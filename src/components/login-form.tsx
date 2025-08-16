@@ -49,7 +49,7 @@ export function LoginForm({
             email: email,
             options: {
                 // set this to false if you do not want the user to be automatically signed up
-                shouldCreateUser: false,
+                shouldCreateUser: true,
                 emailRedirectTo: window.location.origin + '/dashboard',
             },
         });
@@ -140,7 +140,7 @@ export function LoginForm({
                     <div className='relative hidden bg-muted md:block'>
                         <img
                             src='/login.jpg'
-                            alt='Waithog'
+                            alt=''
                             className='absolute inset-0 h-full w-full object-cover saturate-75 brightness-125 contrast-75 dark:brightness-[0.2] dark:grayscale'
                         />
                     </div>

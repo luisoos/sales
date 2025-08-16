@@ -1,5 +1,5 @@
 {
-    "name": "waithog",
+    "name": "saas",
     "version": "0.1.0",
     "private": true,
     "type": "module",
@@ -43,6 +43,7 @@
         "sonner": "^1.7.4",
         "tailwind-merge": "^3.0.1",
         "tailwindcss-animate": "^1.0.7",
+        "ws": "^8.18.3",
         "zod": "^3.23.3"
     },
     "devDependencies": {
