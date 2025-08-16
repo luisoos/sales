@@ -20,27 +20,27 @@ export function LoginForm({
 
     const [email, setEmail] = useState('');
 
-    const signInWithGitLab = async () => {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: 'gitlab',
-        });
-        if (error) {
-            toast.error(
-                'There was an error during the login process. Please try again.',
-            );
-        }
-    };
+    // const signInWithGitLab = async () => {
+    //     const { error } = await supabase.auth.signInWithOAuth({
+    //         provider: 'gitlab',
+    //     });
+    //     if (error) {
+    //         toast.error(
+    //             'There was an error during the login process. Please try again.',
+    //         );
+    //     }
+    // };
 
-    const signInWithGitHub = async () => {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: 'github',
-        });
-        if (error) {
-            toast.error(
-                'There was an error during the login process. Please try again.',
-            );
-        }
-    };
+    // const signInWithGitHub = async () => {
+    //     const { error } = await supabase.auth.signInWithOAuth({
+    //         provider: 'github',
+    //     });
+    //     if (error) {
+    //         toast.error(
+    //             'There was an error during the login process. Please try again.',
+    //         );
+    //     }
+    // };
 
     const signInWithMagicLink = async () => {
         const emailSchema = z.string().email();
@@ -98,7 +98,7 @@ export function LoginForm({
                                 onClick={signInWithMagicLink}>
                                 Send Magic Link
                             </Button>
-                            <div className='relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border'>
+                            {/* <div className='relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border'>
                                 <span className='relative z-10 bg-background px-2 text-muted-foreground'>
                                     Or continue with
                                 </span>
@@ -147,7 +147,7 @@ export function LoginForm({
                                         Login with GitHub
                                     </span>
                                 </Button>
-                            </div>
+                            </div> */}
                         </div>
                     </form>
                     <div className='relative hidden bg-muted md:block'>
