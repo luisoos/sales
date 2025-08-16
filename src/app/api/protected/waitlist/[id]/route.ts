@@ -4,18 +4,24 @@ import { db } from '~/server/db';
 
 const waitlistIdSchema = z.number().int();
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(
+    request: Request,
+    { params }: { params: { id: string } },
+) {
     const validatedId = waitlistIdSchema.safeParse(params.id);
     if (!validatedId)
         return NextResponse.json({ error: 'Bad request' }, { status: 400 });
-        
+
     const entry = await db.waitlist.findUnique({
         where: { id: validatedId.data },
     });
     return NextResponse.json(entry);
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+    request: Request,
+    { params }: { params: { id: string } },
+) {
     const validatedId = waitlistIdSchema.safeParse(params.id);
     if (!validatedId)
         return NextResponse.json({ error: 'Bad request' }, { status: 400 });
@@ -28,7 +34,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     return NextResponse.json(updatedEntry);
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+    request: Request,
+    { params }: { params: { id: string } },
+) {
     const validatedId = waitlistIdSchema.safeParse(params.id);
     if (!validatedId)
         return NextResponse.json({ error: 'Bad request' }, { status: 400 });

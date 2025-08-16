@@ -3,6 +3,7 @@ import React from 'react';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import { type Metadata } from 'next';
+import { Toaster } from '~/components/ui/sonner';
 
 export const metadata: Metadata = {
     title: process.env.NEXT_PUBLIC_PROJECT_NAME,
@@ -17,7 +18,10 @@ export default function RootLayout({
         <html
             lang='en'
             className={`${GeistSans.variable} ${GeistMono.variable}`}>
-            <body>{children}</body>
+            <body>
+                {children}
+                <Toaster />
+            </body>
         </html>
     );
 }

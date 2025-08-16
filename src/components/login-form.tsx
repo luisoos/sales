@@ -9,12 +9,14 @@ import { createClient } from '~/utils/supabase/client';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export function LoginForm({
     className,
     ...props
 }: React.ComponentProps<'div'>) {
     const supabase = createClient();
+    const router = useRouter();
 
     const [email, setEmail] = useState('');
 
@@ -23,7 +25,9 @@ export function LoginForm({
             provider: 'gitlab',
         });
         if (error) {
-            toast.error("There was an error during the login process. Please try again.");
+            toast.error(
+                'There was an error during the login process. Please try again.',
+            );
         }
     };
 
@@ -32,7 +36,9 @@ export function LoginForm({
             provider: 'github',
         });
         if (error) {
-            toast.error("There was an error during the login process. Please try again.");
+            toast.error(
+                'There was an error during the login process. Please try again.',
+            );
         }
     };
 
@@ -41,7 +47,7 @@ export function LoginForm({
         const validation = emailSchema.safeParse(email);
 
         if (!validation.success) {
-            toast.error("Please enter a valid email address.");
+            toast.error('Please enter a valid email address.');
             return;
         }
 
@@ -54,7 +60,9 @@ export function LoginForm({
             },
         });
         if (error) {
-            toast.error("There was an error sending you a Magic Link.");
+            toast.error('There was an error sending you a Magic Link.');
+        } else {
+            router.push('/login/otp?email=' + encodeURIComponent(email));
         }
     };
 
@@ -69,7 +77,9 @@ export function LoginForm({
                                     Welcome back
                                 </h1>
                                 <p className='text-balance text-muted-foreground'>
-                                    Login to your {process.env.NEXT_PUBLIC_PROJECT_NAME} account
+                                    Login to your{' '}
+                                    {process.env.NEXT_PUBLIC_PROJECT_NAME}{' '}
+                                    account
                                 </p>
                             </div>
                             <div className='grid gap-2'>
@@ -82,7 +92,10 @@ export function LoginForm({
                                     required
                                 />
                             </div>
-                            <Button type='submit' className='w-full' onClick={signInWithMagicLink}>
+                            <Button
+                                type='button'
+                                className='w-full'
+                                onClick={signInWithMagicLink}>
                                 Send Magic Link
                             </Button>
                             <div className='relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border'>

@@ -6,7 +6,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <body>
             <main>{children}</main>
-            <Toaster />
         </body>
     );
 }
