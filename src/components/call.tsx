@@ -1,4 +1,5 @@
 'use client';
+
 import { useEffect, useState, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Button } from './ui/button';
@@ -6,11 +7,12 @@ import { Button } from './ui/button';
 export default function Call() {
     const [messages, setMessages] = useState<string[]>([]);
     const socketRef = useRef<Socket | null>(null);
+    const recorderRef = useRef<MediaRecorder | null>(null);
 
     useEffect(() => {
         // Verbindung starten
         const socket = io({
-            path: '/api/protected/socket',
+            path: '/api/socket',
         });
         socketRef.current = socket;
 
@@ -26,32 +28,32 @@ export default function Call() {
             setMessages((prev) => [...prev, 'Antwort: ' + msg]);
         });
 
+        socket.on("stopped", (msg) => {
+            setMessages((prev) => [...prev, '🛑 Server: ' + msg.message]);
+          });
+
         return () => {
             socket.disconnect();
         };
     }, []);
 
     async function startRecording() {
-        const stream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-        });
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         const recorder = new MediaRecorder(stream);
-
+        recorderRef.current = recorder;
+    
         recorder.ondataavailable = (e) => {
             if (e.data.size > 0 && socketRef.current) {
-                // Audio-Chunk in Base64 schicken
-                e.data.arrayBuffer().then((buf) => {
-                    const base64 = Buffer.from(buf).toString('base64');
-                    socketRef.current?.emit('audio', base64);
-                });
+                socketRef.current?.emit('audio', e.data);
             }
         };
-
-        recorder.start(500); // alle 500ms ein Chunk
+    
+        recorder.start(500);
     }
-
+    
     function stopResponse() {
         socketRef.current?.emit('stop');
+        recorderRef.current?.stop();
     }
 
     return (
