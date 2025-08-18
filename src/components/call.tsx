@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Button } from './ui/button';
+import PushToTalkButton from './push-to-talk-button';
 
 export default function Call() {
     const [messages, setMessages] = useState<string[]>([]);
@@ -28,9 +29,10 @@ export default function Call() {
             setMessages((prev) => [...prev, 'Antwort: ' + msg]);
         });
 
-        socket.on("stopped", (msg) => {
+        socket.on('stopped', (msg) => {
             setMessages((prev) => [...prev, '🛑 Server: ' + msg.message]);
-          });
+            stopRecording();
+        });
 
         return () => {
             socket.disconnect();
@@ -38,19 +40,27 @@ export default function Call() {
     }, []);
 
     async function startRecording() {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+        });
         const recorder = new MediaRecorder(stream);
         recorderRef.current = recorder;
-    
+
         recorder.ondataavailable = (e) => {
             if (e.data.size > 0 && socketRef.current) {
                 socketRef.current?.emit('audio', e.data);
             }
         };
-    
+
         recorder.start(500);
     }
-    
+
+    function stopRecording() {
+        if (recorderRef.current) {
+            recorderRef.current.stop();
+        }
+    }
+
     function stopResponse() {
         socketRef.current?.emit('stop');
         recorderRef.current?.stop();
@@ -58,12 +68,13 @@ export default function Call() {
 
     return (
         <div>
-            <Button onClick={startRecording} variant='outline' className='mx-2'>
+            {/* <Button onClick={startRecording} variant='outline' className='mx-2'>
                 🎤 Aufnahme starten
             </Button>
             <Button onClick={stopResponse} variant='outline' className='mx-2'>
                 ⏹ Antwort abbrechen
-            </Button>
+            </Button> */}
+            <PushToTalkButton start={() => startRecording()} stop={() => stopResponse()} />
             <ul>
                 {messages.map((m, i) => (
                     <li key={i}>{m}</li>
