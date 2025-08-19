@@ -66,63 +66,78 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
                 fs.writeFileSync(filePath, Buffer.concat(chunks));
 
                 // Speech-to-text
-                const transcription = await groq.audio.transcriptions.create({
-                    file: fs.createReadStream(filePath),
-                    model: 'whisper-large-v3',
-                    temperature: 0.05,
-                    response_format: 'verbose_json',
-                });
-
-                // Text-to-text
-                const chatCompletion = await groq.chat.completions.create({
-                    messages: [
-                        {
-                            role: 'system',
-                            content:
-                                'You are an AI that should test the user in Sales. <response_format>Only answer in plain English and no other language. Do NOT use any symbols or Markdown syntax, even when asked for.</response_format>',
-                        },
-                        {
-                            role: 'user',
-                            content: transcription.text,
-                        },
-                    ],
-                    model: 'openai/gpt-oss-20b',
-                    temperature: 1,
-                    max_completion_tokens: 8192,
-                    top_p: 1,
-                    stream: false,
-                    reasoning_effort: 'medium',
-                    // "response_format": {
-                    //   "type": "json_object"
-                    // },
-                    stop: null,
-                });
-
-                const chatAnswer = chatCompletion.choices[0]?.message.content;
-
-                if (chatAnswer) {
-                    // Text-to-speech
-                    const wav = await groq.audio.speech.create({
-                        model: 'playai-tts',
-                        voice: 'Mamaw-PlayAI',
-                        response_format: 'wav',
-                        input: chatAnswer,
+                try {
+                    const transcription = await groq.audio.transcriptions.create({
+                        file: fs.createReadStream(filePath),
+                        model: 'whisper-large-v3',
+                        temperature: 0.05,
+                        response_format: 'verbose_json',
                     });
-                    const buffer = Buffer.from(await wav.arrayBuffer());
+                
 
-                    console.log(transcription.text, ' -> ', chatAnswer);
-                    // Send the (text and) TTS to the client
-                    socket.emit('tts', buffer);
-                    socket.emit('text', chatAnswer);
+                    // Text-to-text
+                    const chatCompletion = await groq.chat.completions.create({
+                        messages: [
+                            {
+                                role: 'system',
+                                content:
+                                    'You are an AI that should test the user in Sales. <response_format>Only answer in plain English and no other language. Do NOT use any symbols or Markdown syntax, even when asked for.</response_format>',
+                            },
+                            {
+                                role: 'user',
+                                content: transcription.text,
+                            },
+                        ],
+                        model: 'openai/gpt-oss-20b',
+                        temperature: 1,
+                        max_completion_tokens: 8192,
+                        top_p: 1,
+                        stream: false,
+                        reasoning_effort: 'medium',
+                        // "response_format": {
+                        //   "type": "json_object"
+                        // },
+                        stop: null,
+                    });
+
+                    const chatAnswer = chatCompletion.choices[0]?.message.content;
+
+                    if (chatAnswer) {
+                        // Text-to-speech
+                        const wav = await groq.audio.speech.create({
+                            model: 'playai-tts',
+                            voice: 'Mamaw-PlayAI',
+                            response_format: 'wav',
+                            input: chatAnswer,
+                        });
+                        const buffer = Buffer.from(await wav.arrayBuffer());
+
+                        console.log(transcription.text, ' -> ', chatAnswer);
+                        // Send the (text and) TTS to the client
+                        socket.emit('tts', buffer);
+                        socket.emit('transcription', transcription.text);
+                        socket.emit('text', chatAnswer);
+                    }
+
+                    // Unset the audio cache to receive new user input
+                    audioCache[socket.id] = [];
+                } catch (e: any) {
+                    if (e.error.error.message) {
+                        if (e.error.error.message === 'file is empty') {
+                            socket.emit('err', 'No speech was detected.');
+                        } else if (e.error.error.message.startsWith('Rate limit reached')) {
+                            socket.emit('err', `Too many users are using ${process.env.NEXT_PUBLIC_PROJECT_NAME} at the moment. Try again later.`);
+                        } else {
+                            socket.emit('err', 'Sorry! Our systems had an internal error. We will work on fixing it as soon as possible.');
+                            console.log(e)
+                        }
+                    }
+                } finally {
+                    // Remove the used user audio input
+                    fs.unlink(filePath, (err) => {
+                        if (err) console.log('err'); //throw err;
+                    });
                 }
-
-                // Remove the used user audio input
-                fs.unlink(filePath, (err) => {
-                    if (err) console.log("err");//throw err;
-                });
-
-                // Unset the audio cache to receive new user input
-                audioCache[socket.id] = [];
             });
 
             // Optional: Verbindung schließen

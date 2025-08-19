@@ -5,6 +5,7 @@ import { io, Socket } from 'socket.io-client';
 import { Button } from './ui/button';
 import PushToTalkButton, { Bars } from './push-to-talk-button';
 import { cn } from '~/lib/utils';
+import { toast } from 'sonner';
 
 export default function Call() {
     const [messages, setMessages] = useState<string[]>([]);
@@ -12,6 +13,7 @@ export default function Call() {
     const [characterSpeaks, setCharacterSpeaks] = useState<boolean>(false);
     const socketRef = useRef<Socket | null>(null);
     const recorderRef = useRef<MediaRecorder | null>(null);
+    const audioContext = new AudioContext();
 
     useEffect(() => {
         // Connect to websocket
@@ -24,17 +26,18 @@ export default function Call() {
             console.log('Verbunden:', socket.id);
         });
 
-        socket.on('text', (msg: string) => {
+        socket.on('transcription', (msg: string) => {
             setMessages((prev) => [...prev, 'You: ' + msg]);
         });
 
-        socket.on('tts', async (msg: string) => {
+        socket.on('text', (msg: string) => {
             setMessages((prev) => [...prev, 'Character: ' + msg]);
+        });
+
+        socket.on('tts', async (msg: ArrayBuffer) => {
             setCharacterSpeaks(true);
 
-            console.log(msg)
-            const audio = new Audio(msg);
-            await audio.play();
+            playArrayBuffer(msg)
 
             setCharacterSpeaks(false);
         });
@@ -43,6 +46,14 @@ export default function Call() {
             // setMessages((prev) => [...prev, '🛑 Server: ' + msg.message]);
             stopRecording();
             setDisableButton(true);
+        });
+
+        socket.on('err', (msg) => {
+            console.log(msg)
+            toast.error(msg)
+            stopRecording();
+            setDisableButton(false);
+            setCharacterSpeaks(false);
         });
 
         return () => {
@@ -77,6 +88,20 @@ export default function Call() {
         recorderRef.current?.stop();
     }
 
+    function playArrayBuffer(arrayBuffer: ArrayBuffer) {
+        audioContext.decodeAudioData(arrayBuffer, (audioBuffer) => {
+            const source = audioContext.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(audioContext.destination);
+            source.start(0);
+            source.onended = () => {
+                setDisableButton(false);
+            };
+        }, (error) => {
+            console.error('Error decoding audio data', error);
+        });
+    }
+
     return (
         <div>
             {/* <Button onClick={startRecording} variant='outline' className='mx-2'>
@@ -85,22 +110,33 @@ export default function Call() {
             <Button onClick={stopResponse} variant='outline' className='mx-2'>
                 ⏹ Antwort abbrechen
             </Button> */}
-            <div className={cn('w-5/6 mx-auto mb-12 border rounded-xl', characterSpeaks ? 'shadow-inner shadow-green-600' : 'shadow')} >
-                <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimgv3.fotor.com%2Fimages%2Fgallery%2Fcartoon-character-generated-by-Fotor-ai-art-creator.jpg&f=1&nofb=1&ipt=07e4cd80d8b00359d14f4a23916a05465a2ef282f57d7622292bdbcf1bdc282d" 
-                className="w-16 mx-auto my-24 rounded-full" />
+            <div
+                className={cn(
+                    'w-5/6 mx-auto mb-12 border rounded-xl shadow',
+                    characterSpeaks
+                        ? 'border border-green-500'
+                        : 'border',
+                )}>
+                <img
+                    src='https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimgv3.fotor.com%2Fimages%2Fgallery%2Fcartoon-character-generated-by-Fotor-ai-art-creator.jpg&f=1&nofb=1&ipt=07e4cd80d8b00359d14f4a23916a05465a2ef282f57d7622292bdbcf1bdc282d'
+                    className='w-16 mx-auto my-24 rounded-full'
+                />
             </div>
-            <div className="w-min mx-auto"><PushToTalkButton
-                start={() => startRecording()}
-                stop={() => stopResponse()}
-                disabled={disableButton}
-            /></div>
-            <div className="w-5/6 mx-auto mt-16">
-            <p className="font-medium text-lg">Conversation Log</p>
-            <ul>
-                {messages.map((m, i) => (
-                    <li key={i}>{m}</li>
-                ))}
-            </ul></div>
+            <div className='w-min mx-auto'>
+                <PushToTalkButton
+                    start={() => startRecording()}
+                    stop={() => stopResponse()}
+                    disabled={disableButton}
+                />
+            </div>
+            <div className='w-5/6 mx-auto mt-16'>
+                <p className='font-medium text-lg'>Conversation Log</p>
+                <ul>
+                    {messages.map((m, i) => (
+                        <li key={i}>{m}</li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 }

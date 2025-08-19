@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GalleryVerticalEnd, Home, Users, Settings, Medal } from 'lucide-react';
+import { Home, Users, Settings, Medal, BadgePercent } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import {
@@ -59,9 +59,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
     // Helper function to check if a path is active
     const isPathActive = (path: string) => {
-        if (path === '/dashboard') {
+        if (!pathname) 
+            return false;
+        if (path === '/dashboard')
             return pathname === '/dashboard';
-        }
         return pathname.startsWith(path);
     };
 
@@ -73,7 +74,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         <SidebarMenuButton size='lg' asChild>
                             <a href='/dashboard'>
                                 <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
-                                    <GalleryVerticalEnd className='size-4' />
+                                    <BadgePercent className='size-4' />
                                 </div>
                                 <div className='flex flex-col gap-0.5 leading-none'>
                                     <span className='font-semibold'>
