@@ -1,5 +1,19 @@
 # 🚀 Next.js Supabase Starter Template
 
+### To-do
+- [ ] Remove audio files automatically
+- [ ] Fix TTS
+- [ ] Lections
+- [ ] Secure Websockets and add authentication / session
+
+#### Later
+- [ ] Prompt Engineer
+- [ ] Streak
+- [ ] Save conversations
+- [ ] Leaderboard
+- [ ] Dashboard
+- [ ] Improvement Tips -> AI Analyses historical conversations
+
 A minimalistic starter template for Next.js with Supabase, featuring:
 
 - 🔐 Supabase Auth

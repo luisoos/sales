@@ -6,9 +6,10 @@ import React, { useState, useEffect, useRef } from 'react';
 type PushToTalkButtonProps = {
   start: () => Promise<void> | void;
   stop: () => void;
+  disabled: boolean;
 };
 
-export default function PushToTalkButton({ start, stop }: PushToTalkButtonProps) {
+export default function PushToTalkButton({ start, stop, disabled }: PushToTalkButtonProps) {
   const [volume, setVolume] = useState(0);
   const [active, setActive] = useState<boolean>(false);
 
@@ -103,19 +104,16 @@ export default function PushToTalkButton({ start, stop }: PushToTalkButtonProps)
         onTouchEnd={handlePressEnd}
         style={{ padding: 10, fontSize: 16 }}
         className="rounded-xl w-80 border shadow h-[100px]"
+        disabled={disabled}
       >
         { active ? <Bars sensitivity={Math.min(volume / 2, 50)} /> :
-        <div className="font-mono text-sm"><Mic className="mx-auto text-indigo-700" />Push to talk</div> }
+        <div className="text-sm"><Mic className="mx-auto text-indigo-700" />Push to talk</div> }
       </button>
-      <div style={{ marginTop: 10, fontSize: 18 }}>
-        Volume level: {volume.toFixed(2)}
-      </div>
     </div>
   );
 }
 
-
-function Bars({ sensitivity }: { sensitivity: number }) {
+export function Bars({ sensitivity }: { sensitivity: number }) {
   const [history, setHistory] = useState<number[]>([]);
 
   // Whenever sensitivity changes, keep only the last 5 values

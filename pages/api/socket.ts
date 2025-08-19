@@ -65,6 +65,7 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
                 const filePath = path.join('tmp/', `${socket.id}.wav`);
                 fs.writeFileSync(filePath, Buffer.concat(chunks));
 
+                // Speech-to-text
                 const transcription = await groq.audio.transcriptions.create({
                     file: fs.createReadStream(filePath),
                     model: 'whisper-large-v3',
@@ -72,11 +73,13 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
                     response_format: 'verbose_json',
                 });
 
+                // Text-to-text
                 const chatCompletion = await groq.chat.completions.create({
                     messages: [
                         {
                             role: 'system',
-                            content: "You are an AI that should test the user in Sales. <response_format>Only answer in plain English and no other language. Do NOT use any symbols or Markdown syntax, even when asked for.</response_format>",
+                            content:
+                                'You are an AI that should test the user in Sales. <response_format>Only answer in plain English and no other language. Do NOT use any symbols or Markdown syntax, even when asked for.</response_format>',
                         },
                         {
                             role: 'user',
@@ -95,18 +98,30 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
                     stop: null,
                 });
 
-                if (chatCompletion.choices[0]) {
-                    console.log(
-                        transcription.text,
-                        ' -> ',
-                        chatCompletion.choices[0].message.content,
-                    );
-                    socket.emit(
-                        'text',
-                        chatCompletion.choices[0].message.content,
-                    );
+                const chatAnswer = chatCompletion.choices[0]?.message.content;
+
+                if (chatAnswer) {
+                    // Text-to-speech
+                    const wav = await groq.audio.speech.create({
+                        model: 'playai-tts',
+                        voice: 'Mamaw-PlayAI',
+                        response_format: 'wav',
+                        input: chatAnswer,
+                    });
+                    const buffer = Buffer.from(await wav.arrayBuffer());
+
+                    console.log(transcription.text, ' -> ', chatAnswer);
+                    // Send the (text and) TTS to the client
+                    socket.emit('tts', buffer);
+                    socket.emit('text', chatAnswer);
                 }
 
+                // Remove the used user audio input
+                fs.unlink(filePath, (err) => {
+                    if (err) console.log("err");//throw err;
+                });
+
+                // Unset the audio cache to receive new user input
                 audioCache[socket.id] = [];
             });
 
