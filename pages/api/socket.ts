@@ -6,6 +6,7 @@ import { Server as IOServer, Socket } from 'socket.io';
 import fs from 'fs';
 import Groq from 'groq-sdk';
 import path from 'path';
+import { SystemPromptBuilder } from '~/utils/prompts/system-prompt';
 
 interface SocketServer extends NetSocket {
     server: HTTPServer & { io?: IOServer };
@@ -80,8 +81,7 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
                         messages: [
                             {
                                 role: 'system',
-                                content:
-                                    'You are an AI that should test the user in Sales. <response_format>Only answer in plain English and no other language. Do NOT use any symbols or Markdown syntax, even when asked for.</response_format>',
+                                content: new SystemPromptBuilder(1).build(),
                             },
                             {
                                 role: 'user',
@@ -106,9 +106,11 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
                         // Text-to-speech
                         const wav = await groq.audio.speech.create({
                             model: 'playai-tts',
-                            voice: 'Mamaw-PlayAI',
+                            voice: 'Aaliyah-PlayAI',
                             response_format: 'wav',
                             input: chatAnswer,
+                            sample_rate: 16000,
+                            speed: 1.5
                         });
                         const buffer = Buffer.from(await wav.arrayBuffer());
 

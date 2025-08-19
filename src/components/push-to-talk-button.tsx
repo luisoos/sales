@@ -7,12 +7,14 @@ type PushToTalkButtonProps = {
     start: () => Promise<void> | void;
     stop: () => void;
     disabled: boolean;
+    getStream: () => MediaStream | null;
 };
 
 export default function PushToTalkButton({
     start,
     stop,
     disabled,
+    getStream,
 }: PushToTalkButtonProps) {
     const [volume, setVolume] = useState(0);
     const [active, setActive] = useState<boolean>(false);
@@ -22,7 +24,7 @@ export default function PushToTalkButton({
     const dataArrayRef = useRef<Uint8Array | null>(null);
     const animationIdRef = useRef<number | null>(null);
     const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
-    const streamRef = useRef<MediaStream | null>(null);
+    // We do not acquire our own stream; we visualise the parent's stream
 
     const getAverageVolume = (array: Uint8Array) => {
         if (!array) return 0;
@@ -43,10 +45,8 @@ export default function PushToTalkButton({
 
     const startMonitoring = async () => {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                audio: true,
-            });
-            streamRef.current = stream;
+            const stream = getStream();
+            if (!stream) return;
 
             audioContextRef.current = new AudioContext();
             sourceRef.current =
@@ -63,7 +63,7 @@ export default function PushToTalkButton({
 
             updateVolume();
         } catch (err) {
-            console.error('Error accessing microphone:', err);
+            console.error('Error initialising analyser:', err);
         }
     };
 
@@ -80,22 +80,19 @@ export default function PushToTalkButton({
             audioContextRef.current.close();
             audioContextRef.current = null;
         }
-        if (streamRef.current) {
-            streamRef.current
-                .getTracks()
-                .forEach((track: MediaStreamTrack) => track.stop());
-            streamRef.current = null;
-        }
         dataArrayRef.current = null;
         analyserRef.current = null;
         setVolume(0);
     };
 
-    const handlePressStart = () => {
+    const handlePressStart = async () => {
         if (active) return;
         setActive(true);
-        start();
-        startMonitoring();
+        const maybePromise = start();
+        if (maybePromise && typeof (maybePromise as any).then === 'function') {
+            await (maybePromise as Promise<void>);
+        }
+        await startMonitoring();
     };
 
     const handlePressEnd = () => {
@@ -104,6 +101,22 @@ export default function PushToTalkButton({
         stop();
         stopMonitoring();
     };
+
+    // If the parent disables the button while we are active, force stop
+    useEffect(() => {
+        if (disabled && active) {
+            setActive(false);
+            try { stop(); } catch {}
+            stopMonitoring();
+        }
+    }, [disabled]);
+
+    // Cleanup on unmount to ensure mic is released
+    useEffect(() => {
+        return () => {
+            stopMonitoring();
+        };
+    }, []);
 
     return (
         <div style={{ display: 'inline-block', textAlign: 'center' }}>

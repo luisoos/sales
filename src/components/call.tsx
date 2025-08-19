@@ -13,6 +13,7 @@ export default function Call() {
     const [characterSpeaks, setCharacterSpeaks] = useState<boolean>(false);
     const socketRef = useRef<Socket | null>(null);
     const recorderRef = useRef<MediaRecorder | null>(null);
+    const streamRef = useRef<MediaStream | null>(null);
     const audioContext = new AudioContext();
 
     useEffect(() => {
@@ -57,6 +58,15 @@ export default function Call() {
         });
 
         return () => {
+            try {
+                if (recorderRef.current && recorderRef.current.state !== 'inactive') {
+                    recorderRef.current.stop();
+                }
+            } catch {}
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach((track) => track.stop());
+                streamRef.current = null;
+            }
             socket.disconnect();
         };
     }, []);
@@ -65,6 +75,7 @@ export default function Call() {
         const stream = await navigator.mediaDevices.getUserMedia({
             audio: true,
         });
+        streamRef.current = stream;
         const recorder = new MediaRecorder(stream);
         recorderRef.current = recorder;
 
@@ -74,18 +85,37 @@ export default function Call() {
             }
         };
 
+        recorder.onstop = () => {
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach((track) => track.stop());
+                streamRef.current = null;
+            }
+        };
+
         recorder.start(500);
     }
 
     function stopRecording() {
-        if (recorderRef.current) {
+        if (recorderRef.current && recorderRef.current.state !== 'inactive') {
             recorderRef.current.stop();
         }
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach((track) => track.stop());
+            streamRef.current = null;
+        }
+        recorderRef.current = null;
     }
 
     function stopResponse() {
         socketRef.current?.emit('stop');
-        recorderRef.current?.stop();
+        if (recorderRef.current && recorderRef.current.state !== 'inactive') {
+            recorderRef.current.stop();
+        }
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach((track) => track.stop());
+            streamRef.current = null;
+        }
+        recorderRef.current = null;
     }
 
     function playArrayBuffer(arrayBuffer: ArrayBuffer) {
@@ -127,6 +157,7 @@ export default function Call() {
                     start={() => startRecording()}
                     stop={() => stopResponse()}
                     disabled={disableButton}
+                    getStream={() => streamRef.current}
                 />
             </div>
             <div className='w-5/6 mx-auto mt-16'>
