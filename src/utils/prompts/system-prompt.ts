@@ -94,7 +94,3 @@ His background shows the company is operating under a budget freeze with stringe
         }
     }
 }
-
-export default function systemPrompt(lectionNumber: number) {
-    return new SystemPromptBuilder(lectionNumber).build();
-}

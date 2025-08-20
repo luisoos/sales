@@ -39,6 +39,16 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
         io.on('connection', (socket: Socket) => {
             console.log('⏩ Neuer Client:', socket.id);
 
+            let selectedLessonSlug:
+                | 'beginner'
+                | 'intermediate'
+                | 'advanced'
+                | 'expert'
+                | undefined = 'beginner';
+            socket.on('selectLesson', (slug) => {
+                selectedLessonSlug = slug;
+            });
+
             // Beispiel: Audio-Chunks empfangen
             socket.on('audio', (chunk: Buffer) => {
                 console.log('🎶 Audio-Chunk erhalten:', chunk.length, 'Bytes');
@@ -68,20 +78,33 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
 
                 // Speech-to-text
                 try {
-                    const transcription = await groq.audio.transcriptions.create({
-                        file: fs.createReadStream(filePath),
-                        model: 'whisper-large-v3',
-                        temperature: 0.05,
-                        response_format: 'verbose_json',
-                    });
-                
+                    const transcription =
+                        await groq.audio.transcriptions.create({
+                            file: fs.createReadStream(filePath),
+                            model: 'whisper-large-v3',
+                            temperature: 0.05,
+                            response_format: 'verbose_json',
+                        });
 
                     // Text-to-text
+                    const lessonNumber =
+                        selectedLessonSlug === 'beginner'
+                            ? 1
+                            : selectedLessonSlug === 'intermediate'
+                              ? 2
+                              : selectedLessonSlug === 'advanced'
+                                ? 3
+                                : selectedLessonSlug === 'expert'
+                                  ? 4
+                                  : 1;
+
                     const chatCompletion = await groq.chat.completions.create({
                         messages: [
                             {
                                 role: 'system',
-                                content: new SystemPromptBuilder(1).build(),
+                                content: new SystemPromptBuilder(
+                                    lessonNumber,
+                                ).build(),
                             },
                             {
                                 role: 'user',
@@ -100,7 +123,8 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
                         stop: null,
                     });
 
-                    const chatAnswer = chatCompletion.choices[0]?.message.content;
+                    const chatAnswer =
+                        chatCompletion.choices[0]?.message.content;
 
                     if (chatAnswer) {
                         // Text-to-speech
@@ -110,7 +134,7 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
                             response_format: 'wav',
                             input: chatAnswer,
                             sample_rate: 16000,
-                            speed: 1.5
+                            speed: 1,
                         });
                         const buffer = Buffer.from(await wav.arrayBuffer());
 
@@ -127,11 +151,21 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
                     if (e.error.error.message) {
                         if (e.error.error.message === 'file is empty') {
                             socket.emit('err', 'No speech was detected.');
-                        } else if (e.error.error.message.startsWith('Rate limit reached')) {
-                            socket.emit('err', `Too many users are using ${process.env.NEXT_PUBLIC_PROJECT_NAME} at the moment. Try again later.`);
+                        } else if (
+                            e.error.error.message.startsWith(
+                                'Rate limit reached',
+                            )
+                        ) {
+                            socket.emit(
+                                'err',
+                                `Too many users are using ${process.env.NEXT_PUBLIC_PROJECT_NAME} at the moment. Try again later.`,
+                            );
                         } else {
-                            socket.emit('err', 'Sorry! Our systems had an internal error. We will work on fixing it as soon as possible.');
-                            console.log(e)
+                            socket.emit(
+                                'err',
+                                'Sorry! Our systems had an internal error. We will work on fixing it as soon as possible.',
+                            );
+                            console.log(e);
                         }
                     }
                 } finally {

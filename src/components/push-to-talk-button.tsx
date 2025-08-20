@@ -106,7 +106,9 @@ export default function PushToTalkButton({
     useEffect(() => {
         if (disabled && active) {
             setActive(false);
-            try { stop(); } catch {}
+            try {
+                stop();
+            } catch {}
             stopMonitoring();
         }
     }, [disabled]);
@@ -149,18 +151,20 @@ export function Bars({ sensitivity }: { sensitivity: number }) {
     useEffect(() => {
         setHistory((h) => [...h.slice(-4), sensitivity]);
     }, [sensitivity]);
-    
+
     return (
-        <><div className='mx-auto flex items-end gap-1 w-min h-16'>
-            {history.map((v, i) => (
-                <div
-                    key={i}
-                    className='w-1 bg-indigo-700 rounded-full'
-                    style={{ height: `${Math.max(1, Math.round(v))}px` }}
-                />
-            ))}
-        </div>
-            <div className={`mx-auto -mt-16 w-12 h-12 bg-indigo-300 rounded-full animate-ping ${sensitivity * 3 < 35 ? 'duration-1000' : 'duration-500'}`}></div>
+        <>
+            <div className='mx-auto flex items-end gap-1 w-min h-16'>
+                {history.map((v, i) => (
+                    <div
+                        key={i}
+                        className='w-1 bg-indigo-700 rounded-full'
+                        style={{ height: `${Math.max(1, Math.round(v))}px` }}
+                    />
+                ))}
+            </div>
+            <div
+                className={`mx-auto -mt-16 w-12 h-12 bg-indigo-300 rounded-full animate-ping ${sensitivity * 3 < 35 ? 'duration-1000' : 'duration-500'}`}></div>
         </>
     );
 }

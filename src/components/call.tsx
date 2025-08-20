@@ -2,12 +2,17 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { Button } from './ui/button';
-import PushToTalkButton, { Bars } from './push-to-talk-button';
+import PushToTalkButton from './push-to-talk-button';
 import { cn } from '~/lib/utils';
 import { toast } from 'sonner';
 
-export default function Call() {
+type LessonSlug = 'beginner' | 'intermediate' | 'advanced' | 'expert';
+
+type CallProps = {
+    lessonSlug?: LessonSlug;
+};
+
+export default function Call({ lessonSlug }: CallProps) {
     const [messages, setMessages] = useState<string[]>([]);
     const [disableButton, setDisableButton] = useState<boolean>(false);
     const [characterSpeaks, setCharacterSpeaks] = useState<boolean>(false);
@@ -25,6 +30,9 @@ export default function Call() {
 
         socket.on('connect', () => {
             console.log('Verbunden:', socket.id);
+            if (lessonSlug) {
+                socket.emit('selectLesson', lessonSlug);
+            }
         });
 
         socket.on('transcription', (msg: string) => {
@@ -38,7 +46,7 @@ export default function Call() {
         socket.on('tts', async (msg: ArrayBuffer) => {
             setCharacterSpeaks(true);
 
-            playArrayBuffer(msg)
+            playArrayBuffer(msg);
 
             setCharacterSpeaks(false);
         });
@@ -50,8 +58,8 @@ export default function Call() {
         });
 
         socket.on('err', (msg) => {
-            console.log(msg)
-            toast.error(msg)
+            console.log(msg);
+            toast.error(msg);
             stopRecording();
             setDisableButton(false);
             setCharacterSpeaks(false);
@@ -59,7 +67,10 @@ export default function Call() {
 
         return () => {
             try {
-                if (recorderRef.current && recorderRef.current.state !== 'inactive') {
+                if (
+                    recorderRef.current &&
+                    recorderRef.current.state !== 'inactive'
+                ) {
                     recorderRef.current.stop();
                 }
             } catch {}
@@ -71,10 +82,23 @@ export default function Call() {
         };
     }, []);
 
+    // Update selected lesson if it changes while the socket is active
+    useEffect(() => {
+        if (lessonSlug && socketRef.current) {
+            socketRef.current.emit('selectLesson', lessonSlug);
+        }
+    }, [lessonSlug]);
+
     async function startRecording() {
-        const stream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-        });
+        let stream;
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                audio: true,
+            });
+        } catch (e) {
+            toast.error('We could not access your microphone. Check if you allowed access to it.');
+            return;
+        }
         streamRef.current = stream;
         const recorder = new MediaRecorder(stream);
         recorderRef.current = recorder;
@@ -119,17 +143,21 @@ export default function Call() {
     }
 
     function playArrayBuffer(arrayBuffer: ArrayBuffer) {
-        audioContext.decodeAudioData(arrayBuffer, (audioBuffer) => {
-            const source = audioContext.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(audioContext.destination);
-            source.start(0);
-            source.onended = () => {
-                setDisableButton(false);
-            };
-        }, (error) => {
-            console.error('Error decoding audio data', error);
-        });
+        audioContext.decodeAudioData(
+            arrayBuffer,
+            (audioBuffer) => {
+                const source = audioContext.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(audioContext.destination);
+                source.start(0);
+                source.onended = () => {
+                    setDisableButton(false);
+                };
+            },
+            (error) => {
+                console.error('Error decoding audio data', error);
+            },
+        );
     }
 
     return (
@@ -143,9 +171,7 @@ export default function Call() {
             <div
                 className={cn(
                     'w-5/6 mx-auto mb-12 border rounded-xl shadow',
-                    characterSpeaks
-                        ? 'border border-green-500'
-                        : 'border',
+                    characterSpeaks ? 'border border-green-500' : 'border',
                 )}>
                 <img
                     src='https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimgv3.fotor.com%2Fimages%2Fgallery%2Fcartoon-character-generated-by-Fotor-ai-art-creator.jpg&f=1&nofb=1&ipt=07e4cd80d8b00359d14f4a23916a05465a2ef282f57d7622292bdbcf1bdc282d'

@@ -59,10 +59,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
     // Helper function to check if a path is active
     const isPathActive = (path: string) => {
-        if (!pathname) 
-            return false;
-        if (path === '/dashboard')
-            return pathname === '/dashboard';
+        if (!pathname) return false;
+        if (path === '/dashboard') return pathname === '/dashboard';
         return pathname.startsWith(path);
     };
 
