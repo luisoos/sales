@@ -96,7 +96,9 @@ export default function Call({ lessonSlug }: CallProps) {
                 audio: true,
             });
         } catch (e) {
-            toast.error('We could not access your microphone. Check if you allowed access to it.');
+            toast.error(
+                'We could not access your microphone. Check if you allowed access to it.',
+            );
             return;
         }
         streamRef.current = stream;

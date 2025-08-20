@@ -16,7 +16,7 @@ import { redirect, useSearchParams } from 'next/navigation';
 export default function LoginPage() {
     const supabase = createClient();
     const searchParams = useSearchParams();
-    const email = searchParams.get('email');
+    const email = searchParams?.get('email') ?? null;
 
     const [value, setValue] = useState('');
     if (!email) {
@@ -59,7 +59,7 @@ export default function LoginPage() {
                         <h2 className='mb-2 text-center text-base'>
                             Enter the code we sent to your email{' '}
                             <span className='font-mono'>
-                                {decodeURIComponent(email!)}
+                                {email ? decodeURIComponent(email) : ''}
                             </span>
                         </h2>
                         <div className='mb-12 w-min mx-auto'>

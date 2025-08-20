@@ -1,12 +1,18 @@
 export type leadTemperature = 'warm' | 'mixed' | 'cold' | 'hostile';
 
+export type Character = {
+    id: number;
+    name: string;
+    role: string;
+    avatarUrl: string;
+};
+
 export type Lesson = {
     id: number;
     slug: 'beginner' | 'intermediate' | 'advanced' | 'expert';
     levelLabel: string;
     title: string;
-    personaName: string;
-    personaRole: string;
+    character: Character;
     companyDescription: string;
     leadTemperature: leadTemperature;
     summary: string;
@@ -14,14 +20,76 @@ export type Lesson = {
     goal: string;
 };
 
+export const characters: Character[] = [
+    {
+        id: 1,
+        name: 'Sarah Thompson',
+        role: 'Marketing Manager',
+        avatarUrl: 'https://i.pravatar.cc/80?img=1',
+    } as Character,
+    {
+        id: 2,
+        name: 'Michael Chen',
+        role: 'Operations Director',
+        avatarUrl: 'https://i.pravatar.cc/80?img=2',
+    } as Character,
+    {
+        id: 3,
+        name: 'Jennifer Rodriguez',
+        role: 'Chief Procurement Officer',
+        avatarUrl: 'https://i.pravatar.cc/80?img=3',
+    } as Character,
+    {
+        id: 4,
+        name: 'David Patel',
+        role: 'Chief Financial Officer',
+        avatarUrl: 'https://i.pravatar.cc/80?img=4',
+    } as Character,
+    {
+        id: 5,
+        name: 'Amina Yusuf',
+        role: 'Product Lead',
+        avatarUrl: 'https://i.pravatar.cc/80?img=5',
+    } as Character,
+    {
+        id: 6,
+        name: 'Lucas Müller',
+        role: 'IT Manager',
+        avatarUrl: 'https://i.pravatar.cc/80?img=6',
+    } as Character,
+    {
+        id: 7,
+        name: 'Priya Singh',
+        role: 'Sales Director',
+        avatarUrl: 'https://i.pravatar.cc/80?img=7',
+    } as Character,
+    {
+        id: 8,
+        name: 'Ethan Brown',
+        role: 'Data Analyst',
+        avatarUrl: 'https://i.pravatar.cc/80?img=8',
+    } as Character,
+    {
+        id: 9,
+        name: 'Maria Garcia',
+        role: 'HR Business Partner',
+        avatarUrl: 'https://i.pravatar.cc/80?img=9',
+    } as Character,
+    {
+        id: 10,
+        name: 'Tom Williams',
+        role: 'Operations VP',
+        avatarUrl: 'https://i.pravatar.cc/80?img=10',
+    } as Character,
+];
+
 export const lessons: Lesson[] = [
     {
         id: 1,
         slug: 'beginner',
         levelLabel: 'Beginner',
         title: 'Warm lead with budget concerns (Marketing automation demo)',
-        personaName: 'Sarah Thompson',
-        personaRole: 'Marketing Manager',
+        character: characters[0]!,
         companyDescription: 'Fifty-person software company, Q4 budget planning',
         leadTemperature: 'warm',
         summary:
@@ -37,8 +105,7 @@ export const lessons: Lesson[] = [
         slug: 'intermediate',
         levelLabel: 'Intermediate',
         title: 'Skeptical referral with past vendor disappointment (Manufacturing ops)',
-        personaName: 'Michael Chen',
-        personaRole: 'Operations Director',
+        character: characters[1]!,
         companyDescription: 'Five hundred-employee manufacturing company',
         leadTemperature: 'mixed',
         summary:
@@ -54,8 +121,7 @@ export const lessons: Lesson[] = [
         slug: 'advanced',
         levelLabel: 'Advanced',
         title: 'Analytical procurement leader comparing vendors (Retail enterprise)',
-        personaName: 'Jennifer Rodriguez',
-        personaRole: 'Chief Procurement Officer',
+        character: characters[2]!,
         companyDescription:
             'Fortune 500 retail chain evaluating multiple solutions',
         leadTemperature: 'cold',
@@ -72,8 +138,7 @@ export const lessons: Lesson[] = [
         slug: 'expert',
         levelLabel: 'Expert',
         title: 'Hostile CFO driving cost reduction and consolidation (Global logistics)',
-        personaName: 'David Patel',
-        personaRole: 'Chief Financial Officer',
+        character: characters[3]!,
         companyDescription:
             'Global logistics enterprise under budget freeze with strict compliance',
         leadTemperature: 'hostile',

@@ -3,7 +3,7 @@
 import Call from '~/components/call';
 import { useParams } from 'next/navigation';
 import { getLessonBySlug, leadTemperature } from '~/utils/prompts/lessons';
-import { ucfirst } from '~/lib/utils';
+import { cn, ucfirst } from '~/lib/utils';
 import { BadgeWithDot } from '~/components/ui/base/badges/badges';
 
 export default function Page() {
@@ -12,6 +12,37 @@ export default function Page() {
     }>();
     const lesson = params?.slug ? getLessonBySlug(params.slug) : undefined;
 
+    return (
+        <>
+            {lesson && (
+                <div className='w-11/12 mx-auto'>
+                    <h2 className='font-medium text-xl'>{lesson.title}</h2>
+                    <p className='flex mt-2 mb-4 text-sm items-center gap-2'>
+                        <img
+                            src={lesson.character.avatarUrl}
+                            alt={lesson.character.name}
+                            className='w-5 h-5 rounded-full border'
+                        />
+                        {lesson.levelLabel} ⋅ {lesson.character.name} (
+                        {lesson.character.role}) ⋅{' '}
+                        <LeadTemperatureBadge
+                            leadTemperature={lesson.leadTemperature}
+                        />
+                    </p>
+                </div>
+            )}
+            <Call lessonSlug={params?.slug} />
+        </>
+    );
+}
+
+export function LeadTemperatureBadge({
+    leadTemperature,
+    className,
+}: {
+    leadTemperature: leadTemperature;
+    className?: string;
+}) {
     function getTemperatureColor(temperature: leadTemperature) {
         switch (temperature) {
             case 'warm':
@@ -19,27 +50,19 @@ export default function Page() {
             case 'mixed':
                 return 'orange';
             case 'cold':
-                return 'blue';                
+                return 'blue';
             case 'hostile':
-                return 'blue-light';
+                return 'gray';
         }
     }
 
     return (
-        <>
-            {lesson && (
-                <div className='w-5/6 mx-auto'>
-                    <h2 className='font-medium text-xl'>{lesson.title}</h2>
-                    <p className='flex mt-2 mb-4 text-sm'>
-                        {lesson.levelLabel} ⋅ {lesson.personaName} (
-                        {lesson.personaRole}) ⋅{' '}
-                        <BadgeWithDot type="modern" color={getTemperatureColor(lesson.leadTemperature)} size="sm" className="ml-1">
-                            {ucfirst(lesson.leadTemperature)}
-                        </BadgeWithDot>
-                    </p>
-                </div>
-            )}
-            <Call lessonSlug={params?.slug} />
-        </>
+        <BadgeWithDot
+            type='modern'
+            color={getTemperatureColor(leadTemperature)}
+            size='sm'
+            className={cn(className)}>
+            {ucfirst(leadTemperature)}
+        </BadgeWithDot>
     );
 }
