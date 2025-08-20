@@ -336,7 +336,7 @@ const TableRow = <T extends object>({
                         ? className(state)
                         : className,
 
-                    'max-md:flex max-md:flex-col max-md:my-2',
+                    'max-md:flex max-md:flex-col max-md:py-2',
                 )
             }>
             {selectionBehavior === 'toggle' && (
