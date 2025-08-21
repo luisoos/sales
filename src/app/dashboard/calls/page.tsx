@@ -9,8 +9,11 @@ import {
 import { LeadTemperatureBadge } from './[slug]/page';
 import { BadgeWithImage } from '~/components/ui/base/badges/badges';
 import { BadgeGroup } from '~/components/ui/base/badges/badge-groups';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
+    const router = useRouter();
+
     return (
         <div className='w-11/12 mx-auto'>
             <TableCard.Root className='w-full mt-2'>
@@ -19,20 +22,24 @@ export default function Page() {
                     title='All Lections'
                     badge={lessons.length + ' Lections'}
                 />
-                <Table aria-label='All Lections'>
-                    <Table.Header className='max-md:hidden'>
+                <Table
+                    aria-label='All Lections'
+                    onRowAction={(key) =>
+                        router.push(`/dashboard/calls/${key}`)
+                    }>
+                    <Table.Header className='max-lg:hidden'>
                         <Table.Head
                             id='level'
                             label='Level'
                             isRowHeader
-                            className='w-full max-w-1/4'
+                            className='w-min'
                         />
                         <Table.Head id='title' label='Title' />
                         <Table.Head id='Character' label='Character' />
                         <Table.Head
                             id='temperature'
                             label='Lead Temperature'
-                            className='md:hidden xl:table-cell'
+                            className='lg:hidden xl:table-cell'
                         />
                     </Table.Header>
 
@@ -41,8 +48,8 @@ export default function Page() {
                             // TODO:
                             const userHasDoneLesson = true;
                             return (
-                                <Table.Row id={item.id}>
-                                    <Table.Cell className='flex flex-wrap items-center my-1.5 gap-1'>
+                                <Table.Row id={item.id} className="cursor-pointer">
+                                    <Table.Cell className='w-min flex max-md:flex-nowrap flex-wrap items-center my-1.5 gap-1'>
                                         {' '}
                                         <BadgeGroup
                                             addonText={String(item.id)}
@@ -60,21 +67,21 @@ export default function Page() {
                                             leadTemperature={
                                                 item.leadTemperature
                                             }
-                                            className='max-md:flex hidden'
+                                            className='max-lg:flex hidden'
                                         />
                                         <BadgeWithImage
                                             type='modern'
                                             color='gray'
                                             size='sm'
                                             imgSrc={item.character.avatarUrl}
-                                            className='max-md:flex hidden'>
+                                            className='max-lg:flex hidden'>
                                             {item.character.name}
                                         </BadgeWithImage>
                                     </Table.Cell>
                                     <Table.Cell className='whitespace-normal break-words'>
                                         {item.title}
                                     </Table.Cell>
-                                    <Table.Cell className='max-md:hidden'>
+                                    <Table.Cell className='max-lg:hidden'>
                                         <div className='flex items-center gap-3'>
                                             <img
                                                 src={item.character.avatarUrl}
@@ -88,7 +95,7 @@ export default function Page() {
                                             </div>
                                         </div>
                                     </Table.Cell>
-                                    <Table.Cell className='max-md:hidden'>
+                                    <Table.Cell className='max-lg:hidden'>
                                         <LeadTemperatureBadge
                                             leadTemperature={
                                                 item.leadTemperature

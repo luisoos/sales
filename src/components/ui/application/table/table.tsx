@@ -332,11 +332,11 @@ const TableRow = <T extends object>({
                     // Row border—using an "after" pseudo-element to avoid the border taking up space.
                     '[&>td]:after:absolute [&>td]:after:inset-x-0 [&>td]:after:bottom-0 [&>td]:after:h-px [&>td]:after:w-full [&>td]:after:bg-border-secondary last:[&>td]:after:hidden [&>td]:focus-visible:after:opacity-0 focus-visible:[&>td]:after:opacity-0',
 
+                    'max-md:flex max-md:flex-col max-md:py-2',
+
                     typeof className === 'function'
                         ? className(state)
                         : className,
-
-                    'max-md:flex max-md:flex-col max-md:py-2',
                 )
             }>
             {selectionBehavior === 'toggle' && (
