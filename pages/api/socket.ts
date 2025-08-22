@@ -39,14 +39,10 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
         io.on('connection', (socket: Socket) => {
             console.log('⏩ Neuer Client:', socket.id);
 
-            let selectedLessonSlug:
-                | 'beginner'
-                | 'intermediate'
-                | 'advanced'
-                | 'expert'
-                | undefined = 'beginner';
+            let selectedLessonId: number;
+            
             socket.on('selectLesson', (slug) => {
-                selectedLessonSlug = slug;
+                selectedLessonId = slug;
             });
 
             // Beispiel: Audio-Chunks empfangen
@@ -87,23 +83,12 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
                         });
 
                     // Text-to-text
-                    const lessonNumber =
-                        selectedLessonSlug === 'beginner'
-                            ? 1
-                            : selectedLessonSlug === 'intermediate'
-                              ? 2
-                              : selectedLessonSlug === 'advanced'
-                                ? 3
-                                : selectedLessonSlug === 'expert'
-                                  ? 4
-                                  : 1;
-
                     const chatCompletion = await groq.chat.completions.create({
                         messages: [
                             {
                                 role: 'system',
                                 content: new SystemPromptBuilder(
-                                    lessonNumber,
+                                    selectedLessonId,
                                 ).build(),
                             },
                             {
@@ -134,7 +119,7 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
                             response_format: 'wav',
                             input: chatAnswer,
                             sample_rate: 16000,
-                            speed: 1,
+                            speed: 1.25,
                         });
                         const buffer = Buffer.from(await wav.arrayBuffer());
 

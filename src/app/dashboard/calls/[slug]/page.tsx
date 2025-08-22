@@ -1,16 +1,18 @@
 'use client';
 
 import Call from '~/components/call';
-import { useParams } from 'next/navigation';
-import { getLessonBySlug, leadTemperature } from '~/utils/prompts/lessons';
+import { redirect, useParams } from 'next/navigation';
+import { getLessonById, leadTemperature } from '~/utils/prompts/lessons';
 import { cn, ucfirst } from '~/lib/utils';
 import { BadgeWithDot } from '~/components/ui/base/badges/badges';
 
 export default function Page() {
     const params = useParams<{
-        slug: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+        slug: string;
     }>();
-    const lesson = params?.slug ? getLessonBySlug(params.slug) : undefined;
+    const lesson = params?.slug ? getLessonById(Number(params.slug)) : undefined;
+
+    if (!params?.slug || !lesson) redirect('/dashboard/calls');
 
     return (
         <>
@@ -31,7 +33,7 @@ export default function Page() {
                     </p>
                 </div>
             )}
-            <Call lessonSlug={params?.slug} />
+            <Call lessonId={Number(params.slug)} />
         </>
     );
 }

@@ -6,13 +6,11 @@ import PushToTalkButton from './push-to-talk-button';
 import { cn } from '~/lib/utils';
 import { toast } from 'sonner';
 
-type LessonSlug = 'beginner' | 'intermediate' | 'advanced' | 'expert';
-
 type CallProps = {
-    lessonSlug?: LessonSlug;
+    lessonId?: number;
 };
 
-export default function Call({ lessonSlug }: CallProps) {
+export default function Call({ lessonId }: CallProps) {
     const [messages, setMessages] = useState<string[]>([]);
     const [disableButton, setDisableButton] = useState<boolean>(false);
     const [characterSpeaks, setCharacterSpeaks] = useState<boolean>(false);
@@ -30,8 +28,8 @@ export default function Call({ lessonSlug }: CallProps) {
 
         socket.on('connect', () => {
             console.log('Verbunden:', socket.id);
-            if (lessonSlug) {
-                socket.emit('selectLesson', lessonSlug);
+            if (lessonId) {
+                socket.emit('selectLesson', lessonId);
             }
         });
 
@@ -84,10 +82,10 @@ export default function Call({ lessonSlug }: CallProps) {
 
     // Update selected lesson if it changes while the socket is active
     useEffect(() => {
-        if (lessonSlug && socketRef.current) {
-            socketRef.current.emit('selectLesson', lessonSlug);
+        if (lessonId && socketRef.current) {
+            socketRef.current.emit('selectLesson', lessonId);
         }
-    }, [lessonSlug]);
+    }, [lessonId]);
 
     async function startRecording() {
         let stream;

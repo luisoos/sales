@@ -153,6 +153,6 @@ export const lessons: Lesson[] = [
     },
 ];
 
-export function getLessonBySlug(slug: Lesson['slug']): Lesson | undefined {
-    return lessons.find((l) => l.slug === slug);
+export function getLessonById(id: Lesson['id']): Lesson | undefined {
+    return lessons.find((l) => l.id === id);
 }
