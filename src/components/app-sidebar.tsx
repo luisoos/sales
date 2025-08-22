@@ -26,7 +26,7 @@ const data = {
         },
         {
             title: 'Calls',
-            url: '/dashboard/users',
+            url: '/dashboard/calls',
             icon: Users,
             items: [
                 {

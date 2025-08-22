@@ -10,7 +10,9 @@ export default function Page() {
     const params = useParams<{
         slug: string;
     }>();
-    const lesson = params?.slug ? getLessonById(Number(params.slug)) : undefined;
+    const lesson = params?.slug
+        ? getLessonById(Number(params.slug))
+        : undefined;
 
     if (!params?.slug || !lesson) redirect('/dashboard/calls');
 

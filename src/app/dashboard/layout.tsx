@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import { Separator } from '@radix-ui/react-separator';
 import { AppSidebar } from '~/components/app-sidebar';
 import {
@@ -17,7 +18,29 @@ import {
     SidebarTrigger,
 } from '~/components/ui/sidebar';
 
+const getBreadcrumbLabel = (pathname: string) => {
+    if (pathname === '/dashboard') {
+        return 'Dashboard';
+    }
+    if (pathname.startsWith('/dashboard/calls')) {
+        if (pathname === '/dashboard/calls') {
+            return 'Calls';
+        }
+        return 'Call Details';
+    }
+    const lastSegment = pathname.split('/').pop();
+    if (!lastSegment) return '';
+
+    return lastSegment
+        .split('-')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+};
+
 export default function RootLayout({ children }: { children: ReactNode }) {
+    const pathname = usePathname();
+    const breadcrumbLabel = pathname ? getBreadcrumbLabel(pathname) : '';
+
     return (
         <main>
             <SidebarProvider
@@ -37,15 +60,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className='hidden md:block'>
-                                    <BreadcrumbLink href='#'>
+                                    <BreadcrumbLink href='/dashboard'>
                                         {process.env.NEXT_PUBLIC_PROJECT_NAME}
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className='hidden md:block' />
                                 <BreadcrumbItem>
-                                    {/* TODO: detect route -> map to breadcrumb label */}
                                     <BreadcrumbPage>
-                                        Data Fetching
+                                        {breadcrumbLabel}
                                     </BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>

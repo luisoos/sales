@@ -40,7 +40,7 @@ export default function handler(req: NextApiRequest, res: SocketResponse) {
             console.log('⏩ Neuer Client:', socket.id);
 
             let selectedLessonId: number;
-            
+
             socket.on('selectLesson', (slug) => {
                 selectedLessonId = slug;
             });

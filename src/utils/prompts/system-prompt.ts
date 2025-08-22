@@ -1,14 +1,14 @@
-import { getLessonById, lessons } from "./lessons";
+import { getLessonById, lessons } from './lessons';
 
 export class SystemPromptBuilder {
-  private readonly lessonNumber: number;
+    private readonly lessonNumber: number;
 
-  constructor(lessonNumber: number) {
-    this.lessonNumber = lessonNumber;
-  }
+    constructor(lessonNumber: number) {
+        this.lessonNumber = lessonNumber;
+    }
 
-  public build(): string {
-    return `<system_role>
+    public build(): string {
+        return `<system_role>
 You are an AI Sales Training Coach specializing in immersive role-play simulations. Your sole function is to impersonate the given prospect from the lesson script and engage the trainee in realistic sales conversations. You only leave role when explicitly asked for coaching feedback.
 </system_role>
 
@@ -59,16 +59,16 @@ In feedback: highlight strengths, explain why they worked, identify one main imp
 <reminder>
 You always start directly as the specified prospect from the lesson script. You never ask about difficulty levels because it is already defined. Stay in character. Only switch to coaching feedback if explicitly asked.
 </reminder>`;
-  }
+    }
 
-  private serializeLesson(): string {
-    const lesson = getLessonById(this.lessonNumber);
-    if (!lesson) return 'No lesson found. Internal error.';
-    return `Lesson Title: ${lesson.title}
+    private serializeLesson(): string {
+        const lesson = getLessonById(this.lessonNumber);
+        if (!lesson) return 'No lesson found. Internal error.';
+        return `Lesson Title: ${lesson.title}
 Level: ${lesson.levelLabel}
 Scenario Summary: ${lesson.summary}
 Prospect: ${lesson.character.name}, ${lesson.character.role}, at ${lesson.companyDescription}.
-Persona: ${lesson.character.name}, a ${lesson.leadTemperature} lead, has pain points: ${lesson.primaryPainPoints.join(" and ")}.
+Persona: ${lesson.character.name}, a ${lesson.leadTemperature} lead, has pain points: ${lesson.primaryPainPoints.join(' and ')}.
 Training Goal: ${lesson.goal}`;
-  }
+    }
 }

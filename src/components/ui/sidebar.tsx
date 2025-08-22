@@ -215,7 +215,7 @@ const Sidebar = React.forwardRef<
                             } as React.CSSProperties
                         }
                         side={side}>
-                        <SheetTitle className="sr-only">Sidebar</SheetTitle>
+                        <SheetTitle className='sr-only'>Sidebar</SheetTitle>
                         <div className='flex h-full w-full flex-col'>
                             {children}
                         </div>

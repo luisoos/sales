@@ -48,7 +48,9 @@ export default function Page() {
                             // TODO:
                             const userHasDoneLesson = true;
                             return (
-                                <Table.Row id={item.id} className="cursor-pointer">
+                                <Table.Row
+                                    id={item.id}
+                                    className='cursor-pointer'>
                                     <Table.Cell className='w-min flex max-md:flex-nowrap flex-wrap items-center my-1.5 gap-1'>
                                         {' '}
                                         <BadgeGroup
