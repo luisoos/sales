@@ -1,16 +1,19 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { useNotesPopoverStore } from '~/lib/store/notes-popover.store';
+import { io, type Socket } from 'socket.io-client';
 import PushToTalkButton from './push-to-talk-button';
 import { cn } from '~/lib/utils';
 import { toast } from 'sonner';
+import { TextArea } from 'react-aria-components';
 
 type CallProps = {
     lessonId?: number;
 };
 
 export default function Call({ lessonId }: CallProps) {
+    const { isOpen } = useNotesPopoverStore();
     const [messages, setMessages] = useState<string[]>([]);
     const [disableButton, setDisableButton] = useState<boolean>(false);
     const [characterSpeaks, setCharacterSpeaks] = useState<boolean>(false);
@@ -18,6 +21,30 @@ export default function Call({ lessonId }: CallProps) {
     const recorderRef = useRef<MediaRecorder | null>(null);
     const streamRef = useRef<MediaStream | null>(null);
     const audioContext = new AudioContext();
+
+    const callEndedRef = useRef(false);
+    const messagesRef = useRef(messages);
+    useEffect(() => {
+        messagesRef.current = messages;
+    }, [messages]);
+
+    function handleCallEnd(status: 'CLOSE' | 'NOT CLOSED') {
+        if (callEndedRef.current) return;
+        callEndedRef.current = true;
+
+        stopRecording();
+        setDisableButton(true);
+        socketRef.current?.disconnect();
+
+        // TODO: Send conversation log to the database
+        const logData = {
+            status: status,
+            conversation: messagesRef.current,
+            endedAt: new Date(),
+        };
+        console.log('--- Call Log ---', logData);
+        toast.info(`Call ended with status: ${status}`);
+    }
 
     useEffect(() => {
         // Connect to websocket
@@ -38,7 +65,19 @@ export default function Call({ lessonId }: CallProps) {
         });
 
         socket.on('text', (msg: string) => {
-            setMessages((prev) => [...prev, 'Character: ' + msg]);
+            if (msg.includes('<stop_call_close>')) {
+                const cleanMsg = msg.replace(/<stop_call_close>/g, '').trim();
+                setMessages((prev) => [...prev, 'Character: ' + cleanMsg]);
+                handleCallEnd('CLOSE');
+            } else if (msg.includes('<stop_call_no_close>')) {
+                const cleanMsg = msg
+                    .replace(/<stop_call_no_close>/g, '')
+                    .trim();
+                setMessages((prev) => [...prev, 'Character: ' + cleanMsg]);
+                handleCallEnd('NOT CLOSED');
+            } else {
+                setMessages((prev) => [...prev, 'Character: ' + msg]);
+            }
         });
 
         socket.on('tts', async (msg: ArrayBuffer) => {
@@ -64,19 +103,9 @@ export default function Call({ lessonId }: CallProps) {
         });
 
         return () => {
-            try {
-                if (
-                    recorderRef.current &&
-                    recorderRef.current.state !== 'inactive'
-                ) {
-                    recorderRef.current.stop();
-                }
-            } catch {}
-            if (streamRef.current) {
-                streamRef.current.getTracks().forEach((track) => track.stop());
-                streamRef.current = null;
+            if (!callEndedRef.current) {
+                handleCallEnd('NOT CLOSED');
             }
-            socket.disconnect();
         };
     }, []);
 
@@ -100,7 +129,12 @@ export default function Call({ lessonId }: CallProps) {
             return;
         }
         streamRef.current = stream;
-        const recorder = new MediaRecorder(stream);
+        const options = { mimeType: 'audio/webm;codecs=opus' };
+        if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+            toast.error('Your browser does not support recording in webm/opus format.');
+            return;
+        }
+        const recorder = new MediaRecorder(stream, options);
         recorderRef.current = recorder;
 
         recorder.ondataavailable = (e) => {
@@ -170,7 +204,7 @@ export default function Call({ lessonId }: CallProps) {
             </Button> */}
             <div
                 className={cn(
-                    'w-5/6 mx-auto mb-12 border rounded-xl shadow',
+                    'w-5/6 mx-auto mb-12 border rounded-xl bg-gradient-to-tr from-white to-zinc-50 shadow-inner',
                     characterSpeaks ? 'border border-green-500' : 'border',
                 )}>
                 <img
@@ -186,7 +220,7 @@ export default function Call({ lessonId }: CallProps) {
                     getStream={() => streamRef.current}
                 />
             </div>
-            <div className='w-5/6 mx-auto mt-16'>
+            <div className={cn('w-5/6 mx-auto mt-16 transition-all', isOpen && 'w-4/6')}>
                 <p className='font-medium text-lg'>Conversation Log</p>
                 <ul>
                     {messages.map((m, i) => (

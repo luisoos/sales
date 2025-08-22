@@ -2,9 +2,10 @@
 
 import Call from '~/components/call';
 import { redirect, useParams } from 'next/navigation';
-import { getLessonById, leadTemperature } from '~/utils/prompts/lessons';
+import { getLessonById, type leadTemperature } from '~/utils/prompts/lessons';
 import { cn, ucfirst } from '~/lib/utils';
 import { BadgeWithDot } from '~/components/ui/base/badges/badges';
+import { NotesPopover } from '~/components/notes-popover';
 
 export default function Page() {
     const params = useParams<{
@@ -33,6 +34,7 @@ export default function Page() {
                             leadTemperature={lesson.leadTemperature}
                         />
                     </p>
+                    <NotesPopover lesson={lesson} />
                 </div>
             )}
             <Call lessonId={Number(params.slug)} />

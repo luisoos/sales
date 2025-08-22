@@ -90,7 +90,7 @@ export default function PushToTalkButton({
         setActive(true);
         const maybePromise = start();
         if (maybePromise && typeof (maybePromise as any).then === 'function') {
-            await (maybePromise as Promise<void>);
+            await maybePromise;
         }
         await startMonitoring();
     };
@@ -129,7 +129,7 @@ export default function PushToTalkButton({
                 onTouchStart={handlePressStart}
                 onTouchEnd={handlePressEnd}
                 style={{ padding: 10, fontSize: 16 }}
-                className='rounded-xl w-80 border shadow h-[100px]'
+                className='rounded-xl w-80 border bg-gradient-to-br from-white to-zinc-50 shadow-inner h-[100px]'
                 disabled={disabled}>
                 {active ? (
                     <Bars sensitivity={Math.min(volume / 2, 50)} />

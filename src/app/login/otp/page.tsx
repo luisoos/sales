@@ -28,7 +28,7 @@ export default function LoginPage() {
         const verifyOTP = async () => {
             if (value.length === 6) {
                 const { data, error } = await supabase.auth.verifyOtp({
-                    email: decodeURIComponent(email!),
+                    email: decodeURIComponent(email),
                     token: value,
                     type: 'email',
                 });

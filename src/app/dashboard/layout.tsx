@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { Separator } from '@radix-ui/react-separator';
 import { AppSidebar } from '~/components/app-sidebar';
