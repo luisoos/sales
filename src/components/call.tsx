@@ -1,19 +1,19 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { useNotesPopoverStore } from '~/lib/store/notes-popover.store';
 import { io, type Socket } from 'socket.io-client';
 import PushToTalkButton from './push-to-talk-button';
 import { cn } from '~/lib/utils';
 import { toast } from 'sonner';
-import { TextArea } from 'react-aria-components';
+import { motion, AnimatePresence } from 'framer-motion';
+import { getLessonById } from '~/utils/prompts/lessons';
 
 type CallProps = {
-    lessonId?: number;
+    lessonId: number;
+    showNotes: boolean;
 };
 
-export default function Call({ lessonId }: CallProps) {
-    const { isOpen } = useNotesPopoverStore();
+export default function Call({ lessonId, showNotes }: CallProps) {
     const [messages, setMessages] = useState<string[]>([]);
     const [disableButton, setDisableButton] = useState<boolean>(false);
     const [characterSpeaks, setCharacterSpeaks] = useState<boolean>(false);
@@ -21,6 +21,7 @@ export default function Call({ lessonId }: CallProps) {
     const recorderRef = useRef<MediaRecorder | null>(null);
     const streamRef = useRef<MediaStream | null>(null);
     const audioContext = new AudioContext();
+    const lesson = getLessonById(lessonId);
 
     const callEndedRef = useRef(false);
     const messagesRef = useRef(messages);
@@ -131,7 +132,9 @@ export default function Call({ lessonId }: CallProps) {
         streamRef.current = stream;
         const options = { mimeType: 'audio/webm;codecs=opus' };
         if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-            toast.error('Your browser does not support recording in webm/opus format.');
+            toast.error(
+                'Your browser does not support recording in webm/opus format.',
+            );
             return;
         }
         const recorder = new MediaRecorder(stream, options);
@@ -220,13 +223,49 @@ export default function Call({ lessonId }: CallProps) {
                     getStream={() => streamRef.current}
                 />
             </div>
-            <div className={cn('w-5/6 mx-auto mt-16 transition-all', isOpen && 'w-4/6')}>
-                <p className='font-medium text-lg'>Conversation Log</p>
-                <ul>
-                    {messages.map((m, i) => (
-                        <li key={i}>{m}</li>
-                    ))}
-                </ul>
+
+            <div
+                className={cn(
+                    'w-5/6 mx-auto mt-16 mb-8',
+                    'flex flex-col-reverse lg:flex-row gap-4', // always applied
+                )}>
+                <div className='lg:w-1/2'>
+                    <p className='font-medium text-lg'>Conversation Log</p>
+                    <ul>
+                        {messages.map((m, i) => (
+                            <li key={i}>{m}</li>
+                        ))}
+                    </ul>
+                </div>
+                <AnimatePresence>
+                    {showNotes && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2, ease: 'easeOut' }}
+                            key='notes'
+                            className={showNotes ? 'lg:w-1/2' : 'lg:w-full'}>
+                            <p className='font-medium text-lg'>Notes</p>
+                            <p>
+                                <strong>Call Goal: </strong>
+                                {lesson?.goal}
+                            </p>
+                            <p>
+                                <strong>Company Description: </strong>
+                                {lesson?.companyDescription}
+                            </p>
+                            <p>
+                                <strong>Primary Pain Points: </strong>
+                                {lesson?.primaryPainPoints}
+                            </p>
+                            <p>
+                                <strong>Summary: </strong>
+                                {lesson?.summary}
+                            </p>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );

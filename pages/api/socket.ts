@@ -193,9 +193,9 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                         socket.emit('err', 'An unexpected error occurred.');
                     }
                 } finally {
-                    // fs.unlink(filePath, (err) => {
-                    //     if (err) console.log('Error deleting temp file:', err);
-                    // });
+                    fs.unlink(filePath, (err) => {
+                        if (err) console.log('Error deleting temp file:', err);
+                    });
                 }
             });
 
