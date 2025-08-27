@@ -117,7 +117,22 @@ export default function Call({ lessonId, showNotes }: CallProps) {
         }
     }, [lessonId]);
 
+    const audioChunksRef = useRef<Blob[]>([]);
+
+    function cleanupRecording() {
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach((track) => track.stop());
+            streamRef.current = null;
+        }
+        recorderRef.current = null;
+        audioChunksRef.current = [];
+    }
+
     async function startRecording() {
+        if (recorderRef.current) {
+            return;
+        }
+        audioChunksRef.current = []; // Clear chunks for new recording
         let stream;
         try {
             stream = await navigator.mediaDevices.getUserMedia({
@@ -135,22 +150,25 @@ export default function Call({ lessonId, showNotes }: CallProps) {
             toast.error(
                 'Your browser does not support recording in webm/opus format.',
             );
+            cleanupRecording();
             return;
         }
         const recorder = new MediaRecorder(stream, options);
         recorderRef.current = recorder;
 
         recorder.ondataavailable = (e) => {
-            if (e.data.size > 0 && socketRef.current) {
-                socketRef.current?.emit('audio', e.data);
+            if (e.data.size > 0) {
+                audioChunksRef.current.push(e.data);
             }
         };
 
         recorder.onstop = () => {
-            if (streamRef.current) {
-                streamRef.current.getTracks().forEach((track) => track.stop());
-                streamRef.current = null;
-            }
+            const audioBlob = new Blob(audioChunksRef.current, {
+                type: 'audio/webm;codecs=opus',
+            });
+            socketRef.current?.emit('audio', audioBlob);
+            socketRef.current?.emit('stop'); // Tell server to process the audio
+            cleanupRecording();
         };
 
         recorder.start(500);
@@ -160,23 +178,10 @@ export default function Call({ lessonId, showNotes }: CallProps) {
         if (recorderRef.current && recorderRef.current.state !== 'inactive') {
             recorderRef.current.stop();
         }
-        if (streamRef.current) {
-            streamRef.current.getTracks().forEach((track) => track.stop());
-            streamRef.current = null;
-        }
-        recorderRef.current = null;
     }
 
     function stopResponse() {
-        socketRef.current?.emit('stop');
-        if (recorderRef.current && recorderRef.current.state !== 'inactive') {
-            recorderRef.current.stop();
-        }
-        if (streamRef.current) {
-            streamRef.current.getTracks().forEach((track) => track.stop());
-            streamRef.current = null;
-        }
-        recorderRef.current = null;
+        stopRecording();
     }
 
     function playArrayBuffer(arrayBuffer: ArrayBuffer) {

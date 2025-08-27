@@ -20,7 +20,7 @@ export const config = {
     api: { bodyParser: false },
 };
 
-const audioCache: Record<string, Buffer[]> = {};
+const audioCache: Record<string, Buffer> = {};
 // Store chat history for each session
 const chatHistory: Record<
     string,
@@ -57,18 +57,18 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
             });
 
             socket.on('audio', (chunk: Buffer) => {
-                if (!audioCache[socket.id]) {
-                    audioCache[socket.id] = [];
-                }
-                audioCache[socket.id]?.push(chunk);
+                audioCache[socket.id] = chunk;
             });
 
             socket.on('stop', async () => {
-                const chunks = audioCache[socket.id] ?? [];
-                if (chunks.length === 0) {
+                const audioBuffer = audioCache[socket.id];
+                delete audioCache[socket.id]; // Immediately clear cache
+
+                if (!audioBuffer || audioBuffer.length < 1000) { // Also validates minimum size
                     console.log(
-                        '⏹ Stop-Signal received, but no audio chunks.',
+                        '⏹ Stop-Signal received, but audio buffer is missing or too small.',
                     );
+                    socket.emit('err', 'Audio recording too short or empty.');
                     return;
                 }
 
@@ -90,18 +90,17 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     message: 'Prozess gestoppt.',
                 });
 
-                const filePath = path.join('tmp/', `${socket.id}.webm`);
-                fs.writeFileSync(filePath, Buffer.concat(chunks));
-                audioCache[socket.id] = []; // Clear cache for next turn
-
+                const filePath = path.join('tmp/', `${socket.id}-${Date.now()}.webm`);
+                
                 try {
-                    const transcription =
-                        await groq.audio.transcriptions.create({
-                            file: fs.createReadStream(filePath),
-                            model: 'whisper-large-v3',
-                            temperature: 0.05,
-                            response_format: 'verbose_json',
-                        });
+                    fs.writeFileSync(filePath, audioBuffer);
+                    
+                    const transcription = await groq.audio.transcriptions.create({
+                        file: fs.createReadStream(filePath),
+                        model: 'whisper-large-v3',
+                        temperature: 0.05,
+                        response_format: 'verbose_json',
+                    });
 
                     // Add user message to history
                     const userMessage: Groq.Chat.Completions.ChatCompletionMessageParam =
@@ -194,7 +193,8 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     }
                 } finally {
                     fs.unlink(filePath, (err) => {
-                        if (err) console.log('Error deleting temp file:', err);
+                        if (err)
+                            console.log('Error deleting temp file:', err);
                     });
                 }
             });
