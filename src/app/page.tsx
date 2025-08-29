@@ -1,4 +1,10 @@
+'use client';
+
+import { ArrowDown, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { BadgeGroup } from '~/components/ui/base/badges/badge-groups';
+import { Button } from '~/components/ui/button';
 import {
     ListItem,
     NavigationMenu,
@@ -9,9 +15,12 @@ import {
     NavigationMenuTrigger,
     navigationMenuTriggerStyle,
 } from '~/components/ui/navigation-menu';
+import { PointerHighlight } from '~/components/ui/pointer-highlight';
 import { cn } from '~/lib/utils';
 
 export default function HomePage() {
+    const router = useRouter();
+
     const components: { title: string; href: string; description: string }[] = [
         {
             title: 'Waitlist',
@@ -72,22 +81,36 @@ export default function HomePage() {
                 </NavigationMenu>
             </div>
             <div>
-                <div className='hero-section py-10'>
-                    <div className='container mx-auto text-center'>
-                        <h1 className='text-4xl font-bold mb-4'>
-                            Welcome to {process.env.NEXT_PUBLIC_PROJECT_NAME}
+                <div className='hero-section mt-48 py-10'>
+                    <div className='container mx-auto p-4 text-center'>
+                        <HeaderBadgeGroup />
+                        <h1 className='flex w-fit mx-auto text-5xl font-normal my-4 tracking-tighter'>
+                            Learn Sales <PointerHighlight onClick={() => router.push('dashboard')} containerClassName="ml-2 px-4 cursor-pointer" rectangleClassName="shadow-inner bg-brand/20 border border-brand rounded-full">interactively</PointerHighlight>.
                         </h1>
-                        <p className='text-lg mb-6'>
-                            Manage your waitlists and beta rollouts with ease.
+                        <p className='text-md mb-4 max-w-96 mx-auto'>
+                            With {process.env.NEXT_PUBLIC_PROJECT_NAME} you can learn Sales by having realistic 
+                            calls with AI characters.
                         </p>
-                        <Link href='/login' legacyBehavior passHref>
-                            <a className='px-6 py-3 bg-brand border border-brand-dark text-white rounded-md'>
-                                Get Started
-                            </a>
-                        </Link>
+                        <div className="flex w-min gap-4 mx-auto">
+                        <Button variant='ghost' className="text-zinc-500 group">
+                            Learn More <ArrowDown size={14} className="group-hover:translate-y-0.5 transition-all" />
+                        </Button><Button onClick={() => router.push('dashboard')} className='px-6 py-3 shadow-inner bg-brand border border-brand-dark text-white hover:bg-brand-dark transition-all rounded-md group'>
+                                Get Started <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-all" />
+                        </Button>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     );
 }
+
+export const HeaderBadgeGroup = () => {
+    return (
+        <div className="w-min mx-auto flex flex-col items-start gap-4 hover:translate-x-2 transition-all duration-500">
+            <BadgeGroup addonText="New feature" color="gray" theme="light" align="leading" size="md">
+                We've just released a new feature <ArrowRight size={14} className="ml-1" />
+            </BadgeGroup>
+        </div>
+    );
+};

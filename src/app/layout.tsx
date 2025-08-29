@@ -4,6 +4,7 @@ import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import { type Metadata } from 'next';
 import { Toaster } from '~/components/ui/sonner';
+import localFont from 'next/font/local';
 
 export const metadata: Metadata = {
     title: process.env.NEXT_PUBLIC_PROJECT_NAME,
@@ -11,13 +12,22 @@ export const metadata: Metadata = {
     icons: [{ rel: 'icon', url: '/favicon.ico' }],
 };
 
+
+const vendSans = localFont({
+  src: [
+    { path: './fonts/VendSans-Variable.ttf', style: 'normal' }
+  ],
+  variable: '--font-vendsans',
+  display: 'swap',
+});
+
 export default function RootLayout({
     children,
 }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html
             lang='en'
-            className={`${GeistSans.variable} ${GeistMono.variable}`}>
+            className={`${vendSans.variable} ${GeistSans.variable} ${GeistMono.variable}`}>
             <body>
                 {children}
                 <Toaster />

@@ -120,7 +120,7 @@ const colorClasses: Record<
 > = sortCx({
     light: {
         brand: {
-            root: 'bg-brand/10 text-brand-dark ring-brand hover:bg-brand/50',
+            root: 'bg-brand/10 text-brand-dark ring-brand hover:bg-brand/30',
             addon: 'bg-primary text-current ring-brand',
             icon: 'text-brand',
         },
