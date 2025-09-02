@@ -64,7 +64,8 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                 const audioBuffer = audioCache[socket.id];
                 delete audioCache[socket.id]; // Immediately clear cache
 
-                if (!audioBuffer || audioBuffer.length < 1000) { // Also validates minimum size
+                if (!audioBuffer || audioBuffer.length < 1000) {
+                    // Also validates minimum size
                     console.log(
                         '⏹ Stop-Signal received, but audio buffer is missing or too small.',
                     );
@@ -90,17 +91,21 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     message: 'Prozess gestoppt.',
                 });
 
-                const filePath = path.join('tmp/', `${socket.id}-${Date.now()}.webm`);
-                
+                const filePath = path.join(
+                    'tmp/',
+                    `${socket.id}-${Date.now()}.webm`,
+                );
+
                 try {
                     fs.writeFileSync(filePath, audioBuffer);
-                    
-                    const transcription = await groq.audio.transcriptions.create({
-                        file: fs.createReadStream(filePath),
-                        model: 'whisper-large-v3',
-                        temperature: 0.05,
-                        response_format: 'verbose_json',
-                    });
+
+                    const transcription =
+                        await groq.audio.transcriptions.create({
+                            file: fs.createReadStream(filePath),
+                            model: 'whisper-large-v3',
+                            temperature: 0.05,
+                            response_format: 'verbose_json',
+                        });
 
                     // Add user message to history
                     const userMessage: Groq.Chat.Completions.ChatCompletionMessageParam =
@@ -193,8 +198,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     }
                 } finally {
                     fs.unlink(filePath, (err) => {
-                        if (err)
-                            console.log('Error deleting temp file:', err);
+                        if (err) console.log('Error deleting temp file:', err);
                     });
                 }
             });

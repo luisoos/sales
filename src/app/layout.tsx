@@ -12,13 +12,10 @@ export const metadata: Metadata = {
     icons: [{ rel: 'icon', url: '/favicon.ico' }],
 };
 
-
 const vendSans = localFont({
-  src: [
-    { path: './fonts/VendSans-Variable.ttf', style: 'normal' }
-  ],
-  variable: '--font-vendsans',
-  display: 'swap',
+    src: [{ path: './fonts/VendSans-Variable.ttf', style: 'normal' }],
+    variable: '--font-vendsans',
+    display: 'swap',
 });
 
 export default function RootLayout({

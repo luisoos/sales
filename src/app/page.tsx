@@ -3,6 +3,8 @@
 import { ArrowDown, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { FeaturesBento } from '~/components/landing-page/bento';
+import { WhyUsRow } from '~/components/landing-page/why-us-row';
 import { BadgeGroup } from '~/components/ui/base/badges/badge-groups';
 import { Button } from '~/components/ui/button';
 import {
@@ -85,31 +87,60 @@ export default function HomePage() {
                     <div className='container mx-auto p-4 text-center'>
                         <HeaderBadgeGroup />
                         <h1 className='flex w-fit mx-auto text-5xl font-normal my-4 tracking-tighter'>
-                            Learn Sales <PointerHighlight onClick={() => router.push('dashboard')} containerClassName="ml-2 px-4 cursor-pointer" rectangleClassName="shadow-inner bg-brand/20 border border-brand rounded-full">interactively</PointerHighlight>.
+                            Learn Sales{' '}
+                            <PointerHighlight
+                                onClick={() => router.push('dashboard')}
+                                containerClassName='ml-2 px-4 cursor-pointer'
+                                rectangleClassName='shadow-inner bg-brand/20 border border-brand rounded-full'>
+                                interactively
+                            </PointerHighlight>
+                            .
                         </h1>
                         <p className='text-md mb-4 max-w-96 mx-auto'>
-                            With {process.env.NEXT_PUBLIC_PROJECT_NAME} you can learn Sales by having realistic 
-                            calls with AI characters.
+                            With {process.env.NEXT_PUBLIC_PROJECT_NAME} you can
+                            learn Sales by having realistic calls with AI
+                            characters.
                         </p>
-                        <div className="flex w-min gap-4 mx-auto">
-                        <Button variant='ghost' className="text-zinc-500 group">
-                            Learn More <ArrowDown size={14} className="group-hover:translate-y-0.5 transition-all" />
-                        </Button><Button onClick={() => router.push('dashboard')} className='px-6 py-3 shadow-inner bg-brand border border-brand-dark text-white hover:bg-brand-dark transition-all rounded-md group'>
-                                Get Started <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-all" />
-                        </Button>
+                        <div className='flex w-min gap-4 mx-auto'>
+                            <Button
+                                variant='ghost'
+                                className='text-zinc-500 group'>
+                                Learn More{' '}
+                                <ArrowDown
+                                    size={14}
+                                    className='group-hover:translate-y-0.5 transition-all'
+                                />
+                            </Button>
+                            <Button
+                                onClick={() => router.push('dashboard')}
+                                className='px-6 py-3 shadow-inner bg-brand border border-brand-dark text-white hover:bg-brand-dark transition-all rounded-md group'>
+                                Get Started{' '}
+                                <ArrowRight
+                                    size={14}
+                                    className='group-hover:translate-x-0.5 transition-all'
+                                />
+                            </Button>
                         </div>
                     </div>
                 </div>
             </div>
+            <FeaturesBento className='mx-4 md:mx-auto md:max-w-[800px] my-32' />
+            <WhyUsRow className='mx-12 lg:mx-auto lg:max-w-[1000px] my-32' />
         </main>
     );
 }
 
 export const HeaderBadgeGroup = () => {
     return (
-        <div className="w-min mx-auto flex flex-col items-start gap-4 hover:translate-x-2 transition-all duration-500">
-            <BadgeGroup addonText="New feature" color="gray" theme="light" align="leading" size="md">
-                We've just released a new feature <ArrowRight size={14} className="ml-1" />
+        <div className='w-min mx-auto flex flex-col items-start gap-4 hover:translate-x-2 transition-all duration-500'>
+            <BadgeGroup
+                addonText='New feature'
+                color='gray'
+                theme='light'
+                align='leading'
+                size='md'>
+                We've just released a new feature{' '}
+                <ArrowRight size={14} className='ml-1' />
             </BadgeGroup>
         </div>
     );
