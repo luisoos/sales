@@ -17,13 +17,11 @@ export async function middleware(request: NextRequest) {
     // Update the user's auth session and get the response
     const response = await updateSession(request);
 
-    // For API routes, just return the response
-    if (request.nextUrl.pathname.startsWith('/api/')) {
-        return response || NextResponse.next();
-    }
-
     // For protected routes, ensure user is authenticated
-    if (request.nextUrl.pathname.startsWith('/dashboard')) {
+    if (
+        request.nextUrl.pathname.startsWith('/api/') ||
+        request.nextUrl.pathname.startsWith('/dashboard')
+    ) {
         // Create a new Supabase client for server-side operations
         const supabase = await createClient();
         const {

@@ -52,8 +52,17 @@ export function WhyUsRow({ className }: { className?: string }) {
     );
 }
 
-function WhyUsCell({ children, className }: { children: React.ReactNode, className?: string }) {
+function WhyUsCell({
+    children,
+    className,
+}: {
+    children: React.ReactNode;
+    className?: string;
+}) {
     return (
-        <div className={cn('max-md:my-6 max-md:text-center text-md', className)}>{children}</div>
+        <div
+            className={cn('max-md:my-6 max-md:text-center text-md', className)}>
+            {children}
+        </div>
     );
 }

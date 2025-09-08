@@ -7,7 +7,14 @@ import { cn } from '~/lib/utils';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getLessonById } from '~/utils/prompts/lessons';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '~/components/ui/dialog';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 
@@ -29,7 +36,9 @@ export default function Call({ lessonId, showNotes }: CallProps) {
     const callEndedRef = useRef(false);
     const messagesRef = useRef(messages);
     const [callEndedDialogOpen, setCallEndedDialogOpen] = useState(false);
-    const [callEndedDialogStatus, setCallEndedDialogStatus] = useState<'CLOSE' | 'NOT CLOSED'>('NOT CLOSED');
+    const [callEndedDialogStatus, setCallEndedDialogStatus] = useState<
+        'CLOSE' | 'NOT CLOSED'
+    >('NOT CLOSED');
     useEffect(() => {
         messagesRef.current = messages;
     }, [messages]);
@@ -217,7 +226,11 @@ export default function Call({ lessonId, showNotes }: CallProps) {
             <Button onClick={stopResponse} variant='outline' className='mx-2'>
                 ⏹ Antwort abbrechen
             </Button> */}
-            <CallEndedDialog status={callEndedDialogStatus} open={callEndedDialogOpen} setOpen={setCallEndedDialogOpen} />
+            <CallEndedDialog
+                status={callEndedDialogStatus}
+                open={callEndedDialogOpen}
+                setOpen={setCallEndedDialogOpen}
+            />
             <div
                 className={cn(
                     'w-5/6 mx-auto mb-12 border rounded-xl bg-gradient-to-tr from-white to-zinc-50 shadow-inner',
@@ -284,52 +297,65 @@ export default function Call({ lessonId, showNotes }: CallProps) {
     );
 }
 
-function CallEndedDialog({ status, open, setOpen }: { status: 'CLOSE' | 'NOT CLOSED', open: boolean, setOpen: (open: boolean) => void }) {
+function CallEndedDialog({
+    status,
+    open,
+    setOpen,
+}: {
+    status: 'CLOSE' | 'NOT CLOSED';
+    open: boolean;
+    setOpen: (open: boolean) => void;
+}) {
     const AI_COACH_NAME: string = 'AI Coach';
-  
-    return (
-    <>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[425px] p-8">
-          <DialogHeader>
-            {status === 'CLOSE' ? (
-              <><img
-                src="/call-success-image.png"
-                alt=" "
-                className="mx-auto mb-4 h-32 w-32"
-              />
-              <DialogTitle>Closed lead successfully</DialogTitle>
-                <DialogDescription>
-                {`You achieved the goal of this call. Review the tips from the ${AI_COACH_NAME}`}
-                </DialogDescription></>
-            ) : (
-              <>
-                <img
-                  src="/call-failed-image.png"
-                  alt=" "
-                  className="mx-auto mb-4 h-32 w-32 brightness-125"
-                />
-                <DialogTitle>Failed to close lead</DialogTitle>
-                <DialogDescription>
-                  {`You were not able to achieve the call goal. Try again. Visit the ${AI_COACH_NAME} to learn from this call.`}
-                </DialogDescription>
-              </>
-            )}
-          </DialogHeader>
 
-          <DialogFooter>
-            <Button
-              onClick={() => {
-                window.location.assign('/dashboard/calls');
-              }}
-              className="w-full flex items-center focus-visible:ring-0"
-              variant={status === 'CLOSE' ? 'brand' : 'destructive'}
-            >
-              <ArrowLeft size={16} /> Return to call list
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
-  );
+    return (
+        <>
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent className='sm:max-w-[425px] p-8'>
+                    <DialogHeader>
+                        {status === 'CLOSE' ? (
+                            <>
+                                <img
+                                    src='/call-success-image.png'
+                                    alt=' '
+                                    className='mx-auto mb-4 h-32 w-32'
+                                />
+                                <DialogTitle>
+                                    Closed lead successfully
+                                </DialogTitle>
+                                <DialogDescription>
+                                    {`You achieved the goal of this call. Review the tips from the ${AI_COACH_NAME}`}
+                                </DialogDescription>
+                            </>
+                        ) : (
+                            <>
+                                <img
+                                    src='/call-failed-image.png'
+                                    alt=' '
+                                    className='mx-auto mb-4 h-32 w-32 brightness-125'
+                                />
+                                <DialogTitle>Failed to close lead</DialogTitle>
+                                <DialogDescription>
+                                    {`You were not able to achieve the call goal. Try again. Visit the ${AI_COACH_NAME} to learn from this call.`}
+                                </DialogDescription>
+                            </>
+                        )}
+                    </DialogHeader>
+
+                    <DialogFooter>
+                        <Button
+                            onClick={() => {
+                                window.location.assign('/dashboard/calls');
+                            }}
+                            className='w-full flex items-center focus-visible:ring-0'
+                            variant={
+                                status === 'CLOSE' ? 'brand' : 'destructive'
+                            }>
+                            <ArrowLeft size={16} /> Return to call list
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
+    );
 }

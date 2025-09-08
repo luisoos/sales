@@ -58,7 +58,10 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                         const idx = c.indexOf('=');
                         const name = idx > -1 ? c.substring(0, idx) : c;
                         const value = idx > -1 ? c.substring(idx + 1) : '';
-                        return { name, value } as { name: string; value: string };
+                        return { name, value } as {
+                            name: string;
+                            value: string;
+                        };
                     });
 
                 const supabase = createServerClient(
@@ -263,6 +266,6 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
     }
 
     res.socket.server.io = global.__io;
-    
+
     res.end();
 }
