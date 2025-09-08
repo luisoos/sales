@@ -8,6 +8,11 @@ import Groq from 'groq-sdk';
 import path from 'path';
 import { SystemPromptBuilder } from '~/utils/prompts/system-prompt';
 
+declare global {
+    // eslint-disable-next-line no-var
+    var __io: IOServer | undefined;
+}
+
 interface SocketServer extends NetSocket {
     server: HTTPServer & { io?: IOServer };
 }
@@ -30,7 +35,7 @@ const chatHistory: Record<
 export default function handler(_req: NextApiRequest, res: SocketResponse) {
     const groq = new Groq();
 
-    if (!res.socket.server.io) {
+    if (!global.__io) {
         console.log('⚡ Socket.IO initialisiert');
 
         const io = new IOServer(res.socket.server, {
@@ -38,7 +43,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
             cors: { origin: '*' },
         });
 
-        res.socket.server.io = io;
+        global.__io = io;
 
         io.on('connection', (socket: Socket) => {
             console.log('⏩ Neuer Client:', socket.id);
@@ -212,5 +217,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
         });
     }
 
+    res.socket.server.io = global.__io;
+    
     res.end();
 }

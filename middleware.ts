@@ -10,9 +10,7 @@ import { createClient } from '~/utils/supabase/server';
 // - public folder files
 // - public folder subdirectories
 export const config = {
-    matcher: [
-        '/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-    ],
+    matcher: ['/dashboard/:path*', '/api/:path*'],
 };
 
 export async function middleware(request: NextRequest) {
