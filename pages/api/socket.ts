@@ -7,6 +7,7 @@ import fs from 'fs';
 import Groq from 'groq-sdk';
 import path from 'path';
 import { SystemPromptBuilder } from '~/utils/prompts/system-prompt';
+import { createServerClient } from '@supabase/ssr';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -44,6 +45,50 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
         });
 
         global.__io = io;
+
+        // Enforce auth on every socket connection using Supabase cookies
+        io.use(async (socket, next) => {
+            try {
+                const cookieHeader = socket.request.headers.cookie ?? '';
+                const parsed = cookieHeader
+                    .split(';')
+                    .map((c) => c.trim())
+                    .filter(Boolean)
+                    .map((c) => {
+                        const idx = c.indexOf('=');
+                        const name = idx > -1 ? c.substring(0, idx) : c;
+                        const value = idx > -1 ? c.substring(idx + 1) : '';
+                        return { name, value } as { name: string; value: string };
+                    });
+
+                const supabase = createServerClient(
+                    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+                    {
+                        cookies: {
+                            getAll() {
+                                return parsed;
+                            },
+                            setAll() {
+                                // No-op for socket handshake
+                            },
+                        },
+                    },
+                );
+
+                const {
+                    data: { user },
+                } = await supabase.auth.getUser();
+
+                if (!user) {
+                    return next(new Error('Unauthorized'));
+                }
+
+                return next();
+            } catch (_err) {
+                return next(new Error('Unauthorized'));
+            }
+        });
 
         io.on('connection', (socket: Socket) => {
             console.log('⏩ Neuer Client:', socket.id);

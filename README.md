@@ -1,11 +1,13 @@
 # 🚀 Next.js Supabase Starter Template
 
 ### To-do
-- [ ] Lections
-- [ ] Secure Websockets and add authentication / session
+- [x] Lections
+- [x] Secure Websockets and add authentication / session
 
 #### Later
-- [ ] Prompt Engineer
+- [x] Prompt Engineer
+- [ ] different lections for different products
+- [ ] profile pictures
 - [ ] Streak
 - [ ] Save conversations
 - [ ] Leaderboard
