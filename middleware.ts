@@ -14,21 +14,16 @@ export const config = {
 };
 
 export async function middleware(request: NextRequest) {
-    console.log('Middleware called for path:', request.nextUrl.pathname);
-
     // Update the user's auth session and get the response
     const response = await updateSession(request);
 
     // For API routes, just return the response
     if (request.nextUrl.pathname.startsWith('/api/')) {
-        console.log('API route accessed');
         return response || NextResponse.next();
     }
 
     // For protected routes, ensure user is authenticated
     if (request.nextUrl.pathname.startsWith('/dashboard')) {
-        console.log('Protected route accessed:', request.nextUrl.pathname);
-
         // Create a new Supabase client for server-side operations
         const supabase = await createClient();
         const {
@@ -37,7 +32,6 @@ export async function middleware(request: NextRequest) {
         } = await supabase.auth.getUser();
 
         if (error || !user) {
-            console.log('User not authenticated, redirecting to login');
             return NextResponse.redirect(new URL('/login', request.url));
         }
     }
