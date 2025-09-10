@@ -8,6 +8,7 @@ const conversationSchema = z.object({
     id: z.string().optional(),
     status: z.nativeEnum(ConversationStatus),
     messages: z.array(z.string()),
+    lessonId: z.string(),
 });
 
 const deleteConversationIdSchema = z.string();
@@ -55,6 +56,7 @@ export async function POST(request: NextRequest, response: NextResponse) {
             userId: user.id,
             status: parsed.data.status,
             messages: JSON.stringify(parsed.data.messages),
+            lessonId: parsed.data.lessonId,
         },
     });
     return NextResponse.json({ conversations });
@@ -89,7 +91,6 @@ export async function PATCH(request: NextRequest, response: NextResponse) {
     });
     return NextResponse.json({ conversations });
 }
-
 
 export async function DELETE(request: NextRequest, response: NextResponse) {
     const supabase = await createClient();

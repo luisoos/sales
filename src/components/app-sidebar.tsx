@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Home, Users, Settings, Medal, BadgePercent } from 'lucide-react';
+import {
+    Home,
+    Users,
+    Settings,
+    Medal,
+    BadgePercent,
+    MessageCircleMore,
+} from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import {
@@ -38,6 +45,12 @@ const data = {
                     url: '/dashboard/calls/next',
                 },
             ],
+        },
+        {
+            title: 'Conversation Log',
+            url: '/dashboard/conversation-log',
+            icon: MessageCircleMore,
+            items: [],
         },
         {
             title: 'Leaderboard',

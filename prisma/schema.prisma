@@ -30,7 +30,8 @@ model Conversation {
     userId    String
     messages  Json
     createdAt DateTime @default(now())
-    status      ConversationStatus
+    status    ConversationStatus
+    lessonId  String
 
     User User @relation(fields: [userId], references: [id])
 }
