@@ -9,20 +9,12 @@ datasource db {
     provider = "postgresql"
     url       = env("DATABASE_URL")
     directUrl = env("DIRECT_URL")
-    shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 enum ConversationStatus {
     CLOSED
     NOT_CLOSED
     UNFINISHED
-}
-
-model User {
-    id              String   @id @default(uuid())
-    email           String   @unique
-    createdAt       DateTime @default(now())
-    conversations   Conversation[]
 }
 
 model Conversation {
@@ -33,5 +25,5 @@ model Conversation {
     status    ConversationStatus
     lessonId  String
 
-    User User @relation(fields: [userId], references: [id])
+    // User User @relation(fields: [userId], references: [id])
 }

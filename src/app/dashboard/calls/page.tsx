@@ -10,9 +10,37 @@ import { LeadTemperatureBadge } from './[slug]/page';
 import { BadgeWithImage } from '~/components/ui/base/badges/badges';
 import { BadgeGroup } from '~/components/ui/base/badges/badge-groups';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Conversation } from '@prisma/client';
 
 export default function Page() {
     const router = useRouter();
+
+    const [uniqueLectionsDone, setUniqueLectionsDone] = useState<
+        number | undefined
+    >();
+
+    useEffect(() => {
+        const fetchConversations = async () => {
+            try {
+                const conversationRequest = await fetch(
+                    '/api/protected/conversations',
+                );
+                const data = await conversationRequest.json();
+                const conversations = data.conversation as Conversation[];
+                setUniqueLectionsDone(
+                    conversations.filter(
+                        (item, index, self) =>
+                            index ===
+                            self.findIndex((t) => t.lessonId === item.lessonId),
+                    ).length,
+                );
+            } catch (error: any) {
+                console.log('Could not fetch conversation history.');
+            }
+        };
+        fetchConversations();
+    }, []);
 
     return (
         <div className='w-11/12 mx-auto'>
@@ -20,7 +48,13 @@ export default function Page() {
                 {/* TODO: make "... lections left" */}
                 <TableCard.Header
                     title='All Lections'
-                    badge={lessons.length + ' Lections'}
+                    badge={
+                        uniqueLectionsDone
+                            ? lessons.length -
+                              uniqueLectionsDone +
+                              ' Lections unpracticed'
+                            : lessons.length + ' Lections'
+                    }
                 />
                 <Table
                     aria-label='All Lections'

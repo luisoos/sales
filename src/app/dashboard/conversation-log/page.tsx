@@ -1,6 +1,6 @@
 'use client';
 
-import { lessons } from '~/utils/prompts/lessons';
+import { getLessonById, lessons } from '~/utils/prompts/lessons';
 import {
     Table,
     TableCard,
@@ -18,6 +18,7 @@ import { BadgeColors } from '~/components/ui/base/badges/badge-types';
 import { CloudAlert, MessageCircleOff } from 'lucide-react';
 import Link from 'next/link';
 import AnimatedDotsLoader from '~/components/animated-bars-loader';
+import { standardiseWord } from '~/lib/utils';
 
 export default function Page() {
     const router = useRouter();
@@ -28,7 +29,9 @@ export default function Page() {
     useEffect(() => {
         const fetchConversations = async () => {
             try {
-                const conversations = await fetch('/api/protected/conversations');
+                const conversations = await fetch(
+                    '/api/protected/conversations',
+                );
                 const data = await conversations.json();
                 setConversations(data.conversations);
             } catch (error: any) {
@@ -42,53 +45,63 @@ export default function Page() {
 
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center h-full text-muted-foreground mb-24 text-center">
+            <div className='flex flex-col items-center justify-center h-full text-muted-foreground mb-24 text-center'>
                 <AnimatedDotsLoader />
-                    <p>Loading your conversation log ...</p>
+                <p>Loading your conversation log ...</p>
             </div>
         );
     }
     if (error) {
         return (
-            <div className="flex flex-col items-center justify-center h-full text-muted-foreground mb-24 text-center">
+            <div className='flex flex-col items-center justify-center h-full text-muted-foreground mb-24 text-center'>
                 <CloudAlert className='w-10 h-10 mx-auto mb-2' />
                 <p>{error}</p>
                 <p>
-                    You may reload <Link href='' onClick={() => window.location.reload()} className='underline decoration-dotted'>the page</Link> or try again later.
+                    You may reload{' '}
+                    <Link
+                        href=''
+                        onClick={() => window.location.reload()}
+                        className='underline decoration-dotted'>
+                        the page
+                    </Link>{' '}
+                    or try again later.
                 </p>
             </div>
         );
     }
     if (conversations.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center h-full text-muted-foreground mb-24 text-center">
-                    <MessageCircleOff className='w-10 h-10 mx-auto mb-2' />
-                    <p>No Conversations Found</p>
-                    <p>
-                        Start a{' '}
-                        <Link
-                            href='/dashboard/calls'
-                            className='underline decoration-dotted'>
-                            lesson
-                        </Link>{' '}
-                        to see it here.
-                    </p>
-                </div>
+            <div className='flex flex-col items-center justify-center h-full text-muted-foreground mb-24 text-center'>
+                <MessageCircleOff className='w-10 h-10 mx-auto mb-2' />
+                <p>No Conversations Found</p>
+                <p>
+                    Start a{' '}
+                    <Link
+                        href='/dashboard/calls'
+                        className='underline decoration-dotted'>
+                        lesson
+                    </Link>{' '}
+                    to see it here.
+                </p>
+            </div>
         );
     }
     return (
         <div className='w-11/12 mx-auto'>
             <TableCard.Root className='w-full mt-2'>
-                {/* TODO: make "... lections left" */}
                 <TableCard.Header
                     title='Conversation Log'
-                    badge={lessons.length + ' Lections'}
+                    badge={
+                        conversations.length +
+                        ' Conversation' +
+                        (conversations.length !== 1 ? 's' : '')
+                    }
                 />
                 <Table aria-label='Conversation Log'>
                     <Table.Header className='max-lg:hidden'>
                         <Table.Head
                             id='lesson'
-                            label='lesson'
+                            label='Lesson'
                             isRowHeader
                             className='w-min'
                         />
@@ -102,20 +115,41 @@ export default function Page() {
                                 <Table.Row
                                     id={item.id}
                                     className='cursor-pointer'>
-                                    <Table.Cell className=''>
-                                        {item.lessonId}
+                                    <Table.Cell className='lg:w-min'>
+                                        <div className='flex lg:hidden'>
+                                            <BadgeWithDot
+                                                color={getStatusBadgeColor(
+                                                    item.status,
+                                                )}
+                                                size='sm'
+                                                className='mr-2'>
+                                                {standardiseWord(item.status)}
+                                            </BadgeWithDot>
+                                            <span className='font-mono text-muted-foreground'>
+                                                <FormattedDate
+                                                    pDate={item.createdAt}
+                                                />
+                                            </span>
+                                        </div>
+                                        <span className='font-mono font-extralight'>
+                                            #{item.lessonId}{' '}
+                                        </span>
+                                        {
+                                            getLessonById(Number(item.lessonId))
+                                                ?.title
+                                        }
                                     </Table.Cell>
-                                    <Table.Cell className=''>
+                                    <Table.Cell className='max-lg:hidden'>
                                         <BadgeWithDot
                                             color={getStatusBadgeColor(
                                                 item.status,
                                             )}
                                             size='sm'>
-                                            {item.status}
+                                            {standardiseWord(item.status)}
                                         </BadgeWithDot>
                                     </Table.Cell>
-                                    <Table.Cell className=''>
-                                        {item.createdAt.toLocaleString()}
+                                    <Table.Cell className='max-lg:hidden'>
+                                        <FormattedDate pDate={item.createdAt} />
                                     </Table.Cell>
                                 </Table.Row>
                             );
@@ -136,4 +170,20 @@ function getStatusBadgeColor(status: ConversationStatus): BadgeColors {
         case 'UNFINISHED':
             return 'gray';
     }
+}
+
+function FormattedDate({ pDate }: { pDate: Date | string }) {
+    return (
+        <>
+            {pDate &&
+                new Date(pDate).toLocaleString(navigator.language, {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                })}
+        </>
+    );
 }

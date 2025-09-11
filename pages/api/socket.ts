@@ -8,6 +8,10 @@ import Groq from 'groq-sdk';
 import path from 'path';
 import { SystemPromptBuilder } from '~/utils/prompts/system-prompt';
 import { createServerClient } from '@supabase/ssr';
+import {
+    appendTurnAndMaybeSetStatus,
+    getOrCreateConversation,
+} from '~/server/services/conversation';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -87,6 +91,8 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     return next(new Error('Unauthorized'));
                 }
 
+                socket.data.userId = user.id;
+
                 return next();
             } catch (_err) {
                 return next(new Error('Unauthorized'));
@@ -104,6 +110,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                         content: new SystemPromptBuilder(lessonId).build(),
                     },
                 ];
+                socket.data.lessonId = String(lessonId);
                 console.log(
                     `📚 Lesson ${lessonId} selected for ${socket.id}. History initialized.`,
                 );
@@ -208,6 +215,35 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                         console.log(transcription.text, ' -> ', chatAnswer);
                         socket.emit('tts', buffer);
                         socket.emit('text', chatAnswer);
+
+                        // Save conversation to db
+                        try {
+                            const userId: string | undefined =
+                                socket.data?.userId;
+                            const lessonId: string | undefined =
+                                socket.data?.lessonId;
+                            if (userId && lessonId) {
+                                const conversation =
+                                    await getOrCreateConversation({
+                                        userId,
+                                        lessonId,
+                                    });
+                                await appendTurnAndMaybeSetStatus({
+                                    conversationId: conversation.id,
+                                    userText: transcription.text,
+                                    assistantText: chatAnswer,
+                                });
+                            } else {
+                                console.warn(
+                                    'Missing userId or lessonId, skipping persistence.',
+                                );
+                            }
+                        } catch (err) {
+                            console.error(
+                                'Failed to persist conversation:',
+                                err,
+                            );
+                        }
                     }
                 } catch (e) {
                     let errorMessage: string | undefined;
