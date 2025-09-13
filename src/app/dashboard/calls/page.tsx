@@ -12,6 +12,7 @@ import { BadgeGroup } from '~/components/ui/base/badges/badge-groups';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Conversation } from '@prisma/client';
+import { cn } from '~/lib/utils';
 
 export default function Page() {
     const router = useRouter();
@@ -19,6 +20,24 @@ export default function Page() {
     const [uniqueLectionsDone, setUniqueLectionsDone] = useState<
         number | undefined
     >();
+    const [uniqueLectionsDoneIds, setUniqueLectionsDoneIds] = useState<
+        string[] | undefined
+    >();
+    
+    // Computed state for lessons with completion status, sorted with undone lessons first
+    const lessonsWithStatus = lessons
+        .map(lesson => ({
+            ...lesson,
+            userHasDoneLesson: uniqueLectionsDoneIds?.includes(String(lesson.id)) ?? false
+        }))
+        .sort((a, b) => {
+            // If both have same completion status, sort by ID
+            if (a.userHasDoneLesson === b.userHasDoneLesson) {
+                return a.id - b.id;
+            }
+            // Undone lessons (false) come first, done lessons (true) come last
+            return a.userHasDoneLesson ? 1 : -1;
+        });
 
     useEffect(() => {
         const fetchConversations = async () => {
@@ -27,13 +46,20 @@ export default function Page() {
                     '/api/protected/conversations',
                 );
                 const data = await conversationRequest.json();
-                const conversations = data.conversation as Conversation[];
+                const conversations = data.conversations as Conversation[];
                 setUniqueLectionsDone(
                     conversations.filter(
                         (item, index, self) =>
                             index ===
                             self.findIndex((t) => t.lessonId === item.lessonId),
                     ).length,
+                );
+                setUniqueLectionsDoneIds(
+                    conversations.filter(
+                        (item, index, self) =>
+                            index ===
+                            self.findIndex((t) => t.lessonId === item.lessonId),
+                    ).map(conversation => conversation.lessonId),
                 );
             } catch (error: any) {
                 console.log('Could not fetch conversation history.');
@@ -45,7 +71,6 @@ export default function Page() {
     return (
         <div className='w-11/12 mx-auto'>
             <TableCard.Root className='w-full mt-2'>
-                {/* TODO: make "... lections left" */}
                 <TableCard.Header
                     title='All Lections'
                     badge={
@@ -77,20 +102,18 @@ export default function Page() {
                         />
                     </Table.Header>
 
-                    <Table.Body items={lessons}>
+                    <Table.Body items={lessonsWithStatus}>
                         {(item) => {
-                            // TODO:
-                            const userHasDoneLesson = true;
                             return (
                                 <Table.Row
                                     id={item.id}
-                                    className='cursor-pointer'>
+                                    className={cn('cursor-pointer', item.userHasDoneLesson && 'opacity-70')}>
                                     <Table.Cell className='w-min flex max-md:flex-nowrap flex-wrap items-center my-1.5 gap-1'>
                                         {' '}
                                         <BadgeGroup
                                             addonText={String(item.id)}
                                             color={
-                                                userHasDoneLesson
+                                                item.userHasDoneLesson
                                                     ? 'gray'
                                                     : 'brand'
                                             }

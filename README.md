@@ -3,13 +3,14 @@
 ### To-do
 - [x] Lections
 - [x] Secure Websockets and add authentication / session
+- [ ] Protect lessons -> create API to only read so no client side access
 
 #### Later
 - [x] Prompt Engineer
 - [ ] different lections for different products
 - [ ] profile pictures
 - [ ] Streak
-- [ ] Save conversations
+- [x] Save conversations
 - [ ] Leaderboard
 - [ ] Dashboard
 - [ ] Improvement Tips -> AI Analyses historical conversations
