@@ -1,34 +1,30 @@
-# 🚀 Next.js Supabase Starter Template
+# 🚀 SalesTrainer
 
 ### To-do
 - [x] Lections
 - [x] Secure Websockets and add authentication / session
-- [ ] Protect lessons -> create API to only read so no client side access
+- [x] Prompt Engineer
+- [x] Save conversations
 
 #### Later
-- [x] Prompt Engineer
-- [ ] different lections for different products
-- [ ] profile pictures
-- [ ] Streak
-- [x] Save conversations
-- [ ] Leaderboard
-- [ ] Dashboard
+- [ ] Protect lections & conversation history -> create API to only read so no client side access (send only neccessary items)
+- [ ] Different lections for different products -> categorise lections and use common products for different lections
 - [ ] Improvement Tips -> AI Analyses historical conversations
+- [ ] Streak
+- [ ] Dashboard
+- [ ] profile pictures
+- [ ] Leaderboard
 
-A minimalistic starter template for Next.js with Supabase, featuring:
-
-- 🔐 Supabase Auth
-- 💅 TailwindCSS
-- 🗃️ Prisma ORM
-- 🎨 shadcn/ui
+#### Naming convention
+A **lection** is the name used for an AI Call lesson in the frontend, a **lesson** is the name used in the backend code. Conversations are being stored to the DB as **Conversations**.
 
 ## 🛠️ Tech Stack
 
-- [Next.js](https://nextjs.org/)
-- [Supabase](https://supabase.com/)
-- [TailwindCSS](https://tailwindcss.com/)
-- [Prisma](https://www.prisma.io/)
-- [shadcn/ui](https://ui.shadcn.com/)
+- [⚡ Next.js](https://nextjs.org/)
+- [🔐 Supabase & Supabase Auth](https://supabase.com/)
+- [💅 TailwindCSS](https://tailwindcss.com/)
+- [🗃️ Prisma](https://www.prisma.io/)
+- [🎨 shadcn/ui](https://ui.shadcn.com/)
 
 ## 🚀 Getting Started
 
@@ -58,5 +54,3 @@ To learn more about the technologies used in this template, check out their resp
 - [TailwindCSS Documentation](https://tailwindcss.com/docs)
 - [Prisma Documentation](https://www.prisma.io/docs)
 - [shadcn/ui Documentation](https://ui.shadcn.com/)
-
-Happy coding! 🎉
