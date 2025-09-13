@@ -6,6 +6,7 @@ import {
     Medal,
     BadgePercent,
     MessageCircleMore,
+    GraduationCap,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
@@ -50,6 +51,12 @@ const data = {
             title: 'Conversation Log',
             url: '/dashboard/conversation-log',
             icon: MessageCircleMore,
+            items: [],
+        },
+        {
+            title: 'Mentor',
+            url: '/dashboard/mentor',
+            icon: GraduationCap,
             items: [],
         },
         {

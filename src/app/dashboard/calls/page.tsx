@@ -13,15 +13,18 @@ import AnimatedDotsLoader from '~/components/animated-bars-loader';
 
 export default function Page() {
     const router = useRouter();
-    const { uniqueLectionsDone, lessonsWithStatus, isLoading } = useLessonStatus(lessons);
+    const { uniqueLectionsDone, lessonsWithStatus, isLoading } =
+        useLessonStatus(lessons);
 
     if (isLoading) {
-        return (<div className='flex flex-col items-center justify-center h-full text-muted-foreground mb-24 text-center'>
-            <AnimatedDotsLoader />
-            <p>Loading all lections ...</p>
-        </div>);
+        return (
+            <div className='flex flex-col items-center justify-center h-full text-muted-foreground mb-24 text-center'>
+                <AnimatedDotsLoader />
+                <p>Loading all lections ...</p>
+            </div>
+        );
     }
-    
+
     return (
         <div className='w-11/12 mx-auto'>
             <TableCard.Root className='w-full mt-2'>
@@ -61,7 +64,9 @@ export default function Page() {
                             <LessonRow
                                 key={item.id}
                                 lesson={item}
-                                onRowClick={(id) => router.push(`/dashboard/calls/${id}`)}
+                                onRowClick={(id) =>
+                                    router.push(`/dashboard/calls/${id}`)
+                                }
                             />
                         )}
                     </Table.Body>

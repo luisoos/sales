@@ -24,16 +24,15 @@ export function LessonRow({ lesson, onRowClick }: LessonRowProps) {
     return (
         <Table.Row
             id={lesson.id}
-            className={cn('cursor-pointer', lesson.userHasDoneLesson && 'opacity-70')}
+            className={cn(
+                'cursor-pointer',
+                lesson.userHasDoneLesson && 'opacity-70',
+            )}
             onClick={() => onRowClick(lesson.id)}>
             <Table.Cell className='w-min flex max-md:flex-nowrap flex-wrap items-center my-1.5 gap-1'>
                 <BadgeGroup
                     addonText={String(lesson.id)}
-                    color={
-                        lesson.userHasDoneLesson
-                            ? 'gray'
-                            : 'brand'
-                    }
+                    color={lesson.userHasDoneLesson ? 'gray' : 'brand'}
                     theme='modern'
                     align='leading'
                     size='sm'>

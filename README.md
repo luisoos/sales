@@ -7,13 +7,15 @@
 - [x] Save conversations
 
 #### Later
-- [ ] Protect lections & conversation history -> create API to only read so no client side access (send only neccessary items)
 - [ ] Different lections for different products -> categorise lections and use common products for different lections
-- [ ] Improvement Tips -> AI Analyses historical conversations
+- [x] Improvement Tips -> AI Analyses historical conversations
+    - [ ] Pass conversation logs to AI as context
+    - [ ] Save AI Chats to DB
 - [ ] Streak
 - [ ] Dashboard
-- [ ] profile pictures
+- [ ] Profile Pictures
 - [ ] Leaderboard
+- [ ] Payment, then hide the lessons client-side that require payment
 
 #### Naming convention
 A **lection** is the name used for an AI Call lesson in the frontend, a **lesson** is the name used in the backend code. Conversations are being stored to the DB as **Conversations**.
