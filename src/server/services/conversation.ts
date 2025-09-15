@@ -2,6 +2,13 @@ import { db } from '~/server/db';
 import { ConversationStatus } from '@prisma/client';
 import { RoleMessage } from '~/types/conversation';
 
+export async function getAllConversations(params: { userId: string }) {
+    return db.conversation.findMany({
+        where: { userId: params.userId },
+        orderBy: { createdAt: 'desc' },
+    });
+}
+
 export async function getOrCreateConversation(params: {
     userId: string;
     lessonId: string;

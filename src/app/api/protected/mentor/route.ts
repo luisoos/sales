@@ -1,6 +1,9 @@
+import { Conversation } from '@prisma/client';
 import Groq from 'groq-sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import z from 'zod';
+import { getAllConversations } from '~/server/services/conversation';
+import getMentorPrompt from '~/utils/prompts/mentor-prompt';
 import { createClient } from '~/utils/supabase/server';
 
 const groq = new Groq({
@@ -42,11 +45,16 @@ export async function POST(request: NextRequest, response: NextResponse) {
             );
         }
 
+        const conversations: Conversation[] = await getAllConversations({
+            userId: user.id,
+        });
+        console.log(getMentorPrompt(conversations));
+
         const stream = await groq.chat.completions.create({
             messages: [
                 {
                     role: 'system',
-                    content: 'Du bist ein hilfreicher Assistent.',
+                    content: getMentorPrompt(conversations),
                 },
                 ...parsed.data.messageHistory,
                 { role: 'user', content: parsed.data.message },
