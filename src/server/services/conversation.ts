@@ -1,7 +1,6 @@
 import { db } from '~/server/db';
 import { ConversationStatus } from '@prisma/client';
-
-type RoleMessage = { role: 'system' | 'user' | 'assistant'; content: string };
+import { RoleMessage } from '~/types/conversation';
 
 export async function getOrCreateConversation(params: {
     userId: string;
