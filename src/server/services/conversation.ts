@@ -44,20 +44,25 @@ export async function appendTurnAndMaybeSetStatus(params: {
           ? 'NOT_CLOSED'
           : 'UNFINISHED';
 
+    const conversation = await db.conversation.findUnique({
+        where: { id: conversationId },
+        select: { messages: true }
+    });
+    const previousMessages = Array.isArray(conversation?.messages) ? (conversation.messages as RoleMessage[]) : [];
+
     return db.conversation.update({
         where: { id: conversationId },
         data: {
             status: nextStatus,
             // store as JSON array of role messages (recommended)
-            messages: {
-                push: [
-                    { role: 'user', content: userText } as RoleMessage,
-                    {
-                        role: 'assistant',
-                        content: assistantText,
-                    } as RoleMessage,
-                ],
-            },
+            messages: [
+                ...previousMessages,
+                { role: 'user', content: userText } as RoleMessage,
+                {
+                    role: 'assistant',
+                    content: assistantText,
+                } as RoleMessage,
+            ],
         },
     });
 }

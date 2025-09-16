@@ -228,6 +228,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                                         userId,
                                         lessonId,
                                     });
+                                console.log('Conversation found: ', conversation)
                                 await appendTurnAndMaybeSetStatus({
                                     conversationId: conversation.id,
                                     userText: transcription.text,

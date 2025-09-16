@@ -164,9 +164,9 @@ export default function Page() {
 function getStatusBadgeColor(status: ConversationStatus): BadgeColors {
     switch (status) {
         case 'CLOSED':
-            return 'gray';
+            return 'brand';
         case 'NOT_CLOSED':
-            return 'gray';
+            return 'error';
         case 'UNFINISHED':
             return 'gray';
     }

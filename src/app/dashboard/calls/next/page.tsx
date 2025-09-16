@@ -8,7 +8,7 @@ import { lessons } from '~/utils/prompts/lessons';
 
 export default function Page() {
     const router = useRouter();
-    const { uniqueLectionsDone, lessonsWithStatus, isLoading } =
+    const { uniqueLectionsSuccessfullyDone, lessonsWithStatus, isLoading } =
         useLessonStatus(lessons);
 
     useEffect(() => {

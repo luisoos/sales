@@ -12,5 +12,5 @@ export function ucfirst(str: string): string {
 
 export function standardiseWord(str: string): string {
     if (!str) return str;
-    return ucfirst(str.toLowerCase());
+    return ucfirst(str.toLowerCase().replace('_', ' '));
 }

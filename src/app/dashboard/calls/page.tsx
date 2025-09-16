@@ -13,7 +13,7 @@ import AnimatedDotsLoader from '~/components/animated-bars-loader';
 
 export default function Page() {
     const router = useRouter();
-    const { uniqueLectionsDone, lessonsWithStatus, isLoading } =
+    const { uniqueLectionsSuccessfullyDone, lessonsWithStatus, isLoading } =
         useLessonStatus(lessons);
 
     if (isLoading) {
@@ -31,9 +31,9 @@ export default function Page() {
                 <TableCard.Header
                     title='All Lections'
                     badge={
-                        uniqueLectionsDone
+                        uniqueLectionsSuccessfullyDone
                             ? lessons.length -
-                              uniqueLectionsDone +
+                            uniqueLectionsSuccessfullyDone +
                               ' Lections unpracticed'
                             : lessons.length + ' Lections'
                     }

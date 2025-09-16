@@ -8,10 +8,10 @@ export interface LessonWithStatus {
 }
 
 export function useLessonStatus<T extends { id: number }>(lessons: T[]) {
-    const [uniqueLectionsDone, setUniqueLectionsDone] = useState<
+    const [uniqueLectionsSuccessfullyDone, setUniqueLectionsSuccessfullyDone] = useState<
         number | undefined
     >();
-    const [uniqueLectionsDoneIds, setUniqueLectionsDoneIds] = useState<
+    const [uniqueLectionsSuccessfullyDoneIds, setUniqueLectionsSuccessfullyDoneIds] = useState<
         string[] | undefined
     >();
     const [isLoading, setIsLoading] = useState(true);
@@ -25,15 +25,15 @@ export function useLessonStatus<T extends { id: number }>(lessons: T[]) {
                 const data = await conversationRequest.json();
                 const conversations = data.conversations as Conversation[];
 
-                const uniqueConversations = conversations.filter(
+                const uniqueConversationsSuccessfullyDone = conversations.filter(
                     (item, index, self) =>
-                        index ===
-                        self.findIndex((t) => t.lessonId === item.lessonId),
+                        item.status === "CLOSED" &&
+                        index === self.findIndex(t => t.lessonId === item.lessonId)
                 );
 
-                setUniqueLectionsDone(uniqueConversations.length);
-                setUniqueLectionsDoneIds(
-                    uniqueConversations.map(
+                setUniqueLectionsSuccessfullyDone(uniqueConversationsSuccessfullyDone.length);
+                setUniqueLectionsSuccessfullyDoneIds(
+                    uniqueConversationsSuccessfullyDone.map(
                         (conversation) => conversation.lessonId,
                     ),
                 );
@@ -52,7 +52,7 @@ export function useLessonStatus<T extends { id: number }>(lessons: T[]) {
             .map((lesson) => ({
                 ...lesson,
                 userHasDoneLesson:
-                    uniqueLectionsDoneIds?.includes(String(lesson.id)) ?? false,
+                    uniqueLectionsSuccessfullyDoneIds?.includes(String(lesson.id)) ?? false,
             }))
             .sort((a, b) => {
                 // If both have same completion status, sort by ID
@@ -62,11 +62,11 @@ export function useLessonStatus<T extends { id: number }>(lessons: T[]) {
                 // Undone lessons (false) come first, done lessons (true) come last
                 return a.userHasDoneLesson ? 1 : -1;
             });
-    }, [lessons, uniqueLectionsDoneIds]);
+    }, [lessons, uniqueLectionsSuccessfullyDoneIds]);
 
     return {
-        uniqueLectionsDone,
-        uniqueLectionsDoneIds,
+        uniqueLectionsSuccessfullyDone,
+        uniqueLectionsSuccessfullyDoneIds,
         lessonsWithStatus,
         isLoading,
     };

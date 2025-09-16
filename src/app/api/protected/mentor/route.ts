@@ -48,7 +48,6 @@ export async function POST(request: NextRequest, response: NextResponse) {
         const conversations: Conversation[] = await getAllConversations({
             userId: user.id,
         });
-        console.log(getMentorPrompt(conversations));
 
         const stream = await groq.chat.completions.create({
             messages: [

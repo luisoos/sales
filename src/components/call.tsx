@@ -300,7 +300,7 @@ function CallEndedDialog({
     open: boolean;
     setOpen: (open: boolean) => void;
 }) {
-    const AI_COACH_NAME: string = 'AI Coach';
+    const AI_COACH_NAME: string = 'Mentor (AI Coach)';
 
     return (
         <>
@@ -318,7 +318,7 @@ function CallEndedDialog({
                                     Closed lead successfully
                                 </DialogTitle>
                                 <DialogDescription>
-                                    {`You achieved the goal of this call. Review the tips from the ${AI_COACH_NAME}`}
+                                    {`You achieved the goal of this call. Review the tips from the ${AI_COACH_NAME}.`}
                                 </DialogDescription>
                             </>
                         ) : (
