@@ -10,7 +10,7 @@ import { createClient } from '~/utils/supabase/server';
 // - public folder files
 // - public folder subdirectories
 export const config = {
-    matcher: ['/dashboard/:path*', '/api/:path*'],
+    matcher: ['/dashboard/:path*', '/api/:path*', '/login/:path*'],
 };
 
 export async function middleware(request: NextRequest) {
@@ -31,6 +31,18 @@ export async function middleware(request: NextRequest) {
 
         if (error || !user) {
             return NextResponse.redirect(new URL('/login', request.url));
+        }
+    } else if (
+        request.nextUrl.pathname.startsWith('/login')
+    ) {
+        const supabase = await createClient();
+        const {
+            data: { user },
+            error,
+        } = await supabase.auth.getUser();
+
+        if (!error && user) {
+            return NextResponse.redirect(new URL('/dashboard', request.url));
         }
     }
 
