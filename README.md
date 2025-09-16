@@ -12,9 +12,10 @@
 - [x] Improvement Tips -> AI Analyses historical conversations
     - [x] Pass conversation logs to AI as context
     - [ ] Save AI Chats to DB
-    - [ ] 🐛 Unexpected AI API Stream end (frontend) 
+    - [x] 🐛 Unexpected AI API Stream end (frontend) 
 - [ ] `/log-in`: If already authenticated, redirect to `/dashboard`
 - [ ] Streak
+- [ ] Conversation Log Caching
 - [ ] Clean up `call.tsx` component for better readability -> use hook
 - [ ] Dashboard
 - [ ] Profile Pictures
