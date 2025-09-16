@@ -14,7 +14,7 @@ export async function getOrCreateConversation(params: {
     lessonId: string;
 }) {
     const existing = await db.conversation.findFirst({
-        where: { userId: params.userId, lessonId: params.lessonId },
+        where: { userId: params.userId, lessonId: params.lessonId, status: 'UNFINISHED' },
         orderBy: { createdAt: 'desc' },
     });
     if (existing) return existing;

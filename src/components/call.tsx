@@ -51,12 +51,6 @@ export default function Call({ lessonId, showNotes }: CallProps) {
         setDisableButton(true);
         socketRef.current?.disconnect();
 
-        // TODO: Send conversation log to the database
-        const logData = {
-            status: status,
-            conversation: messagesRef.current,
-            endedAt: new Date(),
-        };
         toast.info(`Call ended with status: ${status}`);
 
         setCallEndedDialogOpen(true);

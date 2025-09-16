@@ -14,6 +14,7 @@
     - [ ] Save AI Chats to DB
 - [ ] `/log-in`: If already authenticated, redirect to `/dashboard`
 - [ ] Streak
+- [ ] Clean up `call.tsx` component for better readability -> use hook
 - [ ] Dashboard
 - [ ] Profile Pictures
 - [ ] Leaderboard

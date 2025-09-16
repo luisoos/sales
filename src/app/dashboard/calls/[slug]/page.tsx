@@ -2,7 +2,8 @@
 
 import Call from '~/components/call';
 import { redirect, useParams } from 'next/navigation';
-import { getLessonById, type leadTemperature } from '~/utils/prompts/lessons';
+import { getLessonById } from '~/utils/prompts/lessons';
+import { type leadTemperature } from '~/types/lessons';
 import { cn, ucfirst } from '~/lib/utils';
 import { BadgeWithDot } from '~/components/ui/base/badges/badges';
 import React from 'react';
@@ -51,7 +52,7 @@ export default function Page() {
                             <Label
                                 className='font-normal my-auto'
                                 htmlFor='toggle'>
-                                Enable notifications
+                                Enable notes
                             </Label>
                         </div>
                     </div>
