@@ -11,8 +11,10 @@
 - [ ] Different lections for different products -> categorise lections and use common products for different lections
 - [x] Improvement Tips -> AI Analyses historical conversations
     - [x] Pass conversation logs to AI as context
-    - [ ] Save AI Chats to DB
+    - [x] Save AI Chats to DB
+    - [ ] Build "Past Chats" Front- & Backend: Use API pagination
     - [x] 🐛 Unexpected AI API Stream end (frontend) 
+    - [ ] Rate limit AI calls
 - [ ] `/log-in`: If already authenticated, redirect to `/dashboard`
 - [ ] Streak
 - [ ] Conversation Log Caching

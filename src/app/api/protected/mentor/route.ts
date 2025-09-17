@@ -2,7 +2,9 @@ import { Conversation } from '@prisma/client';
 import Groq from 'groq-sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import z from 'zod';
+import { db } from '~/server/db';
 import { getAllConversations } from '~/server/services/conversation';
+import { updateOrCreateMentorChat } from '~/server/services/mentor-chat';
 import getMentorPrompt from '~/utils/prompts/mentor-prompt';
 import { createClient } from '~/utils/supabase/server';
 
@@ -16,6 +18,7 @@ const MessageSchema = z.object({
 });
 
 const messageSchema = z.object({
+    mentorChatId: z.string().optional(),
     messageHistory: z.array(MessageSchema).default([]),
     message: z.string(),
 });
@@ -67,12 +70,14 @@ export async function POST(request: NextRequest, response: NextResponse) {
         const responseStream = new ReadableStream({
             async start(controller) {
                 const encoder = new TextEncoder();
+                let fullResponse: string = '';
 
                 try {
                     for await (const chunk of stream) {
                         const content = chunk.choices[0]?.delta?.content;
 
                         if (content) {
+                            fullResponse += content;
                             controller.enqueue(encoder.encode(content));
                         }
                     }
@@ -80,6 +85,18 @@ export async function POST(request: NextRequest, response: NextResponse) {
                     console.error('Streaming error:', error);
                     controller.error(error);
                 } finally {
+                    const savedChat = await updateOrCreateMentorChat({
+                        userId: user.id,
+                        newMessages: [
+                            { role: 'user', content: parsed.data.message },
+                            { role: 'assistant', content: fullResponse },
+                        ],
+                        mentorChatId: parsed.data.mentorChatId,
+                    });
+
+                    const metadata = `\n__CHAT_ID__:${savedChat.id}`;
+                    controller.enqueue(encoder.encode(metadata));
+
                     controller.close();
                 }
             },

@@ -32,9 +32,7 @@ export async function middleware(request: NextRequest) {
         if (error || !user) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
-    } else if (
-        request.nextUrl.pathname.startsWith('/login')
-    ) {
+    } else if (request.nextUrl.pathname.startsWith('/login')) {
         const supabase = await createClient();
         const {
             data: { user },

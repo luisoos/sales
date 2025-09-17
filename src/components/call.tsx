@@ -127,13 +127,14 @@ export default function Call({ lessonId, showNotes }: CallProps) {
         }
     }, [lessonId]);
 
-    // Due to react strict mode in development, each request is being sent twice. 
+    // Due to react strict mode in development, each request is being sent twice.
     // This results in a duplicated conversation log.
     useEffect(() => {
         if (process.env.NODE_ENV === 'development') {
-            const uniqueMessages = [... new Set(messages)];
-            if (uniqueMessages.length !== messages.length) // No endless loop
-                setMessages(uniqueMessages)
+            const uniqueMessages = [...new Set(messages)];
+            if (uniqueMessages.length !== messages.length)
+                // No endless loop
+                setMessages(uniqueMessages);
         }
     }, [messages]);
 

@@ -117,16 +117,25 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                 );
 
                 // To continue an unfinished conversation
-                const pastMessages = await getOrCreateConversation({ userId: socket.data.userId, lessonId: String(lessonId) })
-                console.log(pastMessages)
-                if (pastMessages && Array.isArray(pastMessages.messages) && pastMessages.messages.length > 0) 
-                    (pastMessages.messages as RoleMessage[])?.forEach(message => {
-                        if (message.role === 'user') {
-                            socket.emit('transcription', message.content);
-                        } else if (message.role === 'assistant') {
-                            socket.emit('text', message.content);
-                        }
-                    });
+                const pastMessages = await getOrCreateConversation({
+                    userId: socket.data.userId,
+                    lessonId: String(lessonId),
+                });
+                console.log(pastMessages);
+                if (
+                    pastMessages &&
+                    Array.isArray(pastMessages.messages) &&
+                    pastMessages.messages.length > 0
+                )
+                    (pastMessages.messages as RoleMessage[])?.forEach(
+                        (message) => {
+                            if (message.role === 'user') {
+                                socket.emit('transcription', message.content);
+                            } else if (message.role === 'assistant') {
+                                socket.emit('text', message.content);
+                            }
+                        },
+                    );
             });
 
             socket.on('audio', (chunk: Buffer) => {
@@ -240,7 +249,10 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                                         userId,
                                         lessonId,
                                     });
-                                console.log('Conversation found: ', conversation)
+                                console.log(
+                                    'Conversation found: ',
+                                    conversation,
+                                );
                                 await appendTurnAndMaybeSetStatus({
                                     conversationId: conversation.id,
                                     userText: transcription.text,

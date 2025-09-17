@@ -18,6 +18,8 @@ export default function Page() {
         isLoading,
         streamingMessage,
         error,
+        chatId,
+        setChatId,
         sendMessage,
         clearMessages,
     } = useMentorStream();

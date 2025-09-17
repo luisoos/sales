@@ -33,7 +33,7 @@ export default function Page() {
                     badge={
                         uniqueLectionsSuccessfullyDone
                             ? lessons.length -
-                            uniqueLectionsSuccessfullyDone +
+                              uniqueLectionsSuccessfullyDone +
                               ' Lections unpracticed'
                             : lessons.length + ' Lections'
                     }

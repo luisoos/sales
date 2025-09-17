@@ -6,6 +6,7 @@ export default function useMentorStream() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [streamingMessage, setStreamingMessage] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [chatId, setChatId] = useState<string | undefined>();
 
     const sendMessage = useCallback(
         async (message: string) => {
@@ -30,6 +31,7 @@ export default function useMentorStream() {
                     body: JSON.stringify({
                         messageHistory: messages,
                         message: message,
+                        chatId: chatId,
                     }),
                 });
 
@@ -60,13 +62,18 @@ export default function useMentorStream() {
 
                     if (value) {
                         const chunk = decoder.decode(value);
-                        setMessages((prev) =>
-                            prev.map((msg) =>
-                                msg.id === assistantMessage.id
-                                    ? { ...msg, content: msg.content + chunk }
-                                    : msg,
-                            ),
-                        );
+
+                        if (chunk.includes('__CHAT_ID__:')) {
+                            setChatId(chunk.split('__CHAT_ID__:')[1]);
+                        } else {
+                            setMessages((prev) =>
+                                prev.map((msg) =>
+                                    msg.id === assistantMessage.id
+                                        ? { ...msg, content: msg.content + chunk }
+                                        : msg,
+                                ),
+                            );
+                        }
                     }
                 }
             } catch (err) {
@@ -85,6 +92,7 @@ export default function useMentorStream() {
     const clearMessages = useCallback(() => {
         setMessages([]);
         setError(null);
+        setChatId(undefined);
     }, []);
 
     return {
@@ -92,6 +100,8 @@ export default function useMentorStream() {
         isLoading,
         streamingMessage,
         error,
+        chatId,
+        setChatId,
         sendMessage,
         clearMessages,
     };

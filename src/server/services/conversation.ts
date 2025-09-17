@@ -14,7 +14,11 @@ export async function getOrCreateConversation(params: {
     lessonId: string;
 }) {
     const existing = await db.conversation.findFirst({
-        where: { userId: params.userId, lessonId: params.lessonId, status: 'UNFINISHED' },
+        where: {
+            userId: params.userId,
+            lessonId: params.lessonId,
+            status: 'UNFINISHED',
+        },
         orderBy: { createdAt: 'desc' },
     });
     if (existing) return existing;
@@ -46,9 +50,11 @@ export async function appendTurnAndMaybeSetStatus(params: {
 
     const conversation = await db.conversation.findUnique({
         where: { id: conversationId },
-        select: { messages: true }
+        select: { messages: true },
     });
-    const previousMessages = Array.isArray(conversation?.messages) ? (conversation.messages as RoleMessage[]) : [];
+    const previousMessages = Array.isArray(conversation?.messages)
+        ? (conversation.messages as RoleMessage[])
+        : [];
 
     return db.conversation.update({
         where: { id: conversationId },
