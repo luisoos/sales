@@ -19,6 +19,7 @@ import { CloudAlert, MessageCircleOff } from 'lucide-react';
 import Link from 'next/link';
 import AnimatedDotsLoader from '~/components/animated-bars-loader';
 import { standardiseWord } from '~/lib/utils';
+import FormattedDate from '~/components/formatted-date';
 
 export default function Page() {
     const router = useRouter();
@@ -170,20 +171,4 @@ function getStatusBadgeColor(status: ConversationStatus): BadgeColors {
         case 'UNFINISHED':
             return 'gray';
     }
-}
-
-function FormattedDate({ pDate }: { pDate: Date | string }) {
-    return (
-        <>
-            {pDate &&
-                new Date(pDate).toLocaleString(navigator.language, {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                })}
-        </>
-    );
 }

@@ -23,6 +23,43 @@ const messageSchema = z.object({
     message: z.string(),
 });
 
+export async function GET(request: NextRequest, response: NextResponse) {
+    try {
+        const supabase = await createClient();
+        const {
+            data: { user },
+            error,
+        } = await supabase.auth.getUser();
+
+        if (error || !user) {
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 401 },
+            );
+        }
+
+        const mentorChats = await db.mentorChat.findMany({
+            where: { userId: user.id },
+            orderBy: { updatedAt: 'desc' }
+        });
+
+        console.log(mentorChats)
+
+        return NextResponse.json({ mentorChats })
+    } catch (error) {
+        console.error('API Error:', error);
+        return new NextResponse(
+            JSON.stringify({
+                error: 'Internal Error',
+            }),
+            {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' },
+            },
+        );
+    }
+}
+
 export async function POST(request: NextRequest, response: NextResponse) {
     try {
         const supabase = await createClient();

@@ -10,6 +10,7 @@ import { Send, Bot, User, Trash2, Loader2 } from 'lucide-react';
 import useMentorStream from '~/hooks/use-mentor-stream';
 import { cn } from '~/lib/utils';
 import { Streamdown } from 'streamdown';
+import ChatHistory from '~/components/chat-history';
 
 export default function Page() {
     const [input, setInput] = useState('');
@@ -77,7 +78,7 @@ export default function Page() {
                     </div>
                 </div>
             </div>
-
+            <ChatHistory />
             {/* Messages */}
             <div className='flex-1 overflow-y-auto p-6 space-y-4'>
                 {messages.length === 0 ? (
