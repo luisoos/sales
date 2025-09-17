@@ -127,6 +127,16 @@ export default function Call({ lessonId, showNotes }: CallProps) {
         }
     }, [lessonId]);
 
+    // Due to react strict mode in development, each request is being sent twice. 
+    // This results in a duplicated conversation log.
+    useEffect(() => {
+        if (process.env.NODE_ENV === 'development') {
+            const uniqueMessages = [... new Set(messages)];
+            if (uniqueMessages.length !== messages.length) // No endless loop
+                setMessages(uniqueMessages)
+        }
+    }, [messages]);
+
     const audioChunksRef = useRef<Blob[]>([]);
 
     function cleanupRecording() {
@@ -252,9 +262,16 @@ export default function Call({ lessonId, showNotes }: CallProps) {
                 <div className='lg:w-1/2'>
                     <p className='font-medium text-lg'>Conversation Log</p>
                     <ul>
-                        {messages.map((m, i) => (
-                            <li key={i}>{m}</li>
-                        ))}
+                        {messages.map((m, i) => {
+                            const [firstWord, ...restWords] = m.split(' ');
+                            const rest = restWords.join(' ');
+                            return (
+                                <li key={i}>
+                                    <strong>{firstWord}</strong>
+                                    {rest ? ' ' + rest : ''}
+                                </li>
+                            );
+                        })}
                     </ul>
                 </div>
                 <AnimatePresence>

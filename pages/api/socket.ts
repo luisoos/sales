@@ -12,6 +12,7 @@ import {
     appendTurnAndMaybeSetStatus,
     getOrCreateConversation,
 } from '~/server/services/conversation';
+import { RoleMessage } from '~/types/conversation';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -102,7 +103,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
         io.on('connection', (socket: Socket) => {
             console.log('⏩ Neuer Client:', socket.id);
 
-            socket.on('selectLesson', (lessonId: number) => {
+            socket.on('selectLesson', async (lessonId: number) => {
                 // Initialize chat history with the system prompt for the selected lesson
                 chatHistory[socket.id] = [
                     {
@@ -114,6 +115,18 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                 console.log(
                     `📚 Lesson ${lessonId} selected for ${socket.id}. History initialized.`,
                 );
+
+                // To continue an unfinished conversation
+                const pastMessages = await getOrCreateConversation({ userId: socket.data.userId, lessonId: String(lessonId) })
+                console.log(pastMessages)
+                if (pastMessages && Array.isArray(pastMessages.messages) && pastMessages.messages.length > 0) 
+                    (pastMessages.messages as RoleMessage[])?.forEach(message => {
+                        if (message.role === 'user') {
+                            socket.emit('transcription', message.content);
+                        } else if (message.role === 'assistant') {
+                            socket.emit('text', message.content);
+                        }
+                    });
             });
 
             socket.on('audio', (chunk: Buffer) => {
@@ -212,7 +225,6 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                         });
                         const buffer = Buffer.from(await wav.arrayBuffer());
 
-                        console.log(transcription.text, ' -> ', chatAnswer);
                         socket.emit('tts', buffer);
                         socket.emit('text', chatAnswer);
 
