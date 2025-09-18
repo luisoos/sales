@@ -12,9 +12,11 @@
 - [x] Improvement Tips -> AI Analyses historical conversations
     - [x] Pass conversation logs to AI as context
     - [x] Save AI Chats to DB
-    - [ ] Build "Past Chats" Front- & Backend: Use API pagination
+    - [x] Build "Past Chats" Front- & Backend
+        - [x] Use API pagination
     - [x] 🐛 Unexpected AI API Stream end (frontend) 
     - [ ] Rate limit AI calls
+    - [ ] Ability to delete past chats (context menu or button)
 - [ ] `/log-in`: If already authenticated, redirect to `/dashboard`
 - [ ] Streak
 - [ ] Conversation Log Caching

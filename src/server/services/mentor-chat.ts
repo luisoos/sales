@@ -27,7 +27,7 @@ export async function updateOrCreateMentorChat(params: {
         where: { id: params.mentorChatId },
         data: {
             // store as JSON array of role messages (recommended)
-            messages: [...previousMessages, params.newMessages],
+            messages: [...previousMessages, ...params.newMessages],
         },
     });
 }

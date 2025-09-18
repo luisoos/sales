@@ -9,13 +9,16 @@ import {
 import FormattedDate from './formatted-date';
 import { MentorChat } from '@prisma/client';
 import { RoleMessage } from '~/types/conversation';
+import { cn } from '~/lib/utils';
 
 const chatHistoryBoxMaxCharacterLength = 55;
 
 export default function ChatHistory({
     chatId,
+    setChatId,
 }: {
     chatId: string | undefined;
+    setChatId: (id: string) => void;
 }) {
     const [latestChats, setLatestChats] = useState<MentorChat[]>();
     const [error, setError] = useState<string>();
@@ -58,6 +61,7 @@ export default function ChatHistory({
                         loading={loading}
                         initialRender={initialRender}
                         latestChats={latestChats}
+                        setChatId={setChatId}
                     />
                 </AccordionContent>
             </AccordionItem>
@@ -69,10 +73,12 @@ function SkeletonOrContent({
     loading,
     initialRender,
     latestChats,
+    setChatId,
 }: {
     loading: boolean;
     initialRender: boolean;
     latestChats: MentorChat[] | undefined;
+    setChatId: (id: string) => void;
 }) {
     if ((loading && initialRender) || !latestChats) {
         return (
@@ -90,8 +96,10 @@ function SkeletonOrContent({
                 latestChats.map((chat) => (
                     <ChatHistoryBox
                         key={chat.id}
+                        chatId={chat.id}
                         messages={chat.messages as RoleMessage[]}
                         updatedAt={chat.updatedAt}
+                        onClick={() => setChatId(chat.id)}
                     />
                 ))}
         </div>
@@ -101,13 +109,24 @@ function SkeletonOrContent({
 function ChatHistoryBox({
     messages,
     updatedAt,
+    chatId,
+    onClick,
 }: {
     messages: RoleMessage[];
     updatedAt: Date | string;
+    chatId: string;
+    onClick: () => void;
 }) {
     const firstMessage = messages[0]?.content || 'No messages in chat';
     return (
-        <div className='w-52 h-24 flex flex-col px-4 py-2 shrink-0 justify-between border shadow-inner rounded-md'>
+        <div 
+            className={cn('w-52 h-24 flex flex-col px-4 py-2 shrink-0 justify-between',
+                'border shadow-inner rounded-md',
+                'cursor-pointer hover:bg-accent hover:text-accent-foreground active:scale-[.98] transition-all',
+            )}
+            onClick={onClick}
+            aria-label={`Select chat ${chatId}`}
+        >
             <p className='tracking-tight'>
                 {firstMessage.length > chatHistoryBoxMaxCharacterLength
                     ? firstMessage.substring(

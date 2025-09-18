@@ -102,6 +102,8 @@ export async function POST(request: NextRequest, response: NextResponse) {
             temperature: 0.7,
         });
 
+        console.log(parsed.data.mentorChatId)
+
         const responseStream = new ReadableStream({
             async start(controller) {
                 const encoder = new TextEncoder();
