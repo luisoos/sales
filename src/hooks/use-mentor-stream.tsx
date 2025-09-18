@@ -69,7 +69,10 @@ export default function useMentorStream() {
                             setMessages((prev) =>
                                 prev.map((msg) =>
                                     msg.id === assistantMessage.id
-                                        ? { ...msg, content: msg.content + chunk }
+                                        ? {
+                                              ...msg,
+                                              content: msg.content + chunk,
+                                          }
                                         : msg,
                                 ),
                             );

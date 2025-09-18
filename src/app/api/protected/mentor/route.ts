@@ -40,12 +40,10 @@ export async function GET(request: NextRequest, response: NextResponse) {
 
         const mentorChats = await db.mentorChat.findMany({
             where: { userId: user.id },
-            orderBy: { updatedAt: 'desc' }
+            orderBy: { updatedAt: 'desc' },
         });
 
-        console.log(mentorChats)
-
-        return NextResponse.json({ mentorChats })
+        return NextResponse.json({ mentorChats });
     } catch (error) {
         console.error('API Error:', error);
         return new NextResponse(

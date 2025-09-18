@@ -78,7 +78,7 @@ export default function Page() {
                     </div>
                 </div>
             </div>
-            <ChatHistory />
+            <ChatHistory chatId={chatId} />
             {/* Messages */}
             <div className='flex-1 overflow-y-auto p-6 space-y-4'>
                 {messages.length === 0 ? (
