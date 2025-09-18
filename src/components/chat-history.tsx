@@ -12,6 +12,7 @@ import { RoleMessage } from '~/types/conversation';
 import { cn } from '~/lib/utils';
 
 const chatHistoryBoxMaxCharacterLength = 55;
+const chatHistoryLimit = 10;
 
 export default function ChatHistory({
     chatId,
@@ -24,6 +25,9 @@ export default function ChatHistory({
     const [error, setError] = useState<string>();
     const [loading, setLoading] = useState<boolean>(true);
     const [initialRender, setInitialRender] = useState<boolean>(true);
+    
+    const [chatHistoryOffset, setChatHistoryOffset] = useState<number>(0);
+    const [hasMoreData, setHasMoreData] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchMentorChats = async () => {

@@ -38,12 +38,42 @@ export async function GET(request: NextRequest, response: NextResponse) {
             );
         }
 
+        const params = request.nextUrl.searchParams;
+        const limit = params.get('limit') || '10';
+        const offset = params.get('offset') || '0';
+
+        if (Number(limit) < 1) {
+            return NextResponse.json(
+                { error: 'Invalid limit' },
+                { status: 400 },
+            );
+        }
+        if (Number(offset) < 0) {
+            return NextResponse.json(
+                { error: 'Invalid offset' },
+                { status: 400 },
+            );
+        }
+
         const mentorChats = await db.mentorChat.findMany({
             where: { userId: user.id },
             orderBy: { updatedAt: 'desc' },
+            take: Number(limit),
+            skip: Number(offset),
         });
 
-        return NextResponse.json({ mentorChats });
+        const totalCount = await db.mentorChat.count({
+            where: { userId: user.id },
+        });
+
+        return NextResponse.json(
+            { mentorChats },
+            { 
+                headers: { 
+                    'X-Has-More': ((Number(offset) + Number(limit)) < totalCount).toString()
+                } 
+            }
+        );
     } catch (error) {
         console.error('API Error:', error);
         return new NextResponse(
@@ -101,8 +131,6 @@ export async function POST(request: NextRequest, response: NextResponse) {
             max_tokens: 2048,
             temperature: 0.7,
         });
-
-        console.log(parsed.data.mentorChatId)
 
         const responseStream = new ReadableStream({
             async start(controller) {

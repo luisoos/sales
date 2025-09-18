@@ -127,7 +127,6 @@ export default function useMentorStream() {
     useEffect(() => {
         console.log(chatId, streamingMessage)
         if (chatId && !streamingMessage) {
-            console.log('Fetching messages for chatId:', chatId);
             const fetchMessages = async () => {
                 try {
                     const response = await fetch(`/api/protected/mentor/${chatId}`);
@@ -136,7 +135,7 @@ export default function useMentorStream() {
                     if (!data.messages || !Array.isArray(data.messages)) {
                         throw new Error('Invalid response format');
                     }
-                    
+
                     // Ensure messages have the correct type and stable IDs
                     const messagesWithIds = data.messages.map((msg: any, index: number) => {
                         // Provide defaults for missing fields
@@ -151,7 +150,7 @@ export default function useMentorStream() {
                             content: content
                         } as ChatMessage;
                     });
-                    
+
                     setMessages(messagesWithIds);
                 } catch (error) {
                     console.error('Error fetching messages:', error);
