@@ -19,8 +19,8 @@ export default function useMentorStream() {
             if (!message.trim()) return;
 
             const randomStr = Math.random().toString(36).substring(2, 8);
-            const messageId = chatId 
-                ? `msg-${chatId}-${Date.now()}-${randomStr}` 
+            const messageId = chatId
+                ? `msg-${chatId}-${Date.now()}-${randomStr}`
                 : `temp-${Date.now()}-${randomStr}`;
             const userMessage: ChatMessage = {
                 id: messageId,
@@ -54,10 +54,12 @@ export default function useMentorStream() {
                     throw new Error('No response body');
                 }
 
-                const assistantRandomStr = Math.random().toString(36).substring(2, 8);
+                const assistantRandomStr = Math.random()
+                    .toString(36)
+                    .substring(2, 8);
                 const assistantMessage: ChatMessage = {
-                    id: chatId 
-                        ? `msg-${chatId}-${Date.now() + 1}-${assistantRandomStr}` 
+                    id: chatId
+                        ? `msg-${chatId}-${Date.now() + 1}-${assistantRandomStr}`
                         : `temp-${Date.now() + 1}-${assistantRandomStr}`,
                     role: 'assistant',
                     content: '',
@@ -77,23 +79,26 @@ export default function useMentorStream() {
                         const chunk = decoder.decode(value);
 
                         if (chunk.includes('__CHAT_ID__:')) {
-                            const chatIdMatch = chunk.match(/__CHAT_ID__:(\S+)/);
+                            const chatIdMatch =
+                                chunk.match(/__CHAT_ID__:(\S+)/);
                             if (!chatIdMatch || !chatIdMatch[1]) {
                                 console.error('Invalid chat ID format');
                                 return;
                             }
                             const newChatId = chatIdMatch[1].trim();
                             setChatId(newChatId);
-                            
+
                             // Update message IDs to use the new chat ID
-                            setMessages(prev => {
+                            setMessages((prev) => {
                                 const timestamp = Date.now();
                                 return prev.map((msg, index) => {
                                     if (!msg.id.startsWith('temp-')) return msg;
-                                    const randomStr = Math.random().toString(36).substring(2, 8);
+                                    const randomStr = Math.random()
+                                        .toString(36)
+                                        .substring(2, 8);
                                     return {
                                         ...msg,
-                                        id: `msg-${newChatId}-${timestamp}-${index}-${randomStr}`
+                                        id: `msg-${newChatId}-${timestamp}-${index}-${randomStr}`,
                                     };
                                 });
                             });
@@ -125,31 +130,37 @@ export default function useMentorStream() {
     );
 
     useEffect(() => {
-        console.log(chatId, streamingMessage)
+        console.log(chatId, streamingMessage);
         if (chatId && !streamingMessage) {
             const fetchMessages = async () => {
                 try {
-                    const response = await fetch(`/api/protected/mentor/${chatId}`);
+                    const response = await fetch(
+                        `/api/protected/mentor/${chatId}`,
+                    );
                     const data = await response.json();
-                    
+
                     if (!data.messages || !Array.isArray(data.messages)) {
                         throw new Error('Invalid response format');
                     }
 
                     // Ensure messages have the correct type and stable IDs
-                    const messagesWithIds = data.messages.map((msg: any, index: number) => {
-                        // Provide defaults for missing fields
-                        const messageId = msg.id || `msg-${chatId}-${index}-${Date.now()}`;
-                        const role = msg.role || 'assistant';
-                        const content = msg.content || '';
-                        
-                        return {
-                            ...msg,
-                            id: messageId,
-                            role: role,
-                            content: content
-                        } as ChatMessage;
-                    });
+                    const messagesWithIds = data.messages.map(
+                        (msg: any, index: number) => {
+                            // Provide defaults for missing fields
+                            const messageId =
+                                msg.id ||
+                                `msg-${chatId}-${index}-${Date.now()}`;
+                            const role = msg.role || 'assistant';
+                            const content = msg.content || '';
+
+                            return {
+                                ...msg,
+                                id: messageId,
+                                role: role,
+                                content: content,
+                            } as ChatMessage;
+                        },
+                    );
 
                     setMessages(messagesWithIds);
                 } catch (error) {

@@ -11,6 +11,7 @@ import { MentorChat } from '@prisma/client';
 import { RoleMessage } from '~/types/conversation';
 import { cn } from '~/lib/utils';
 import { Button } from './ui/button';
+import { AnimatePresence, motion } from 'motion/react';
 
 const chatHistoryBoxMaxCharacterLength = 55;
 const chatHistoryLimit = 10;
@@ -26,15 +27,18 @@ export default function ChatHistory({
     const [error, setError] = useState<string>();
     const [loading, setLoading] = useState<boolean>(true);
     const [initialRender, setInitialRender] = useState<boolean>(true);
-    
-    const [chatHistoryOffset, setChatHistoryOffset] = useState<number>(10);
+
+    const [chatHistoryOffset, setChatHistoryOffset] =
+        useState<number>(chatHistoryLimit);
     const [hasMoreData, setHasMoreData] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchMentorChats = async () => {
             try {
                 setLoading(true);
-                const mentorChats = await fetch(`/api/protected/mentor?limit=${chatHistoryLimit}`);
+                const mentorChats = await fetch(
+                    `/api/protected/mentor?limit=${chatHistoryLimit}`,
+                );
                 const data = await mentorChats.json();
                 setLatestChats(data.mentorChats);
             } catch (error: any) {
@@ -42,7 +46,7 @@ export default function ChatHistory({
             } finally {
                 setLoading(false);
                 setInitialRender(false);
-                setChatHistoryOffset(10)
+                setChatHistoryOffset(chatHistoryLimit);
             }
         };
         fetchMentorChats();
@@ -51,9 +55,11 @@ export default function ChatHistory({
     const fetchMoreMentorChats = async () => {
         try {
             setLoading(true);
-            const mentorChats = await fetch(`/api/protected/mentor?offset=${chatHistoryOffset}&limit=${chatHistoryLimit}`);
+            const mentorChats = await fetch(
+                `/api/protected/mentor?offset=${chatHistoryOffset}&limit=${chatHistoryLimit}`,
+            );
             const data = await mentorChats.json();
-            setLatestChats(prev => [...prev, ...(data.mentorChats ?? [])]);
+            setLatestChats((prev) => [...prev, ...(data.mentorChats ?? [])]);
             setHasMoreData(mentorChats.headers.get('X-Has-More') === 'true');
             setChatHistoryOffset(chatHistoryOffset + chatHistoryLimit);
         } catch (error: any) {
@@ -86,7 +92,6 @@ export default function ChatHistory({
                         hasMoreData={hasMoreData}
                         loadMoreDataAction={fetchMoreMentorChats}
                     />
-
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
@@ -120,19 +125,34 @@ function SkeletonOrContent({
 
     return (
         <div className='max-w-[87vw] md:max-w-[calc(100vw-375px)] flex gap-4 pb-1 text-balance overflow-x-auto scrollbar-thin scrollbar-thumb-rounded'>
-            {latestChats.length > 0 &&
-                latestChats.map((chat) => (
-                    <ChatHistoryBox
-                        key={chat.id}
-                        chatId={chat.id}
-                        messages={chat.messages as RoleMessage[]}
-                        updatedAt={chat.updatedAt}
-                        onClick={() => setChatId(chat.id)}
-                    />
-                ))}
+            <AnimatePresence initial={false}>
+                {latestChats.length > 0 &&
+                    latestChats.map((chat) => (
+                        <motion.div
+                            key={chat.id}
+                            layout
+                            initial={{ opacity: 0, x: 500 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0 }}
+                            transition={{
+                                type: 'spring',
+                                stiffness: 300,
+                                damping: 30,
+                            }}>
+                            <ChatHistoryBox
+                                chatId={chat.id}
+                                messages={chat.messages as RoleMessage[]}
+                                updatedAt={chat.updatedAt}
+                                onClick={() => setChatId(chat.id)}
+                            />
+                        </motion.div>
+                    ))}
                 {hasMoreData && (
-                    <Button onClick={loadMoreDataAction} className="my-auto">Load more chats</Button>
+                    <Button onClick={loadMoreDataAction} className='my-auto'>
+                        Load more chats
+                    </Button>
                 )}
+            </AnimatePresence>
         </div>
     );
 }
@@ -150,14 +170,14 @@ function ChatHistoryBox({
 }) {
     const firstMessage = messages[0]?.content || 'No messages in chat';
     return (
-        <div 
-            className={cn('w-52 h-24 flex flex-col px-4 py-2 shrink-0 justify-between',
+        <div
+            className={cn(
+                'w-52 h-24 flex flex-col px-4 py-2 shrink-0 justify-between',
                 'border shadow-inner rounded-md',
                 'cursor-pointer hover:bg-accent hover:text-accent-foreground active:scale-[.98] transition-all',
             )}
             onClick={onClick}
-            aria-label={`Select chat ${chatId}`}
-        >
+            aria-label={`Select chat ${chatId}`}>
             <p className='tracking-tight'>
                 {firstMessage.length > chatHistoryBoxMaxCharacterLength
                     ? firstMessage.substring(

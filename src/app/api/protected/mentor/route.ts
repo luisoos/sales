@@ -68,11 +68,14 @@ export async function GET(request: NextRequest, response: NextResponse) {
 
         return NextResponse.json(
             { mentorChats },
-            { 
-                headers: { 
-                    'X-Has-More': ((Number(offset) + Number(limit)) < totalCount).toString()
-                } 
-            }
+            {
+                headers: {
+                    'X-Has-More': (
+                        Number(offset) + Number(limit) <
+                        totalCount
+                    ).toString(),
+                },
+            },
         );
     } catch (error) {
         console.error('API Error:', error);
