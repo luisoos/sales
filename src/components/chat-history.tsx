@@ -10,6 +10,7 @@ import FormattedDate from './formatted-date';
 import { MentorChat } from '@prisma/client';
 import { RoleMessage } from '~/types/conversation';
 import { cn } from '~/lib/utils';
+import { Button } from './ui/button';
 
 const chatHistoryBoxMaxCharacterLength = 55;
 const chatHistoryLimit = 10;
@@ -21,19 +22,19 @@ export default function ChatHistory({
     chatId: string | undefined;
     setChatId: (id: string) => void;
 }) {
-    const [latestChats, setLatestChats] = useState<MentorChat[]>();
+    const [latestChats, setLatestChats] = useState<MentorChat[]>([]);
     const [error, setError] = useState<string>();
     const [loading, setLoading] = useState<boolean>(true);
     const [initialRender, setInitialRender] = useState<boolean>(true);
     
-    const [chatHistoryOffset, setChatHistoryOffset] = useState<number>(0);
+    const [chatHistoryOffset, setChatHistoryOffset] = useState<number>(10);
     const [hasMoreData, setHasMoreData] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchMentorChats = async () => {
             try {
                 setLoading(true);
-                const mentorChats = await fetch('/api/protected/mentor');
+                const mentorChats = await fetch(`/api/protected/mentor?limit=${chatHistoryLimit}`);
                 const data = await mentorChats.json();
                 setLatestChats(data.mentorChats);
             } catch (error: any) {
@@ -41,10 +42,26 @@ export default function ChatHistory({
             } finally {
                 setLoading(false);
                 setInitialRender(false);
+                setChatHistoryOffset(10)
             }
         };
         fetchMentorChats();
     }, [chatId]);
+
+    const fetchMoreMentorChats = async () => {
+        try {
+            setLoading(true);
+            const mentorChats = await fetch(`/api/protected/mentor?offset=${chatHistoryOffset}&limit=${chatHistoryLimit}`);
+            const data = await mentorChats.json();
+            setLatestChats(prev => [...prev, ...(data.mentorChats ?? [])]);
+            setHasMoreData(mentorChats.headers.get('X-Has-More') === 'true');
+            setChatHistoryOffset(chatHistoryOffset + chatHistoryLimit);
+        } catch (error: any) {
+            setError('Failed to fetch conversations.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     if (error || (latestChats && latestChats.length < 1)) {
         return <></>;
@@ -66,7 +83,10 @@ export default function ChatHistory({
                         initialRender={initialRender}
                         latestChats={latestChats}
                         setChatId={setChatId}
+                        hasMoreData={hasMoreData}
+                        loadMoreDataAction={fetchMoreMentorChats}
                     />
+
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
@@ -78,11 +98,15 @@ function SkeletonOrContent({
     initialRender,
     latestChats,
     setChatId,
+    hasMoreData,
+    loadMoreDataAction,
 }: {
     loading: boolean;
     initialRender: boolean;
     latestChats: MentorChat[] | undefined;
     setChatId: (id: string) => void;
+    hasMoreData: boolean;
+    loadMoreDataAction: () => void;
 }) {
     if ((loading && initialRender) || !latestChats) {
         return (
@@ -106,6 +130,9 @@ function SkeletonOrContent({
                         onClick={() => setChatId(chat.id)}
                     />
                 ))}
+                {hasMoreData && (
+                    <Button onClick={loadMoreDataAction} className="my-auto">Load more chats</Button>
+                )}
         </div>
     );
 }
