@@ -53,6 +53,7 @@
         "react-aria-components": "^1.11.0",
         "react-dom": "^18.3.1",
         "react-rnd": "^10.5.2",
+        "react-use-draggable-scroll": "^0.4.7",
         "socket.io": "^4.8.1",
         "socket.io-client": "^4.8.1",
         "sonner": "^1.7.4",

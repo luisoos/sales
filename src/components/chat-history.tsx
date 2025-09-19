@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Skeleton } from './ui/skeleton';
 import {
     Accordion,
@@ -12,6 +12,7 @@ import { RoleMessage } from '~/types/conversation';
 import { cn } from '~/lib/utils';
 import { Button } from './ui/button';
 import { AnimatePresence, motion } from 'motion/react';
+import { useDraggable } from 'react-use-draggable-scroll';
 
 const chatHistoryBoxMaxCharacterLength = 55;
 const chatHistoryLimit = 10;
@@ -40,7 +41,14 @@ export default function ChatHistory({
                     `/api/protected/mentor?limit=${chatHistoryLimit}`,
                 );
                 const data = await mentorChats.json();
-                setLatestChats(data.mentorChats);
+                // Type and sanitize incoming data
+                const incoming = (data.mentorChats ?? []) as MentorChat[];
+                const sanitized = incoming.filter(
+                    (c): c is MentorChat => typeof (c as any)?.id === 'string' && (c as any).id.length > 0,
+                );
+                // Deduplicate by id in case the API returns overlapping items
+                const unique = Array.from(new Map(sanitized.map((c) => [c.id, c] as const)).values());
+                setLatestChats(unique);
             } catch (error: any) {
                 setError('Failed to fetch conversations.');
             } finally {
@@ -59,7 +67,18 @@ export default function ChatHistory({
                 `/api/protected/mentor?offset=${chatHistoryOffset}&limit=${chatHistoryLimit}`,
             );
             const data = await mentorChats.json();
-            setLatestChats((prev) => [...prev, ...(data.mentorChats ?? [])]);
+            const incoming = (data.mentorChats ?? []) as MentorChat[];
+            const sanitized = incoming.filter(
+                (c): c is MentorChat => typeof (c as any)?.id === 'string' && (c as any).id.length > 0,
+            );
+            // Merge while ensuring uniqueness by id
+            setLatestChats((prev) => {
+                const map = new Map(prev.map((c) => [c.id, c] as const));
+                for (const c of sanitized) {
+                    if (!map.has(c.id)) map.set(c.id, c);
+                }
+                return Array.from(map.values());
+            });
             setHasMoreData(mentorChats.headers.get('X-Has-More') === 'true');
             setChatHistoryOffset(chatHistoryOffset + chatHistoryLimit);
         } catch (error: any) {
@@ -69,7 +88,7 @@ export default function ChatHistory({
         }
     };
 
-    if (error || (latestChats && latestChats.length < 1)) {
+    if (error) {
         return <></>;
     }
 
@@ -113,20 +132,35 @@ function SkeletonOrContent({
     hasMoreData: boolean;
     loadMoreDataAction: () => void;
 }) {
-    if ((loading && initialRender) || !latestChats) {
-        return (
-            <div className='flex gap-4'>
-                <Skeleton className='w-52 h-24 border rounded-md' />
-                <Skeleton className='w-52 h-24 border rounded-md' />
-                <Skeleton className='w-52 h-24 border rounded-md' />
-            </div>
-        );
-    }
+    const ref = useRef<HTMLDivElement>(
+        null,
+    ) as React.MutableRefObject<HTMLInputElement>;
+    const { events } = useDraggable(ref);
 
     return (
-        <div className='max-w-[87vw] md:max-w-[calc(100vw-375px)] flex gap-4 pb-1 text-balance overflow-x-auto scrollbar-thin scrollbar-thumb-rounded'>
+        <div
+            ref={ref}
+            {...events}
+            onWheel={(e) => {
+                e.preventDefault();
+                e.currentTarget.scrollLeft += e.deltaY;
+            }}
+            className='max-w-[87vw] md:max-w-[calc(100vw-375px)] flex gap-4 pb-1 text-balance overflow-x-auto overscroll-contain scrollbar-thin scrollbar-thumb-rounded'>
             <AnimatePresence initial={false}>
-                {latestChats.length > 0 &&
+                {((loading && initialRender) || !latestChats) ? (
+                    <motion.div key='skeletons' className='flex gap-4'>
+                        <Skeleton
+                            className='w-52 h-24 border rounded-md'
+                        />
+                        <Skeleton
+                            className='w-52 h-24 border rounded-md'
+                        />
+                        <Skeleton
+                            className='w-52 h-24 border rounded-md'
+                        />
+                    </motion.div>
+                ) : (
+                    latestChats.length > 0 &&
                     latestChats.map((chat) => (
                         <motion.div
                             key={chat.id}
@@ -146,13 +180,14 @@ function SkeletonOrContent({
                                 onClick={() => setChatId(chat.id)}
                             />
                         </motion.div>
-                    ))}
-                {hasMoreData && (
-                    <Button onClick={loadMoreDataAction} className='my-auto'>
-                        Load more chats
-                    </Button>
+                    ))
                 )}
             </AnimatePresence>
+            {hasMoreData && (
+                <Button onClick={loadMoreDataAction} className='my-auto'>
+                    Load more chats
+                </Button>
+            )}
         </div>
     );
 }
