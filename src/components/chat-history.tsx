@@ -13,6 +13,23 @@ import { cn } from '~/lib/utils';
 import { Button } from './ui/button';
 import { AnimatePresence, motion } from 'motion/react';
 import { useDraggable } from 'react-use-draggable-scroll';
+import {
+    ContextMenu,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuTrigger,
+} from './ui/context-menu';
+import { ExternalLink, Loader2, Trash } from 'lucide-react';
+import {
+    AlertDialog,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from './ui/alert-dialog';
+import { toast } from 'sonner';
 
 const chatHistoryBoxMaxCharacterLength = 55;
 const chatHistoryLimit = 10;
@@ -32,6 +49,7 @@ export default function ChatHistory({
     const [chatHistoryOffset, setChatHistoryOffset] =
         useState<number>(chatHistoryLimit);
     const [hasMoreData, setHasMoreData] = useState<boolean>(true);
+    const [ reloading, setReload ] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchMentorChats = async () => {
@@ -44,10 +62,14 @@ export default function ChatHistory({
                 // Type and sanitize incoming data
                 const incoming = (data.mentorChats ?? []) as MentorChat[];
                 const sanitized = incoming.filter(
-                    (c): c is MentorChat => typeof (c as any)?.id === 'string' && (c as any).id.length > 0,
+                    (c): c is MentorChat =>
+                        typeof (c as any)?.id === 'string' &&
+                        (c as any).id.length > 0,
                 );
                 // Deduplicate by id in case the API returns overlapping items
-                const unique = Array.from(new Map(sanitized.map((c) => [c.id, c] as const)).values());
+                const unique = Array.from(
+                    new Map(sanitized.map((c) => [c.id, c] as const)).values(),
+                );
                 setLatestChats(unique);
             } catch (error: any) {
                 setError('Failed to fetch conversations.');
@@ -55,10 +77,11 @@ export default function ChatHistory({
                 setLoading(false);
                 setInitialRender(false);
                 setChatHistoryOffset(chatHistoryLimit);
+                setReload(false);
             }
         };
         fetchMentorChats();
-    }, [chatId]);
+    }, [chatId, reloading]);
 
     const fetchMoreMentorChats = async () => {
         try {
@@ -69,7 +92,9 @@ export default function ChatHistory({
             const data = await mentorChats.json();
             const incoming = (data.mentorChats ?? []) as MentorChat[];
             const sanitized = incoming.filter(
-                (c): c is MentorChat => typeof (c as any)?.id === 'string' && (c as any).id.length > 0,
+                (c): c is MentorChat =>
+                    typeof (c as any)?.id === 'string' &&
+                    (c as any).id.length > 0,
             );
             // Merge while ensuring uniqueness by id
             setLatestChats((prev) => {
@@ -102,7 +127,7 @@ export default function ChatHistory({
                 <AccordionTrigger className='data-[state=closed]:text-zinc-500 data-[state=open]:text-zinc-800 pt-1 hover:no-underline hover:text-zinc-700 transition-all duration-100'>
                     Latest Chats
                 </AccordionTrigger>
-                <AccordionContent className=''>
+                <AccordionContent>
                     <SkeletonOrContent
                         loading={loading}
                         initialRender={initialRender}
@@ -110,6 +135,7 @@ export default function ChatHistory({
                         setChatId={setChatId}
                         hasMoreData={hasMoreData}
                         loadMoreDataAction={fetchMoreMentorChats}
+                        initiateReload={setReload}
                     />
                 </AccordionContent>
             </AccordionItem>
@@ -124,6 +150,7 @@ function SkeletonOrContent({
     setChatId,
     hasMoreData,
     loadMoreDataAction,
+    initiateReload,
 }: {
     loading: boolean;
     initialRender: boolean;
@@ -131,6 +158,7 @@ function SkeletonOrContent({
     setChatId: (id: string) => void;
     hasMoreData: boolean;
     loadMoreDataAction: () => void;
+    initiateReload: (reload: boolean) => void;
 }) {
     const ref = useRef<HTMLDivElement>(
         null,
@@ -145,19 +173,13 @@ function SkeletonOrContent({
                 e.preventDefault();
                 e.currentTarget.scrollLeft += e.deltaY;
             }}
-            className='max-w-[87vw] md:max-w-[calc(100vw-375px)] flex gap-4 pb-1 text-balance overflow-x-auto overscroll-contain scrollbar-thin scrollbar-thumb-rounded'>
+            className='max-w-[87vw] md:max-w-[calc(100vw-375px)] flex gap-4 pb-1 px-2 text-balance overflow-x-auto overscroll-contain scrollbar-thin scrollbar-thumb-rounded'>
             <AnimatePresence initial={false}>
-                {((loading && initialRender) || !latestChats) ? (
+                {(loading && initialRender) || !latestChats ? (
                     <motion.div key='skeletons' className='flex gap-4'>
-                        <Skeleton
-                            className='w-52 h-24 border rounded-md'
-                        />
-                        <Skeleton
-                            className='w-52 h-24 border rounded-md'
-                        />
-                        <Skeleton
-                            className='w-52 h-24 border rounded-md'
-                        />
+                        <Skeleton className='w-52 h-24 border rounded-md' />
+                        <Skeleton className='w-52 h-24 border rounded-md' />
+                        <Skeleton className='w-52 h-24 border rounded-md' />
                     </motion.div>
                 ) : (
                     latestChats.length > 0 &&
@@ -178,12 +200,13 @@ function SkeletonOrContent({
                                 messages={chat.messages as RoleMessage[]}
                                 updatedAt={chat.updatedAt}
                                 onClick={() => setChatId(chat.id)}
+                                initiateReload={initiateReload}
                             />
                         </motion.div>
                     ))
                 )}
             </AnimatePresence>
-            {hasMoreData && (
+            {!loading && hasMoreData && (
                 <Button onClick={loadMoreDataAction} className='my-auto'>
                     Load more chats
                 </Button>
@@ -197,33 +220,122 @@ function ChatHistoryBox({
     updatedAt,
     chatId,
     onClick,
+    initiateReload,
 }: {
     messages: RoleMessage[];
     updatedAt: Date | string;
     chatId: string;
     onClick: () => void;
+    initiateReload: (reload: boolean) => void;
 }) {
+    const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false);
     const firstMessage = messages[0]?.content || 'No messages in chat';
+
     return (
-        <div
-            className={cn(
-                'w-52 h-24 flex flex-col px-4 py-2 shrink-0 justify-between',
-                'border shadow-inner rounded-md',
-                'cursor-pointer hover:bg-accent hover:text-accent-foreground active:scale-[.98] transition-all',
-            )}
-            onClick={onClick}
-            aria-label={`Select chat ${chatId}`}>
-            <p className='tracking-tight'>
-                {firstMessage.length > chatHistoryBoxMaxCharacterLength
-                    ? firstMessage.substring(
-                          0,
-                          chatHistoryBoxMaxCharacterLength,
-                      ) + '...'
-                    : firstMessage}
-            </p>
-            <span className='text-zinc-500 font-mono text-xs'>
-                <FormattedDate pDate={updatedAt} />
-            </span>
-        </div>
+        <>
+            <ContextMenu modal={false}>
+                <ContextMenuTrigger
+                    className={cn(
+                        'w-52 h-24 flex flex-col px-4 py-2 shrink-0 justify-between',
+                        'border shadow-inner rounded-md',
+                        'cursor-pointer hover:bg-accent hover:text-accent-foreground active:scale-[.98] transition-all',
+                    )}
+                    onClick={onClick}
+                    aria-label={`Select chat ${chatId}`}>
+                    <p className='tracking-tight'>
+                        {firstMessage.length > chatHistoryBoxMaxCharacterLength
+                            ? firstMessage.substring(
+                                  0,
+                                  chatHistoryBoxMaxCharacterLength,
+                              ) + '...'
+                            : firstMessage}
+                    </p>
+                    <span className='text-zinc-500 font-mono text-xs'>
+                        <FormattedDate pDate={updatedAt} />
+                    </span>
+                </ContextMenuTrigger>
+                <ContextMenuContent>
+                    <ContextMenuItem onClick={onClick}>
+                        <ExternalLink className='text-zinc-800' /> Open Chat
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                        variant='destructive'
+                        className='cursor-pointer'
+                        onSelect={(event) => {
+                            event.preventDefault(); // Verhindert das Schließen des Context Menus
+                            setShowDeleteAlert(true);
+                        }}>
+                        <Trash
+                            strokeWidth={2.25}
+                            className='text-destructive'
+                        />
+                        Delete Chat
+                    </ContextMenuItem>
+                </ContextMenuContent>
+            </ContextMenu>
+            <DeleteChatAlertDialog
+                chatId={chatId}
+                showDeleteAlert={showDeleteAlert}
+                setShowDeleteAlert={setShowDeleteAlert}
+                initiateReload={initiateReload}
+            />
+        </>
+    );
+}
+
+function DeleteChatAlertDialog({
+    chatId,
+    showDeleteAlert,
+    setShowDeleteAlert,
+    initiateReload,
+}: {
+    chatId: string;
+    showDeleteAlert: boolean;
+    setShowDeleteAlert: (showAlert: boolean) => void;
+    initiateReload: (reload: boolean) => void;
+}) {
+    const [deletionLoading, setDeletionLoading] = useState<boolean>(false);
+
+    const deleteChat = async () => {
+        try {
+            setDeletionLoading(true);
+            const response = await fetch(`/api/protected/mentor/${chatId}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) {
+                throw new Error('Delete failed');
+            }
+            setShowDeleteAlert(false);
+            initiateReload(true);
+        } catch (error: any) {
+            toast.error('Failed to delete the selected chat.');
+        } finally {
+            setDeletionLoading(false);
+        }
+    };
+    return (
+        <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete this and remove associated data from our
+                            servers.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <Button onClick={deleteChat} disabled={deletionLoading}>
+                            {deletionLoading && (
+                                <Loader2 className='h-3 w-3 animate-spin' />
+                            )}
+                            Continue
+                        </Button>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+        </AlertDialog>
     );
 }

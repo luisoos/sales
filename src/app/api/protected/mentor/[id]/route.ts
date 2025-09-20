@@ -39,3 +39,44 @@ export async function GET(
         );
     }
 }
+
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: Promise<{ id: string }> },
+) {
+    try {
+        const supabase = await createClient();
+        const {
+            data: { user },
+            error,
+        } = await supabase.auth.getUser();
+
+        if (error || !user) {
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 401 },
+            );
+        }
+
+        const { id } = await params;
+        const chat = await db.mentorChat.delete({
+            where: { userId: user.id, id: id },
+        });
+
+        return NextResponse.json(
+            { message: 'Successfully deleted chat.' },
+            { status: 200 },
+        );
+    } catch (error) {
+        console.error('API Error:', error);
+        return new NextResponse(
+            JSON.stringify({
+                error: 'Internal Error',
+            }),
+            {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' },
+            },
+        );
+    }
+}
