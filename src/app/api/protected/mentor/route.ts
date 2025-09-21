@@ -5,6 +5,7 @@ import z from 'zod';
 import { db } from '~/server/db';
 import { getAllConversations } from '~/server/services/conversation';
 import { updateOrCreateMentorChat } from '~/server/services/mentor-chat';
+import { RateLimiter } from '~/server/services/rate-limit';
 import getMentorPrompt from '~/utils/prompts/mentor-prompt';
 import { createClient } from '~/utils/supabase/server';
 
@@ -21,6 +22,12 @@ const messageSchema = z.object({
     mentorChatId: z.string().optional(),
     messageHistory: z.array(MessageSchema).default([]),
     message: z.string(),
+});
+
+const limiter = new RateLimiter({
+    minute: { max: 5, window: 60 * 1000 },
+    hour: { max: 60, window: 60 * 60 * 1000 },
+    day: { max: 120, window: 24 * 60 * 60 * 1000 },
 });
 
 export async function GET(request: NextRequest, response: NextResponse) {
@@ -113,6 +120,19 @@ export async function POST(request: NextRequest, response: NextResponse) {
             return NextResponse.json(
                 { error: 'Invalid request data' },
                 { status: 400 },
+            );
+        }
+
+        // IP Rate Limit Check
+        const ip = request.headers.get('x-forwarded-for') ?? 'unknown';
+        const rateLimiterCheck = limiter.checkIp(ip);
+        console.log(rateLimiterCheck)
+        if (rateLimiterCheck.limited) {
+            return NextResponse.json(
+                {
+                    error: `Too many requests (${rateLimiterCheck.limit[1].max} per ${rateLimiterCheck.limit[0]} limit)`,
+                },
+                { status: 429 },
             );
         }
 

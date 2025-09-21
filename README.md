@@ -16,7 +16,7 @@
         - [x] Use API pagination
     - [x] 🐛 Unexpected AI API Stream end (frontend) 
     - [ ] Rate limit AI calls
-    - [ ] Ability to delete past chats (context menu or button)
+    - [x] Ability to delete past chats (context menu or button)
 - [ ] `/log-in`: If already authenticated, redirect to `/dashboard`
 - [ ] Streak
 - [ ] Conversation Log Caching

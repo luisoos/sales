@@ -49,7 +49,7 @@ export default function ChatHistory({
     const [chatHistoryOffset, setChatHistoryOffset] =
         useState<number>(chatHistoryLimit);
     const [hasMoreData, setHasMoreData] = useState<boolean>(true);
-    const [ reloading, setReload ] = useState<boolean>(false);
+    const [reloading, setReload] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchMentorChats = async () => {
@@ -315,27 +315,26 @@ function DeleteChatAlertDialog({
     };
     return (
         <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>
-                            Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            delete this and remove associated data from our
-                            servers.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <Button onClick={deleteChat} disabled={deletionLoading}>
-                            {deletionLoading && (
-                                <Loader2 className='h-3 w-3 animate-spin' />
-                            )}
-                            Continue
-                        </Button>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>
+                        Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete this and remove associated data from our servers.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <Button onClick={deleteChat} disabled={deletionLoading}>
+                        {deletionLoading && (
+                            <Loader2 className='h-3 w-3 animate-spin' />
+                        )}
+                        Continue
+                    </Button>
+                </AlertDialogFooter>
+            </AlertDialogContent>
         </AlertDialog>
     );
 }
