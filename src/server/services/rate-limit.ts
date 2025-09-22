@@ -23,15 +23,20 @@ export class RateLimiter {
                     count: 1,
                     expires: now + timeWindow,
                 };
+                dataStorageEntry[limit[0]] = record; // zurück in den Container
+                this.dataStorage.set(ip, dataStorageEntry);
                 continue;
             }
 
             record.count++;
 
-            if (record.count > maxRequestsAllowed)
+            if (record.count > maxRequestsAllowed) {
+                this.dataStorage.set(ip, dataStorageEntry);
                 return { limited: true, limit };
+            }
         }
 
+        this.dataStorage.set(ip, dataStorageEntry);
         return { limited: false };
     }
 }

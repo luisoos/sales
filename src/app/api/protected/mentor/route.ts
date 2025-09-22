@@ -126,11 +126,10 @@ export async function POST(request: NextRequest, response: NextResponse) {
         // IP Rate Limit Check
         const ip = request.headers.get('x-forwarded-for') ?? 'unknown';
         const rateLimiterCheck = limiter.checkIp(ip);
-        console.log(rateLimiterCheck)
         if (rateLimiterCheck.limited) {
             return NextResponse.json(
                 {
-                    error: `Too many requests (${rateLimiterCheck.limit[1].max} per ${rateLimiterCheck.limit[0]} limit)`,
+                    error: `Too many requests (${rateLimiterCheck.limit[1].max} messages per ${rateLimiterCheck.limit[0]})`,
                 },
                 { status: 429 },
             );

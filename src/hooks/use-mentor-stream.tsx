@@ -49,7 +49,7 @@ export default function useMentorStream() {
                 if (!response.ok) {
                     if (response.status === 429) {
                         const data = await response.json();
-                        return toast.error(data.error)
+                        return toast.error(data.error);
                     }
                     throw new Error('Failed to send message');
                 }
