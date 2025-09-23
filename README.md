@@ -15,9 +15,9 @@
     - [x] Build "Past Chats" Front- & Backend
         - [x] Use API pagination
     - [x] 🐛 Unexpected AI API Stream end (frontend) 
-    - [ ] Rate limit AI calls
+    - [x] Rate limit AI calls
     - [x] Ability to delete past chats (context menu or button)
-- [ ] `/log-in`: If already authenticated, redirect to `/dashboard`
+- [x] `/log-in`: If already authenticated, redirect to `/dashboard`
 - [ ] Streak
 - [ ] Conversation Log Caching
 - [ ] Clean up `call.tsx` component for better readability -> use hook
