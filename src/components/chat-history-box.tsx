@@ -70,7 +70,7 @@ export function ChatHistoryBox({
                         variant='destructive'
                         className='cursor-pointer'
                         onSelect={(event) => {
-                            event.preventDefault(); // Verhindert das Schließen des Context Menus
+                            event.preventDefault();
                             setShowDeleteAlert(true);
                         }}>
                         <Trash

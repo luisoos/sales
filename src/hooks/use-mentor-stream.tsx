@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
+import { trimUnfinishedSentence } from '~/lib/utils';
 import { Message } from '~/types/mentor';
 
 interface ChatMessage extends Message {
@@ -121,6 +122,17 @@ export default function useMentorStream() {
                         }
                     }
                 }
+                // If there is a unfinished sentence, cut it off
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg.id === assistantMessage.id
+                            ? {
+                                  ...msg,
+                                  content: trimUnfinishedSentence(msg.content),
+                              }
+                            : msg,
+                    )
+                );
             } catch (err) {
                 console.error('Error sending message:', err);
                 setError(
@@ -135,7 +147,6 @@ export default function useMentorStream() {
     );
 
     useEffect(() => {
-        console.log(chatId, streamingMessage);
         if (chatId && !streamingMessage) {
             const fetchMessages = async () => {
                 try {
