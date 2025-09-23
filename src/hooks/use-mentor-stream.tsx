@@ -122,17 +122,6 @@ export default function useMentorStream() {
                         }
                     }
                 }
-                // If there is a unfinished sentence, cut it off
-                setMessages((prev) =>
-                    prev.map((msg) =>
-                        msg.id === assistantMessage.id
-                            ? {
-                                  ...msg,
-                                  content: trimUnfinishedSentence(msg.content),
-                              }
-                            : msg,
-                    )
-                );
             } catch (err) {
                 console.error('Error sending message:', err);
                 setError(
@@ -141,6 +130,14 @@ export default function useMentorStream() {
             } finally {
                 setIsLoading(false);
                 setStreamingMessage(false);
+                // Check all messages for unfinished sentences (if the tokens were exceeded) and remove that
+                setMessages(messages
+                    .filter(message => message.role === 'assistant')
+                    .map(message => ({
+                        ...message,
+                        content: trimUnfinishedSentence(message.content),
+                    }))
+                )
             }
         },
         [messages],
@@ -177,8 +174,15 @@ export default function useMentorStream() {
                             } as ChatMessage;
                         },
                     );
-
-                    setMessages(messagesWithIds);
+                    
+                    // Set fetched messages but do not display unfinished sentences (see above)
+                    setMessages((messagesWithIds as ChatMessage[])
+                        .filter(message => message.role === 'assistant')
+                        .map(message => ({
+                            ...message,
+                            content: trimUnfinishedSentence(message.content),
+                        }))
+                    )
                 } catch (error) {
                     console.error('Error fetching messages:', error);
                 }
@@ -192,7 +196,6 @@ export default function useMentorStream() {
         setError(null);
         setChatId(undefined);
     }, []);
-
     return {
         messages,
         isLoading,

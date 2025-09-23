@@ -1,6 +1,5 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { sentences } from 'sbd';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -17,7 +16,12 @@ export function standardiseWord(str: string): string {
 }
 
 export function trimUnfinishedSentence(text: string): string {
-    const finishedSentences = sentences(text);
-    console.log(finishedSentences.join(' ').trim());
+    const finishedSentences: string[] = text.split(/([.!?;:])/);
+    if (finishedSentences.length === 0) 
+        return '';
+    const lastSentence: string = finishedSentences[finishedSentences.length - 1]!;
+    if (!/([.!?;:])/.test(lastSentence)) {
+        finishedSentences.pop();
+    }
     return finishedSentences.join(' ').trim();
 }

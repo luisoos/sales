@@ -150,7 +150,7 @@ export async function POST(request: NextRequest, response: NextResponse) {
             ],
             model: 'openai/gpt-oss-20b',
             stream: true,
-            max_tokens: 2048,
+            max_tokens: 3072,
             temperature: 0.7,
         });
 
