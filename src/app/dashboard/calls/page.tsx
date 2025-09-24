@@ -27,7 +27,7 @@ export default function Page() {
 
     return (
         <div className='w-11/12 mx-auto'>
-            <TableCard.Root className='w-full mt-2'>
+            <TableCard.Root className='w-full my-2'>
                 <TableCard.Header
                     title='All Lections'
                     badge={

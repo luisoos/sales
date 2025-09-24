@@ -1,4 +1,4 @@
-import { Character, Lesson } from '~/types/lessons';
+import { Character, Lesson, Product } from '~/types/lessons';
 
 export const characters: Character[] = [
     {
@@ -63,74 +63,760 @@ export const characters: Character[] = [
     } as Character,
 ];
 
+export const products: Product[] = [
+    { id: 1, title: 'QuantumLeap CRM', description: 'An AI-powered CRM that predicts customer churn and identifies upselling opportunities.', category: 'B2B SaaS' },
+    { id: 2, title: 'InnovateOS', description: 'An operating system for internal innovation programs, helping companies source and manage employee ideas.', category: 'Enterprise Software' },
+    { id: 3, title: 'CyberGuard Pro', description: 'A comprehensive cybersecurity suite for small and medium businesses (SMBs).', category: 'Cybersecurity' },
+    { id: 4, title: 'GreenShift Logistics', description: 'A platform for optimizing supply chains to reduce carbon footprint and transportation costs.', category: 'Supply Chain' },
+    { id: 5, title: 'TalentSphere', description: 'An AI-driven platform for internal mobility and employee skill-mapping.', category: 'HR Tech' },
+    { id: 6, title: 'ConnectaCare', description: 'A telehealth platform for specialized medical consultations.', category: 'HealthTech' },
+    { id: 7, title: 'ConstructWise', description: 'Project management software for large-scale construction projects, with a focus on safety and compliance.', category: 'Construction Tech' },
+    { id: 8, title: 'Retailytics', description: 'An analytics platform that uses in-store sensor data to optimize layout and product placement.', category: 'Retail Tech' },
+    { id: 9, title: 'Eduvolve', description: 'A personalized learning platform for corporate training and development.', category: 'EdTech' },
+    { id: 10, title: 'AgriMax', description: 'A farm management software using drone and satellite imagery for crop monitoring.', category: 'AgriTech' },
+    { id: 11, title: 'FinOptic', description: 'An AI tool for financial advisors to optimize client portfolios.', category: 'FinTech' },
+    { id: 12, title: 'EventHorizon', description: 'A virtual and hybrid event platform with advanced networking features.', category: 'Event Management' },
+    { id: 13, title: 'AutoFlow', description: 'Robotic Process Automation (RPA) for manufacturing assembly lines.', category: 'Manufacturing Tech' },
+    { id: 14, title: 'LegalEase', description: 'AI-powered contract review and analysis software for legal teams.', category: 'LegalTech' },
+    { id: 15, title: 'MediaMogul', description: 'A platform for managing and distributing marketing content across all channels, with AI-powered performance prediction.', category: 'MarTech' },
+];
+
 export const lessons: Lesson[] = [
+    // Product 1: QuantumLeap CRM
     {
         id: 1,
-        slug: 'beginner',
+        product: products[0]!,
         levelLabel: 'Beginner',
-        title: 'Warm lead with budget concerns (Marketing automation demo)',
-        character: characters[0]!,
-        companyDescription: 'Fifty-person software company, Q4 budget planning',
+        title: 'E-commerce Manager with High Churn',
+        character: characters[0]!, // Sarah Thompson
+        companyDescription: 'Mid-sized e-commerce company struggling with customer retention.',
         leadTemperature: 'warm',
-        summary:
-            'Sarah requested a demo after downloading a whitepaper and is interested but mentioned budget concerns. You need to qualify needs and book a technical demo.',
-        primaryPainPoints: [
-            'Manual lead scoring processes',
-            'Limited reporting that makes ROI hard to show to leadership',
-        ],
-        goal: 'Qualify specific needs and schedule a technical demonstration tailored to requirements',
+        summary: 'Sarah downloaded your ebook on customer retention and seems interested in your solution. Her main problem is high customer churn, but she has a limited budget.',
+        primaryPainPoints: ['High customer churn rate', 'Difficulty identifying at-risk customers', 'Limited budget for new tools'],
+        goal: 'Understand her specific needs and book a demo focusing on the ROI of churn prediction.',
     },
     {
         id: 2,
-        slug: 'intermediate',
+        product: products[0]!,
         levelLabel: 'Intermediate',
-        title: 'Skeptical referral with past vendor disappointment (Manufacturing ops)',
-        character: characters[1]!,
-        companyDescription: 'Five hundred-employee manufacturing company',
+        title: 'Skeptical Director at Subscription Company',
+        character: characters[1]!, // Michael Chen
+        companyDescription: 'A subscription box company with flat revenue growth.',
         leadTemperature: 'mixed',
-        summary:
-            'Michael was referred but has not replied to emails and is skeptical due to a negative ERP experience. Overcome resistance and uncover aligned business needs.',
-        primaryPainPoints: [
-            'Inventory management inefficiencies',
-            'Production scheduling challenges affecting delivery commitments',
-        ],
-        goal: 'Overcome initial resistance and identify genuine business needs that align with your solution',
+        summary: 'Michael was referred by an investor but is happy with their current "good enough" CRM. He sees no reason to switch.',
+        primaryPainPoints: ['Stagnant revenue growth', 'High manual effort to find upsell opportunities', 'Content with existing tools'],
+        goal: 'Convince him to a discovery call to show how AI can uncover hidden revenue opportunities.',
     },
     {
         id: 3,
-        slug: 'advanced',
+        product: products[0]!,
         levelLabel: 'Advanced',
-        title: 'Analytical procurement leader comparing vendors (Retail enterprise)',
-        character: characters[2]!,
-        companyDescription:
-            'Fortune 500 retail chain evaluating multiple solutions',
+        title: 'Procurement Officer at a Telecom Giant',
+        character: characters[2]!, // Jennifer Rodriguez
+        companyDescription: 'A large telecom company locked in a contract with a major competitor.',
         leadTemperature: 'cold',
-        summary:
-            'Jennifer is cost-focused, on a tight timeline, and evaluating three competitors. Differentiate and secure her commitment to proceed.',
-        primaryPainPoints: [
-            'Supply chain visibility challenges',
-            'Vendor performance management across regions and categories',
-        ],
-        goal: 'Differentiate clearly and secure commitment to move forward',
+        summary: 'Jennifer is evaluating CRM providers for the next fiscal year. Your competitor is the incumbent, but their system is expensive and inflexible.',
+        primaryPainPoints: ['High cost of the current CRM', 'Lack of flexibility and poor reporting', 'Long-term contract with a competitor'],
+        goal: 'Secure a meeting to present a TCO comparison and a business case for switching.',
     },
     {
         id: 4,
-        slug: 'expert',
+        product: products[0]!,
         levelLabel: 'Expert',
-        title: 'Hostile CFO driving cost reduction and consolidation (Global logistics)',
-        character: characters[3]!,
-        companyDescription:
-            'Global logistics enterprise under budget freeze with strict compliance',
+        title: 'CFO Mandated to Cut Costs',
+        character: characters[3]!, // David Patel
+        companyDescription: 'A recently acquired software company under orders to slash costs.',
         leadTemperature: 'hostile',
-        summary:
-            'David demands steep discounts with penalties and threatens to choose a competitor bundle. Defend value and reframe to executive business impact.',
-        primaryPainPoints: [
-            'Fragmented data systems',
-            'Rising operating costs across regions',
-            'Missed SLAs impacting satisfaction and retention',
-        ],
-        goal: 'Secure agreement for a limited executive trial with clear success criteria',
+        summary: 'David must cut costs by 30% and consolidate all software. He sees your CRM as a non-essential expense.',
+        primaryPainPoints: ['Aggressive cost-cutting mandate', 'Pressure to consolidate software stack', 'Views your product as a cost center'],
+        goal: 'Reframe the conversation from cost to revenue generation. Propose a paid pilot with guaranteed ROI.',
     },
+    // Product 2: InnovateOS
+    {
+        id: 5,
+        product: products[1]!,
+        levelLabel: 'Beginner',
+        title: 'Product Lead Seeking Fresh Ideas',
+        character: characters[4]!, // Amina Yusuf
+        companyDescription: 'A consumer electronics company looking to innovate faster.',
+        leadTemperature: 'warm',
+        summary: 'Amina is actively looking for ways to source and manage new product ideas from employees. She found your website through a Google search.',
+        primaryPainPoints: ['Good ideas get lost in email chains', 'No clear process for idea submission and evaluation', 'Struggling to engage employees in innovation'],
+        goal: 'Book a demo to showcase the idea management and gamification features of InnovateOS.',
+    },
+    {
+        id: 6,
+        product: products[1]!,
+        levelLabel: 'Intermediate',
+        title: 'IT Manager Worried About Integration',
+        character: characters[5]!, // Lucas Müller
+        companyDescription: 'A large financial services firm with a complex, legacy IT infrastructure.',
+        leadTemperature: 'mixed',
+        summary: 'Lucas was brought into the conversation by the Head of Innovation. He is concerned about the security and integration challenges of adding a new platform.',
+        primaryPainPoints: ['Security vulnerabilities of new software', 'Integration with existing legacy systems', 'Data privacy and compliance concerns'],
+        goal: 'Address his technical concerns and gain his approval for a technical deep-dive session.',
+    },
+    {
+        id: 7,
+        product: products[1]!,
+        levelLabel: 'Advanced',
+        title: 'Sales Director Focused on Quarter-End',
+        character: characters[6]!, // Priya Singh
+        companyDescription: 'A fast-growing SaaS company where the innovation team has no budget.',
+        leadTemperature: 'cold',
+        summary: 'Priya is solely focused on hitting her quarterly numbers. She doesn\'t see the value in an "innovation platform" and is blocking access to the CEO.',
+        primaryPainPoints: ['Short-term revenue focus', 'Sees innovation as a "nice-to-have"', 'Budget constraints for non-sales tools'],
+        goal: 'Connect innovation to long-term revenue growth and propose a pilot tied to developing new sales-enablement tools.',
+    },
+    {
+        id: 8,
+        product: products[1]!,
+        levelLabel: 'Expert',
+        title: 'Operations VP After a Failed Initiative',
+        character: characters[9]!, // Tom Williams
+        companyDescription: 'A manufacturing company that recently shut down a failed "innovation lab".',
+        leadTemperature: 'hostile',
+        summary: 'Tom is extremely skeptical of any innovation-related spending after a previous initiative failed, costing the company over $1M. He thinks it\'s all "fluff".',
+        primaryPainPoints: ['Previous failed innovation project', 'Distrust of innovation consultants and software', 'Belief that innovation doesn\'t deliver tangible results'],
+        goal: 'Acknowledge the past failure and differentiate your process-oriented platform from their previous "innovation theater". Secure a meeting with a C-level sponsor.',
+    },
+    // Product 3: CyberGuard Pro
+    {
+        id: 9,
+        product: products[2]!,
+        levelLabel: 'Beginner',
+        title: 'Law Firm Aware of Ransomware Risks',
+        character: characters[5]!, // Lucas Müller
+        companyDescription: 'A growing law firm handling sensitive client data.',
+        leadTemperature: 'warm',
+        summary: 'Lucas, the IT Manager, just read an article about a competitor suffering a ransomware attack. He is actively researching security solutions.',
+        primaryPainPoints: ['Fear of a data breach and reputational damage', 'Unsure about their current security posture', 'Need for a simple, all-in-one solution'],
+        goal: 'Schedule a security assessment and demo of CyberGuard Pro.',
+    },
+    {
+        id: 10,
+        product: products[2]!,
+        levelLabel: 'Intermediate',
+        title: 'Retail Owner Who Feels "Too Small to Hack"',
+        character: characters[1]!, // Michael Chen
+        companyDescription: 'A small retail chain with 5 stores.',
+        leadTemperature: 'mixed',
+        summary: 'Michael, the owner, received your cold email but believes his business is too small to be a target for cybercriminals. He\'d rather invest in marketing.',
+        primaryPainPoints: ['Belief that they are not a target', 'Limited budget and competing priorities', 'Lack of understanding of cybersecurity risks'],
+        goal: 'Educate him on the risks for SMBs and offer a free dark web scan to demonstrate his vulnerability.',
+    },
+    {
+        id: 11,
+        product: products[2]!,
+        levelLabel: 'Advanced',
+        title: 'CFO Who Sees Security as a Cost Center',
+        character: characters[3]!, // David Patel
+        companyDescription: 'A mid-sized manufacturing company.',
+        leadTemperature: 'cold',
+        summary: 'David, the CFO, is reviewing the IT budget. He sees the cybersecurity line item as a pure cost and wants to reduce it.',
+        primaryPainPoints: ['Pressure to reduce operational expenses', 'Views cybersecurity as an insurance policy, not a business enabler', 'Wants to see clear ROI on all spending'],
+        goal: 'Frame cybersecurity as a business continuity investment and present case studies on the cost of a breach vs. the cost of your solution.',
+    },
+    {
+        id: 12,
+        product: products[2]!,
+        levelLabel: 'Expert',
+        title: 'IT Head Blaming Vendors After a Breach',
+        character: characters[9]!, // Tom Williams
+        companyDescription: 'A company that just had a data breach while using a competitor\'s product.',
+        leadTemperature: 'hostile',
+        summary: 'Tom is furious. His company just suffered a data breach, and he blames his current security vendor. He is hostile to all salespeople and security products.',
+        primaryPainPoints: ['Just experienced a painful data breach', 'Lost trust in security vendors', 'Under immense pressure from the board'],
+        goal: 'Listen to his frustrations, provide value by offering a third-party analysis of the breach, and only then introduce your solution as a more reliable alternative.',
+    },
+    // Product 4: GreenShift Logistics
+    {
+        id: 13,
+        product: products[3]!,
+        levelLabel: 'Beginner',
+        title: 'Sustainability Officer with a Mandate',
+        character: characters[0]!, // Sarah Thompson
+        companyDescription: 'A large consumer packaged goods (CPG) company.',
+        leadTemperature: 'warm',
+        summary: 'Sarah has a new mandate to reduce the company\'s carbon footprint by 15% in two years. She is actively looking for solutions.',
+        primaryPainPoints: ['Pressure to meet corporate sustainability goals', 'Lack of visibility into their supply chain\'s carbon emissions', 'Difficulty balancing cost and sustainability'],
+        goal: 'Book a demo to show how GreenShift can reduce emissions while also cutting costs.',
+    },
+    {
+        id: 14,
+        product: products[3]!,
+        levelLabel: 'Intermediate',
+        title: 'Skeptical Logistics Director',
+        character: characters[1]!, // Michael Chen
+        companyDescription: 'A third-party logistics (3PL) company.',
+        leadTemperature: 'mixed',
+        summary: 'Michael is interested in the cost-saving aspects of your platform but is skeptical about the "green" marketing. He thinks it\'s just a premium feature he doesn\'t need.',
+        primaryPainPoints: ['Rising fuel and operational costs', 'Skepticism towards sustainability initiatives', 'Focus on operational efficiency above all else'],
+        goal: 'Focus the conversation on efficiency gains and cost reduction, using the carbon reduction as a secondary benefit.',
+    },
+    {
+        id: 15,
+        product: products[3]!,
+        levelLabel: 'Advanced',
+        title: 'Procurement Officer Focused on Lowest Cost',
+        character: characters[2]!, // Jennifer Rodriguez
+        companyDescription: 'A large, low-margin retail chain.',
+        leadTemperature: 'cold',
+        summary: 'Jennifer\'s only metric is cost per mile. She is in the final stages of negotiating with several low-cost carriers.',
+        primaryPainPoints: ['Extreme focus on minimizing logistics costs', 'Belief that sustainable logistics is always more expensive', 'Long-standing relationships with incumbent low-cost carriers'],
+        goal: 'Present a business case showing how your route optimization can beat the lowest-cost carriers, even with a higher per-mile rate.',
+    },
+    {
+        id: 16,
+        product: products[3]!,
+        levelLabel: 'Expert',
+        title: 'VP of Supply Chain Fearing Disruption',
+        character: characters[9]!, // Tom Williams
+        companyDescription: 'A medical device company where on-time delivery is critical.',
+        leadTemperature: 'hostile',
+        summary: 'Tom\'s bonus is tied to on-time delivery. He is extremely change-averse and believes implementing a new platform will cause massive disruptions.',
+        primaryPainPoints: ['Fear of any change to the current system', 'Bonus tied to on-time delivery metrics', 'Past negative experiences with software implementations'],
+        goal: 'De-risk the decision by proposing a small-scale, parallel pilot on a non-critical shipping lane to prove reliability and efficiency gains without disrupting core operations.',
+    },
+    // Product 5: TalentSphere
+    {
+        id: 17,
+        product: products[4]!,
+        levelLabel: 'Beginner',
+        title: 'HR Partner Tackling Employee Attrition',
+        character: characters[8]!, // Maria Garcia
+        companyDescription: 'A tech company with high employee turnover.',
+        leadTemperature: 'warm',
+        summary: 'Maria is concerned about losing top talent to competitors. She believes a lack of internal career growth is the main cause and is looking for solutions.',
+        primaryPainPoints: ['High employee attrition, especially among top performers', 'Lack of clear career paths for employees', 'Manual and time-consuming process for internal hiring'],
+        goal: 'Schedule a demo to show how TalentSphere can improve employee retention by visualizing career paths and facilitating internal mobility.',
+    },
+    {
+        id: 18,
+        product: products[4]!,
+        levelLabel: 'Intermediate',
+        title: 'Data Analyst Questioning the AI',
+        character: characters[7]!, // Ethan Brown
+        companyDescription: 'A data-driven consulting firm.',
+        leadTemperature: 'mixed',
+        summary: 'Ethan is part of the evaluation committee. He is skeptical about the "AI" in your platform and wants to understand the underlying algorithms and data models.',
+        primaryPainPoints: ['Skepticism about AI and black-box algorithms', 'Concerns about potential bias in the skill-mapping', 'Needs to see the data and validate the model'],
+        goal: 'Arrange a technical deep-dive with a product specialist to explain the AI model and address his data-related concerns.',
+    },
+    {
+        id: 19,
+        product: products[4]!,
+        levelLabel: 'Advanced',
+        title: 'CFO Focused on Hard Costs',
+        character: characters[3]!, // David Patel
+        companyDescription: 'A traditional manufacturing company.',
+        leadTemperature: 'cold',
+        summary: 'David doesn\'t see the ROI of an HR platform. He wants to know the hard cost savings, not "soft benefits" like employee engagement.',
+        primaryPainPoints: ['Focus on tangible, hard-cost savings', 'Sees HR tech as a "soft" investment', 'Difficulty connecting employee retention to the bottom line'],
+        goal: 'Build a business case focused on the hard costs of recruitment, onboarding, and lost productivity due to attrition.',
+    },
+    {
+        id: 20,
+        product: products[4]!,
+        levelLabel: 'Expert',
+        title: 'Sales Director Who Hoards Talent',
+        character: characters[6]!, // Priya Singh
+        companyDescription: 'A competitive sales organization.',
+        leadTemperature: 'hostile',
+        summary: 'Priya believes in keeping her top performers on her team at all costs. She sees your internal mobility platform as a threat that will allow other departments to "poach" her best people.',
+        primaryPainPoints: ['Fear of losing her top sales talent', 'Believes internal mobility will hurt her team\'s performance', 'Highly competitive and territorial culture'],
+        goal: 'Reframe the platform as a tool for developing her people and creating a stronger leadership pipeline within the sales organization itself.',
+    },
+    // Product 6: ConnectaCare
+    {
+        id: 21,
+        product: products[5]!,
+        levelLabel: 'Beginner',
+        title: 'Clinic Manager Seeking Efficiency',
+        character: characters[1]!, // Michael Chen
+        companyDescription: 'A busy specialty clinic with long patient wait times.',
+        leadTemperature: 'warm',
+        summary: 'Michael is looking for ways to improve patient flow and reduce wait times. He is exploring telehealth as an option for follow-up consultations.',
+        primaryPainPoints: ['Long patient wait times', 'Inefficient use of specialists\' time', 'Need to improve patient satisfaction'],
+        goal: 'Book a demo to show how ConnectaCare can streamline follow-up appointments and improve clinic efficiency.',
+    },
+    {
+        id: 22,
+        product: products[5]!,
+        levelLabel: 'Intermediate',
+        title: 'IT Manager Concerned with HIPAA',
+        character: characters[5]!, // Lucas Müller
+        companyDescription: 'A regional hospital system.',
+        leadTemperature: 'mixed',
+        summary: 'Lucas is evaluating telehealth platforms but is extremely concerned about HIPAA compliance and data security. He has a long list of technical questions.',
+        primaryPainPoints: ['Strict HIPAA compliance requirements', 'Data security and patient privacy concerns', 'Integration with their existing Electronic Health Record (EHR) system'],
+        goal: 'Provide compliance documentation and schedule a security-focused technical call.',
+    },
+    {
+        id: 23,
+        product: products[5]!,
+        levelLabel: 'Advanced',
+        title: 'CFO Questioning Reimbursement',
+        character: characters[3]!, // David Patel
+        companyDescription: 'A rural healthcare provider.',
+        leadTemperature: 'cold',
+        summary: 'David is unsure about the reimbursement landscape for telehealth visits. He won\'t approve any purchase without a clear path to profitability.',
+        primaryPainPoints: ['Uncertainty about telehealth reimbursement rates', 'Need for a clear ROI and profitability model', 'Budget constraints in a rural healthcare setting'],
+        goal: 'Provide a detailed analysis of telehealth reimbursement codes and build a customized ROI model for his clinic.',
+    },
+    {
+        id: 24,
+        product: products[5]!,
+        levelLabel: 'Expert',
+        title: 'Chief of Surgery Who Resists Change',
+        character: characters[9]!, // Tom Williams
+        companyDescription: 'A prestigious urban hospital.',
+        leadTemperature: 'hostile',
+        summary: 'The Chief of Surgery is a powerful figure who believes that "real medicine" happens in person. He sees telehealth as a low-quality, impersonal alternative and is actively blocking the initiative.',
+        primaryPainPoints: ['Belief that telehealth is inferior to in-person care', 'Resistance to changing established clinical workflows', 'Concern about losing the "human touch" in medicine'],
+        goal: 'Find a physician champion within his department to run a pilot program focused on a specific use case (e.g., post-operative follow-ups) to demonstrate value and win him over.',
+    },
+    // Product 7: ConstructWise
+    {
+        id: 25,
+        product: products[6]!,
+        levelLabel: 'Beginner',
+        title: 'Project Manager Drowning in Paperwork',
+        character: characters[1]!, // Michael Chen
+        companyDescription: 'A mid-sized construction company.',
+        leadTemperature: 'warm',
+        summary: 'Michael is managing a large project and is overwhelmed by the amount of paperwork, change orders, and communication with subcontractors.',
+        primaryPainPoints: ['Manual, paper-based processes', 'Poor communication and coordination with subcontractors', 'Project delays and cost overruns'],
+        goal: 'Schedule a demo to show how ConstructWise can digitize his workflows and centralize project communication.',
+    },
+    {
+        id: 26,
+        product: products[6]!,
+        levelLabel: 'Intermediate',
+        title: 'Skeptical Site Superintendent',
+        character: characters[9]!, // Tom Williams
+        companyDescription: 'A large general contractor.',
+        leadTemperature: 'mixed',
+        summary: 'Tom is a veteran superintendent who is used to doing things "the old way." He is resistant to adopting new technology and thinks it will just slow his crew down.',
+        primaryPainPoints: ['Resistance to new technology', 'Belief that current methods are "good enough"', 'Concern that software will create more work for his team on site'],
+        goal: 'Focus on the mobile app\'s ease of use and show him how it can save him time on daily reports and safety checklists.',
+    },
+    {
+        id: 27,
+        product: products[6]!,
+        levelLabel: 'Advanced',
+        title: 'Procurement Head Squeezing Margins',
+        character: characters[2]!, // Jennifer Rodriguez
+        companyDescription: 'A major real estate developer.',
+        leadTemperature: 'cold',
+        summary: 'Jennifer is looking for a project management solution but is bundling it with other software and pressuring all vendors for a steep discount.',
+        primaryPainPoints: ['Focus on getting the lowest possible price', 'Bundling software to increase negotiating leverage', 'Views project management software as a commodity'],
+        goal: 'Differentiate on features critical to her business (e.g., safety and compliance tracking) and hold firm on value-based pricing.',
+    },
+    {
+        id: 28,
+        product: products[6]!,
+        levelLabel: 'Expert',
+        title: 'CFO After a Lawsuit',
+        character: characters[3]!, // David Patel
+        companyDescription: 'A construction company that recently settled a major safety violation lawsuit.',
+        leadTemperature: 'hostile',
+        summary: 'David is furious about the financial and reputational damage from a recent lawsuit. He is scrutinizing all expenses and is hostile to any new spending, even if it\'s for safety.',
+        primaryPainPoints: ['Extreme cost-consciousness after a lawsuit', 'Distrust of new systems and vendors', 'Blames operational failures for the safety incident'],
+        goal: 'Shift the conversation from cost to risk mitigation. Frame the investment in ConstructWise as a critical step to prevent future lawsuits and demonstrate a commitment to safety to insurers and clients.',
+    },
+    // Product 8: Retailytics
+    {
+        id: 29,
+        product: products[7]!,
+        levelLabel: 'Beginner',
+        title: 'Marketing Manager for a Fashion Brand',
+        character: characters[0]!, // Sarah Thompson
+        companyDescription: 'A fashion retail brand with several brick-and-mortar stores.',
+        leadTemperature: 'warm',
+        summary: 'Sarah is responsible for in-store marketing and promotions. She is looking for data to justify her budget and optimize her campaigns.',
+        primaryPainPoints: ['Difficulty measuring the effectiveness of in-store marketing', 'Lack of data on customer behavior and traffic patterns', 'Need to prove the ROI of her marketing spend'],
+        goal: 'Book a demo to show how Retailytics can provide actionable insights on customer flow and campaign effectiveness.',
+    },
+    {
+        id: 30,
+        product: products[7]!,
+        levelLabel: 'Intermediate',
+        title: 'IT Manager Worried About Privacy',
+        character: characters[5]!, // Lucas Müller
+        companyDescription: 'A European supermarket chain.',
+        leadTemperature: 'mixed',
+        summary: 'Lucas is interested in the technology but has major concerns about GDPR and customer privacy. He needs to be convinced that your sensor data is anonymized and compliant.',
+        primaryPainPoints: ['Strict GDPR and data privacy regulations', 'Customer concerns about being "watched"', 'Technical questions about data anonymization'],
+        goal: 'Provide detailed documentation on your data privacy and GDPR compliance measures, and offer a call with your lead engineer.',
+    },
+    {
+        id: 31,
+        product: products[7]!,
+        levelLabel: 'Advanced',
+        title: 'Operations Director Loyal to Existing Vendor',
+        character: characters[1]!, // Michael Chen
+        companyDescription: 'A big-box electronics retailer.',
+        leadTemperature: 'cold',
+        summary: 'Michael has been using a basic traffic counting solution for years and is happy with it. He has a good relationship with the vendor and doesn\'t see a compelling reason to switch.',
+        primaryPainPoints: ['Loyalty to an incumbent vendor', 'Sees no need for more advanced analytics', 'Views switching as a hassle'],
+        goal: 'Differentiate by showing the limitations of simple traffic counting and the advanced insights (e.g., dwell time, path analysis) your platform provides. Offer a free trial for one store.',
+    },
+    {
+        id: 32,
+        product: products[7]!,
+        levelLabel: 'Expert',
+        title: 'Franchisee in Revolt',
+        character: characters[9]!, // Tom Williams
+        companyDescription: 'A fast-food chain with many franchisees.',
+        leadTemperature: 'hostile',
+        summary: 'Corporate is trying to mandate the use of Retailytics across all stores, but a powerful group of franchisees is refusing. Tom, their leader, sees it as another top-down cost with no benefit to him.',
+        primaryPainPoints: ['Franchisee resistance to corporate mandates', 'Belief that the technology is just for corporate oversight', 'Concern about the cost and complexity of implementation'],
+        goal: 'Win over the lead franchisee by demonstrating how the data can directly increase his store\'s profitability through better staffing and promotional placement.',
+    },
+    // Product 9: Eduvolve
+    {
+        id: 33,
+        product: products[8]!,
+        levelLabel: 'Beginner',
+        title: 'L&D Manager with a New Mandate',
+        character: characters[8]!, // Maria Garcia
+        companyDescription: 'A fast-growing company that needs to scale its onboarding and training.',
+        leadTemperature: 'warm',
+        summary: 'Maria has been tasked with creating a more scalable and engaging training program for new hires and existing employees. She is actively researching Learning Management Systems (LMS).',
+        primaryPainPoints: ['Inefficient, manual onboarding process', 'Low employee engagement with current training materials', 'Need to track learning progress and measure effectiveness'],
+        goal: 'Schedule a demo to highlight Eduvolve\'s personalized learning paths and gamification features.',
+    },
+    {
+        id: 34,
+        product: products[8]!,
+        levelLabel: 'Intermediate',
+        title: 'Department Head Who Wants Custom Content',
+        character: characters[6]!, // Priya Singh
+        companyDescription: 'A highly specialized engineering firm.',
+        leadTemperature: 'mixed',
+        summary: 'Priya is interested in the platform but is concerned that your off-the-shelf content won\'t be relevant for her team of specialized engineers. She wants to create her own content.',
+        primaryPainPoints: ['Need for highly specialized, custom training content', 'Concern that a generic LMS won\'t meet their needs', 'Wants an easy-to-use content authoring tool'],
+        goal: 'Focus the demo on the content authoring tools and show how easy it is to create and upload custom courses.',
+    },
+    {
+        id: 35,
+        product: products[8]!,
+        levelLabel: 'Advanced',
+        title: 'CFO Who Cut the Training Budget',
+        character: characters[3]!, // David Patel
+        companyDescription: 'A company that has recently undergone budget cuts.',
+        leadTemperature: 'cold',
+        summary: 'David just cut the Learning & Development budget by 40%. He sees training as a non-essential expense, especially during tough economic times.',
+        primaryPainPoints: ['Training budget has been drastically cut', 'Sees L&D as a cost center', 'Pressure to justify every dollar of spending'],
+        goal: 'Build a business case showing how targeted training through your platform can improve productivity and reduce costs in other areas (e.g., sales effectiveness, operational errors).',
+    },
+    {
+        id: 36,
+        product: products[8]!,
+        levelLabel: 'Expert',
+        title: 'Employees Who Hate the Old LMS',
+        character: characters[4]!, // Amina Yusuf
+        companyDescription: 'A company with a universally hated, clunky, legacy LMS.',
+        leadTemperature: 'hostile',
+        summary: 'Amina and her colleagues are cynical about any new training platform. The last one was a disaster - hard to use, irrelevant content, and mandatory. They are actively resisting any change.',
+        primaryPainPoints: ['Negative past experience with a bad LMS', 'Cynicism and resistance from employees', 'Belief that all corporate training is a waste of time'],
+        goal: 'Acknowledge their past negative experience. Run a small, voluntary pilot with a group of influential employees, focusing on a topic they care about, to create internal champions.',
+    },
+    // Product 10: AgriMax
+    {
+        id: 37,
+        product: products[9]!,
+        levelLabel: 'Beginner',
+        title: 'Tech-Savvy Farm Manager',
+        character: characters[1]!, // Michael Chen
+        companyDescription: 'A large, modern farming operation.',
+        leadTemperature: 'warm',
+        summary: 'Michael is always looking for new technologies to improve crop yields and efficiency. He saw your ad in a trade magazine and requested a demo.',
+        primaryPainPoints: ['Need to increase crop yields', 'Rising costs of fertilizer and pesticides', 'Difficulty monitoring large fields effectively'],
+        goal: 'Schedule a demo to show how drone and satellite imagery can lead to higher yields and lower input costs.',
+    },
+    {
+        id: 38,
+        product: products[9]!,
+        levelLabel: 'Intermediate',
+        title: 'Skeptical, Multi-Generational Farmer',
+        character: characters[9]!, // Tom Williams
+        companyDescription: 'A family-owned farm that has been operating for generations.',
+        leadTemperature: 'mixed',
+        summary: 'Tom is proud of his family\'s farming traditions. He is skeptical of new technology and relies on his experience and intuition.',
+        primaryPainPoints: ['Reliance on traditional farming methods', 'Skepticism towards technology and data', '"We\'ve always done it this way" mentality'],
+        goal: 'Build trust by showing him data about his own farm. Offer a free analysis of one of his fields to show him an insight he couldn\'t get on his own.',
+    },
+    {
+        id: 39,
+        product: products[9]!,
+        levelLabel: 'Advanced',
+        title: 'Procurement for a Corporate Farm',
+        character: characters[2]!, // Jennifer Rodriguez
+        companyDescription: 'A large agricultural corporation that owns many farms.',
+        leadTemperature: 'cold',
+        summary: 'Jennifer is evaluating farm management software from several vendors. She is looking for the best price and a solution that can be standardized across all their farms.',
+        primaryPainPoints: ['Need for a standardized solution across multiple farms', 'Focus on enterprise-level features and reporting', 'Price sensitivity and competitive evaluation'],
+        goal: 'Differentiate on your enterprise-level reporting and support. Provide a detailed proposal that includes a rollout and training plan for all their farms.',
+    },
+    {
+        id: 40,
+        product: products[9]!,
+        levelLabel: 'Expert',
+        title: 'Farmer with Poor Internet',
+        character: characters[5]!, // Lucas Müller
+        companyDescription: 'A farm in a remote, rural area with unreliable internet connectivity.',
+        leadTemperature: 'hostile',
+        summary: 'Lucas is interested in the technology but has tried other software that failed because of his poor internet connection. He is frustrated and believes no cloud-based solution will work for him.',
+        primaryPainPoints: ['Poor or unreliable internet connectivity', 'Negative experience with other cloud-based software', 'Need for a solution with robust offline capabilities'],
+        goal: 'Highlight your platform\'s offline functionality. Demonstrate how data can be collected in the field and synced later when a connection is available.',
+    },
+    // Product 11: FinOptic
+    {
+        id: 41,
+        product: products[10]!,
+        levelLabel: 'Beginner',
+        title: 'Financial Advisor Looking for an Edge',
+        character: characters[7]!, // Ethan Brown
+        companyDescription: 'An independent financial advisor.',
+        leadTemperature: 'warm',
+        summary: 'Ethan is looking for tools to help him stand out from the competition and provide more value to his clients. He is intrigued by the idea of using AI to optimize portfolios.',
+        primaryPainPoints: ['Competition from robo-advisors', 'Need to provide more personalized advice', 'Time-consuming manual portfolio analysis'],
+        goal: 'Schedule a demo to show how FinOptic can help him build smarter, more personalized portfolios in less time.',
+    },
+    {
+        id: 42,
+        product: products[10]!,
+        levelLabel: 'Intermediate',
+        title: 'Compliance Officer with Concerns',
+        character: characters[5]!, // Lucas Müller
+        companyDescription: 'A wealth management firm.',
+        leadTemperature: 'mixed',
+        summary: 'Lucas is from the compliance department. He is concerned about the "black box" nature of the AI and needs to ensure that its recommendations are explainable and defensible.',
+        primaryPainPoints: ['Regulatory and compliance concerns (FINRA, SEC)', 'Need for explainable AI (XAI)', 'Fear of AI making non-compliant recommendations'],
+        goal: 'Arrange a call with your head of data science to explain the model\'s logic and provide documentation on the audit trails and explainability features.',
+    },
+    {
+        id: 43,
+        product: products[10]!,
+        levelLabel: 'Advanced',
+        title: 'Old-School Advisor Who Trusts His Gut',
+        character: characters[9]!, // Tom Williams
+        companyDescription: 'A veteran financial advisor close to retirement.',
+        leadTemperature: 'cold',
+        summary: 'Tom has been in the business for 40 years and trusts his own judgment above any algorithm. He sees AI as a gimmick for younger advisors who lack experience.',
+        primaryPainPoints: ['Belief that human experience is superior to AI', 'Resistance to new technology', 'Sees AI as a threat to his professional judgment'],
+        goal: 'Position FinOptic not as a replacement for his experience, but as a tool that can augment it. Show him how it can handle the tedious analysis, freeing him up to focus on client relationships.',
+    },
+    {
+        id: 44,
+        product: products[10]!,
+        levelLabel: 'Expert',
+        title: 'CFO of a Firm That Built Its Own Tool',
+        character: characters[3]!, // David Patel
+        companyDescription: 'A large investment bank.',
+        leadTemperature: 'hostile',
+        summary: 'David\'s firm has invested millions in developing its own proprietary portfolio optimization software. He is dismissive of outside vendors and believes their in-house solution is superior.',
+        primaryPainPoints: ['Massive investment in a proprietary in-house system', '"Not invented here" syndrome', 'Belief that their tool is superior'],
+        goal: 'Challenge him to a "bake-off." Offer to run a historical analysis on a set of portfolios to compare the performance of your AI against their in-house tool. Focus on a niche area their tool may not cover.',
+    },
+    // Product 12: EventHorizon
+    {
+        id: 45,
+        product: products[11]!,
+        levelLabel: 'Beginner',
+        title: 'Event Planner for a Tech Conference',
+        character: characters[0]!, // Sarah Thompson
+        companyDescription: 'A company that runs a large annual tech conference.',
+        leadTemperature: 'warm',
+        summary: 'Sarah is looking for a platform for their upcoming hybrid event. She needs to provide a great experience for both in-person and virtual attendees.',
+        primaryPainPoints: ['Difficulty engaging virtual attendees', 'Need for seamless networking between in-person and virtual participants', 'Complex logistics of a hybrid event'],
+        goal: 'Schedule a demo to showcase the platform\'s hybrid networking and engagement features.',
+    },
+    {
+        id: 46,
+        product: products[11]!,
+        levelLabel: 'Intermediate',
+        title: 'Sponsor Relations Manager',
+        character: characters[6]!, // Priya Singh
+        companyDescription: 'A trade association that relies on event sponsorships for revenue.',
+        leadTemperature: 'mixed',
+        summary: 'Priya is concerned that a virtual or hybrid event will offer less value to her sponsors. She needs to be convinced that she can still sell high-value sponsorship packages.',
+        primaryPainPoints: ['Fear of losing sponsorship revenue', 'Difficulty demonstrating ROI to sponsors in a virtual setting', 'Need for creative virtual sponsorship opportunities'],
+        goal: 'Show her the virtual expo hall, lead generation features, and other digital sponsorship opportunities that can provide measurable ROI to her sponsors.',
+    },
+    {
+        id: 47,
+        product: products[11]!,
+        levelLabel: 'Advanced',
+        title: 'CFO Focused on Event Costs',
+        character: characters[3]!, // David Patel
+        companyDescription: 'A company that is cutting its marketing budget.',
+        leadTemperature: 'cold',
+        summary: 'David is questioning the expense of a large-scale event and the associated platform costs. He is considering canceling the event altogether or just doing a simple webinar.',
+        primaryPainPoints: ['Pressure to reduce marketing and event spend', 'Questioning the ROI of large events', 'Looking for cheaper alternatives like simple webinar software'],
+        goal: 'Build a business case that frames the event as a revenue generator (through ticket sales and sponsorships) and a key part of the sales pipeline, not just a cost.',
+    },
+    {
+        id: 48,
+        product: products[11]!,
+        levelLabel: 'Expert',
+        title: 'CEO After a "Zoom Fatigue" Disaster',
+        character: characters[9]!, // Tom Williams
+        companyDescription: 'A company whose last virtual event was a technical and engagement disaster.',
+        leadTemperature: 'hostile',
+        summary: 'Tom, the CEO, is furious about their last virtual event. It had technical glitches, low attendance, and was described as "death by PowerPoint." He is completely against doing another virtual event.',
+        primaryPainPoints: ['Extremely negative past experience with a virtual event', 'Belief that all virtual events are boring and ineffective ("Zoom fatigue")', 'Lost trust in event technology platforms'],
+        goal: 'Acknowledge the failure of their last event. Differentiate your platform by focusing on its production value and interactive, TV-show-like engagement features. Offer to produce a small, high-quality internal event for free to prove your capabilities.',
+    },
+    // Product 13: AutoFlow
+    {
+        id: 49,
+        product: products[12]!,
+        levelLabel: 'Beginner',
+        title: 'Plant Manager with a Labor Shortage',
+        character: characters[1]!, // Michael Chen
+        companyDescription: 'A manufacturing plant struggling to find skilled labor.',
+        leadTemperature: 'warm',
+        summary: 'Michael is having trouble filling positions on the assembly line. He is looking into automation as a potential solution for repetitive tasks.',
+        primaryPainPoints: ['Skilled labor shortage', 'High employee turnover in repetitive jobs', 'Need to increase production output without adding headcount'],
+        goal: 'Schedule a site visit and demo to identify specific tasks that are good candidates for robotic process automation (RPA).',
+    },
+    {
+        id: 50,
+        product: products[12]!,
+        levelLabel: 'Intermediate',
+        title: 'Union Representative Worried About Jobs',
+        character: characters[8]!, // Maria Garcia
+        companyDescription: 'A heavily unionized manufacturing facility.',
+        leadTemperature: 'mixed',
+        summary: 'Maria is the union representative. She is concerned that automation will lead to job losses for her members and is skeptical of the company\'s motives.',
+        primaryPainPoints: ['Fear of job losses due to automation', 'Concern that the company is trying to break the union', 'Distrust of management'],
+        goal: 'Frame the automation project as a way to improve worker safety and upskill the workforce for higher-value jobs. Propose a joint committee to manage the transition.',
+    },
+    {
+        id: 51,
+        product: products[12]!,
+        levelLabel: 'Advanced',
+        title: 'CFO Comparing to a Cheaper Solution',
+        character: characters[3]!, // David Patel
+        companyDescription: 'A cost-conscious manufacturing company.',
+        leadTemperature: 'cold',
+        summary: 'David is comparing your RPA solution to a much cheaper, less sophisticated one from a smaller vendor. He is focused purely on the upfront capital expenditure.',
+        primaryPainPoints: ['Focus on minimizing upfront capital cost', 'Sees automation solutions as a commodity', 'Is being tempted by a low-cost, but likely inferior, competitor'],
+        goal: 'Shift the conversation from upfront cost to Total Cost of Ownership (TCO). Highlight your solution\'s lower maintenance costs, higher reliability, and superior support.',
+    },
+    {
+        id: 52,
+        product: products[12]!,
+        levelLabel: 'Expert',
+        title: 'Operations VP After a Failed Automation Project',
+        character: characters[9]!, // Tom Williams
+        companyDescription: 'A company where a previous robotics project failed to deliver results.',
+        leadTemperature: 'hostile',
+        summary: 'Tom championed a major automation project a few years ago that went over budget and failed to deliver the promised efficiency gains. He is now extremely risk-averse and hostile to any new automation proposals.',
+        primaryPainPoints: ['Burned by a previous, failed automation project', 'Lost credibility and is now highly risk-averse', 'Believes automation is overhyped and too complex'],
+        goal: 'Acknowledge the past failure. Differentiate your RPA solution as being more flexible and easier to implement than traditional industrial robots. Propose a small, well-defined, and guaranteed-to-succeed pilot project to rebuild his confidence.',
+    },
+    // Product 14: LegalEase
+    {
+        id: 53,
+        product: products[13]!,
+        levelLabel: 'Beginner',
+        title: 'Overwhelmed In-House Counsel',
+        character: characters[4]!, // Amina Yusuf
+        companyDescription: 'A fast-growing startup with a small legal team.',
+        leadTemperature: 'warm',
+        summary: 'Amina is the sole in-house counsel and is buried in contracts. She is looking for a way to speed up her contract review process.',
+        primaryPainPoints: ['High volume of contracts to review', 'Manual and time-consuming review process', 'Bottleneck for the sales and procurement teams'],
+        goal: 'Schedule a demo to show how LegalEase can automatically redline standard contracts and flag risky clauses in minutes.',
+    },
+    {
+        id: 54,
+        product: products[13]!,
+        levelLabel: 'Intermediate',
+        title: 'IT Manager with Data Security Concerns',
+        character: characters[5]!, // Lucas Müller
+        companyDescription: 'A large, security-conscious enterprise.',
+        leadTemperature: 'mixed',
+        summary: 'Lucas is concerned about uploading highly confidential contracts to a third-party cloud platform. He needs to be assured of the platform\'s security and confidentiality measures.',
+        primaryPainPoints: ['Extreme sensitivity of legal data', 'Concerns about data security and attorney-client privilege', 'Wants an on-premise or private cloud deployment option'],
+        goal: 'Provide security certifications (e.g., SOC 2 Type II) and offer a detailed security review. Discuss private cloud deployment options.',
+    },
+    {
+        id: 55,
+        product: products[13]!,
+        levelLabel: 'Advanced',
+        title: 'Managing Partner of a Law Firm',
+        character: characters[9]!, // Tom Williams
+        companyDescription: 'A traditional, prestigious law firm.',
+        leadTemperature: 'cold',
+        summary: 'Tom believes that contract review is a core legal skill that cannot and should not be automated. He is resistant to technology that he feels devalues the work of his lawyers.',
+        primaryPainPoints: ['Belief that legal work cannot be automated', 'Fear that technology will commoditize their services', 'Traditional, change-resistant culture'],
+        goal: 'Position LegalEase as a tool that assists, rather than replaces, lawyers. Show how it can handle the low-value, repetitive parts of contract review, allowing his lawyers to focus on high-value strategic advice.',
+    },
+    {
+        id: 56,
+        product: products[13]!,
+        levelLabel: 'Expert',
+        title: 'CFO Who Sees Legal as a Cost Center',
+        character: characters[3]!, // David Patel
+        companyDescription: 'A private equity-owned company under pressure to cut costs.',
+        leadTemperature: 'hostile',
+        summary: 'David sees the legal department as a pure cost center and is looking to reduce its budget, including spending on outside counsel. He is hostile to any new spending on legal tech.',
+        primaryPainPoints: ['Pressure to cut legal department costs', 'Views legal as a cost center to be minimized', 'Doesn\'t see the ROI of legal tech'],
+        goal: 'Build a business case showing how LegalEase can directly reduce the company\'s reliance on expensive outside law firms for routine contract work, leading to significant hard-dollar savings.',
+    },
+    // Product 15: MediaMogul
+    {
+        id: 57,
+        product: products[14]!,
+        levelLabel: 'Beginner',
+        title: 'Content Marketing Manager Juggling Platforms',
+        character: characters[0]!, // Sarah Thompson
+        companyDescription: 'A B2B company with an active content marketing program.',
+        leadTemperature: 'warm',
+        summary: 'Sarah is struggling to manage and distribute content across their blog, social media channels, and email newsletters. She is looking for a unified platform.',
+        primaryPainPoints: ['Using multiple, disconnected tools for content management', 'Wasting time copying and pasting content between systems', 'Difficulty tracking content performance across channels'],
+        goal: 'Schedule a demo to show how MediaMogul can centralize her content operations and provide unified analytics.',
+    },
+    {
+        id: 58,
+        product: products[14]!,
+        levelLabel: 'Intermediate',
+        title: 'Data Analyst Who Doubts the AI',
+        character: characters[7]!, // Ethan Brown
+        companyDescription: 'A data-savvy e-commerce company.',
+        leadTemperature: 'mixed',
+        summary: 'Ethan is skeptical of your "AI-powered performance prediction." He wants to understand the model and see if it\'s any better than their own internal forecasts.',
+        primaryPainPoints: ['Skepticism about the accuracy of AI predictions', 'Wants to understand the data model and features', 'Believes their internal analytics are superior'],
+        goal: 'Offer a "bake-off." Ask him to provide data for past campaigns and show him how your model\'s predictions would have performed against the actual results.',
+    },
+    {
+        id: 59,
+        product: products[14]!,
+        levelLabel: 'Advanced',
+        title: 'Head of Sales Who Ignores Marketing',
+        character: characters[6]!, // Priya Singh
+        companyDescription: 'A company with a major sales and marketing divide.',
+        leadTemperature: 'cold',
+        summary: 'Priya, the Head of Sales, believes her team generates all the real leads. She sees marketing content as "fluff" and doesn\'t encourage her team to use it.',
+        primaryPainPoints: ['Sales and marketing misalignment', 'Sales team doesn\'t use or value marketing content', 'Difficulty proving marketing\'s contribution to revenue'],
+        goal: 'Show her how MediaMogul can track which pieces of content are being used by the top-performing salespeople and how that content influences deals. Frame it as a sales enablement tool, not a marketing tool.',
+    },
+    {
+        id: 60,
+        product: products[14]!,
+        levelLabel: 'Expert',
+        title: 'CMO Who Just Bought a Competitor',
+        character: characters[9]!, // Tom Williams
+        companyDescription: 'A large enterprise company.',
+        leadTemperature: 'hostile',
+        summary: 'Tom, the new CMO, just signed a multi-year deal with your biggest competitor a month ago at his previous job and is planning to bring them in. He has no interest in talking to you.',
+        primaryPainPoints: ['Just signed a long-term contract with a competitor', 'Has a strong existing relationship with that competitor', 'Wants to standardize on the tool he knows and trusts'],
+        goal: 'Play the long game. Acknowledge his decision and relationship. Pivot to a "thought leadership" approach. Offer to share valuable industry insights and data that your platform generates. Your goal is not to win today, but to be the first person he calls when his current vendor fails to deliver.',
+    }
 ];
 
 export function getLessonById(id: Lesson['id']): Lesson | undefined {

@@ -7,9 +7,16 @@ export type Character = {
     avatarUrl: string;
 };
 
+export type Product = {
+    id: number;
+    title: string;
+    description: string;
+    category: string;
+}
+
 export type Lesson = {
     id: number;
-    slug: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+    product: Product;
     levelLabel: string;
     title: string;
     character: Character;
