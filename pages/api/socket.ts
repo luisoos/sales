@@ -121,7 +121,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     userId: socket.data.userId,
                     lessonId: String(lessonId),
                 });
-                console.log(pastMessages);
+
                 if (
                     pastMessages &&
                     Array.isArray(pastMessages.messages) &&
@@ -249,10 +249,6 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                                         userId,
                                         lessonId,
                                     });
-                                console.log(
-                                    'Conversation found: ',
-                                    conversation,
-                                );
                                 await appendTurnAndMaybeSetStatus({
                                     conversationId: conversation.id,
                                     userText: transcription.text,

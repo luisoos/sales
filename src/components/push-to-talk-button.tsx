@@ -21,7 +21,7 @@ export default function PushToTalkButton({
 
     const audioContextRef = useRef<AudioContext | null>(null);
     const analyserRef = useRef<AnalyserNode | null>(null);
-    const dataArrayRef = useRef<Uint8Array | null>(null);
+    const dataArrayRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
     const animationIdRef = useRef<number | null>(null);
     const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
     // We do not acquire our own stream; we visualise the parent's stream
