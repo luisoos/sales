@@ -12,7 +12,7 @@ export type Product = {
     title: string;
     description: string;
     category: string;
-}
+};
 
 export type Lesson = {
     id: number;

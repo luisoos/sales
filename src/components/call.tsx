@@ -242,7 +242,7 @@ export default function Call({ lessonId, showNotes }: CallProps) {
                     characterSpeaks ? 'border border-green-500' : 'border',
                 )}>
                 <img
-                    src='https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimgv3.fotor.com%2Fimages%2Fgallery%2Fcartoon-character-generated-by-Fotor-ai-art-creator.jpg&f=1&nofb=1&ipt=07e4cd80d8b00359d14f4a23916a05465a2ef282f57d7622292bdbcf1bdc282d'
+                    src={lesson?.character.avatarUrl}
                     className='w-16 mx-auto my-24 rounded-full'
                 />
             </div>

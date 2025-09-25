@@ -131,13 +131,14 @@ export default function useMentorStream() {
                 setIsLoading(false);
                 setStreamingMessage(false);
                 // Check all messages for unfinished sentences (if the tokens were exceeded) and remove that
-                setMessages(messages
-                    .filter(message => message.role === 'assistant')
-                    .map(message => ({
-                        ...message,
-                        content: trimUnfinishedSentence(message.content),
-                    }))
-                )
+                setMessages(
+                    messages
+                        .filter((message) => message.role === 'assistant')
+                        .map((message) => ({
+                            ...message,
+                            content: trimUnfinishedSentence(message.content),
+                        })),
+                );
             }
         },
         [messages],
@@ -174,15 +175,18 @@ export default function useMentorStream() {
                             } as ChatMessage;
                         },
                     );
-                    
+
                     // Set fetched messages but do not display unfinished sentences (see above)
-                    setMessages((messagesWithIds as ChatMessage[])
-                        .filter(message => message.role === 'assistant')
-                        .map(message => ({
-                            ...message,
-                            content: trimUnfinishedSentence(message.content),
-                        }))
-                    )
+                    setMessages(
+                        (messagesWithIds as ChatMessage[])
+                            .filter((message) => message.role === 'assistant')
+                            .map((message) => ({
+                                ...message,
+                                content: trimUnfinishedSentence(
+                                    message.content,
+                                ),
+                            })),
+                    );
                 } catch (error) {
                     console.error('Error fetching messages:', error);
                 }

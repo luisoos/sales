@@ -17,9 +17,9 @@ export function standardiseWord(str: string): string {
 
 export function trimUnfinishedSentence(text: string): string {
     const finishedSentences: string[] = text.split(/([.!?;:])/);
-    if (finishedSentences.length === 0) 
-        return '';
-    const lastSentence: string = finishedSentences[finishedSentences.length - 1]!;
+    if (finishedSentences.length === 0) return '';
+    const lastSentence: string =
+        finishedSentences[finishedSentences.length - 1]!;
     if (!/([.!?;:])/.test(lastSentence)) {
         finishedSentences.pop();
     }
