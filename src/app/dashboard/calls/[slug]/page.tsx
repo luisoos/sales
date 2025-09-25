@@ -9,6 +9,7 @@ import { BadgeWithDot } from '~/components/ui/base/badges/badges';
 import React from 'react';
 import { Checkbox } from '~/components/ui/checkbox';
 import { Label } from '~/components/ui/label';
+import ProductPopUp from '~/components/product-pop-up';
 
 export default function Page() {
     const params = useParams<{
@@ -59,6 +60,7 @@ export default function Page() {
                 </div>
             )}
             <Call lessonId={Number(params.slug)} showNotes={showNotes} />
+            <ProductPopUp product={lesson.product} />
         </div>
     );
 }
