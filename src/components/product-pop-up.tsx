@@ -17,9 +17,13 @@ export default function ProductPopUp({ product }: { product: Product }) {
 
     return (
         <AlertDialog open={open}>
-            <AlertDialogContent className='lg:w-9/12 lg:max-w-2xl h-96' variant='no-darken'>
+            <AlertDialogContent
+                className='lg:w-9/12 lg:max-w-2xl h-96'
+                variant='no-darken'>
                 <div className='text-center'>
-                    <AlertDialogTitle className='mt-2 font-normal text-sm'>About the product</AlertDialogTitle>
+                    <AlertDialogTitle className='mt-2 font-normal text-sm'>
+                        About the product
+                    </AlertDialogTitle>
                     <p className='font-medium text-2xl text-zinc-800'>
                         {product.title} ({product.category})
                     </p>

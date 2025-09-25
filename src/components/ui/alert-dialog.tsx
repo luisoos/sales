@@ -39,14 +39,14 @@ function AlertDialogOverlay({
     className,
     ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Overlay> & {
-    variant?: 'default' | 'no-darken'
+    variant?: 'default' | 'no-darken';
 }) {
     return (
         <AlertDialogPrimitive.Overlay
             data-slot='alert-dialog-overlay'
             className={cn(
                 'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50',
-                variant  === 'default' ? 'bg-black/50' : 'bg-black/10',
+                variant === 'default' ? 'bg-black/50' : 'bg-black/10',
                 className,
             )}
             {...props}
@@ -59,7 +59,7 @@ function AlertDialogContent({
     className,
     ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Content> & {
-    variant?: 'default' | 'no-darken'
+    variant?: 'default' | 'no-darken';
 }) {
     return (
         <AlertDialogPortal>

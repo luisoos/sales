@@ -6,7 +6,6 @@ import PushToTalkButton from './push-to-talk-button';
 import { cn } from '~/lib/utils';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getLessonById } from '~/utils/prompts/lessons';
 import {
     Dialog,
     DialogContent,
@@ -17,13 +16,15 @@ import {
 } from '~/components/ui/dialog';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '~/components/ui/button';
+import { Lesson } from '~/types/lessons';
 
 type CallProps = {
-    lessonId: number;
+    lesson: Lesson;
     showNotes: boolean;
 };
 
-export default function Call({ lessonId, showNotes }: CallProps) {
+export default function Call({ lesson, showNotes }: CallProps) {
+    const lessonId = lesson.id;
     const [messages, setMessages] = useState<string[]>([]);
     const [disableButton, setDisableButton] = useState<boolean>(false);
     const [characterSpeaks, setCharacterSpeaks] = useState<boolean>(false);
@@ -31,7 +32,6 @@ export default function Call({ lessonId, showNotes }: CallProps) {
     const recorderRef = useRef<MediaRecorder | null>(null);
     const streamRef = useRef<MediaStream | null>(null);
     const audioContext = new AudioContext();
-    const lesson = getLessonById(lessonId);
 
     const callEndedRef = useRef(false);
     const messagesRef = useRef(messages);
@@ -285,22 +285,28 @@ export default function Call({ lessonId, showNotes }: CallProps) {
                             key='notes'
                             className={showNotes ? 'lg:w-1/2' : 'lg:w-full'}>
                             <p className='font-medium text-lg'>Notes</p>
-                            <p>
-                                <strong>Call Goal: </strong>
-                                {lesson?.goal}
-                            </p>
-                            <p>
-                                <strong>Company Description: </strong>
-                                {lesson?.companyDescription}
-                            </p>
-                            <p>
-                                <strong>Primary Pain Points: </strong>
-                                {lesson?.primaryPainPoints}
-                            </p>
-                            <p>
-                                <strong>Summary: </strong>
-                                {lesson?.summary}
-                            </p>
+                            <table className='border-separate border-spacing-y-2'>
+                                <tbody>
+                                    <NoteRow
+                                        label='Call Goal'
+                                        value={lesson?.goal}
+                                    />
+                                    <NoteRow
+                                        label='About the Company'
+                                        value={lesson?.companyDescription}
+                                    />
+                                    <NoteRow
+                                        label='Primary Pain Points'
+                                        value={lesson?.primaryPainPoints.join(
+                                            ', ',
+                                        )}
+                                    />
+                                    <NoteRow
+                                        label='Summary'
+                                        value={lesson?.summary}
+                                    />
+                                </tbody>
+                            </table>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -369,5 +375,20 @@ function CallEndedDialog({
                 </DialogContent>
             </Dialog>
         </>
+    );
+}
+
+function NoteRow({
+    label,
+    value,
+}: {
+    label: string;
+    value: string | undefined;
+}) {
+    return (
+        <tr>
+            <td className='w-40 align-top font-medium pr-2'>{label}:</td>
+            <td className='align-top'>{value}</td>
+        </tr>
     );
 }

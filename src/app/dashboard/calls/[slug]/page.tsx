@@ -59,7 +59,7 @@ export default function Page() {
                     </div>
                 </div>
             )}
-            <Call lessonId={Number(params.slug)} showNotes={showNotes} />
+            <Call lesson={lesson} showNotes={showNotes} />
             <ProductPopUp product={lesson.product} />
         </div>
     );
