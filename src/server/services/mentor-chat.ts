@@ -1,9 +1,7 @@
 import { RoleMessage } from '~/types/conversation';
 import { db } from '~/server/db';
 
-export async function getAllMentorChats(params: {
-    userId: string;
-}) {
+export async function getAllMentorChats(params: { userId: string }) {
     const mentorChats = await db.mentorChat.findMany({
         where: { userId: params.userId },
     });
