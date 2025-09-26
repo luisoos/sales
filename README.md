@@ -8,7 +8,7 @@
     - [x] 🐛 FIX: seems to only save first conversation, but maybe thats not true -> test
 
 #### Later
-- [ ] Different lections for different products -> categorise lections and use common products for different lections
+- [x] Different lections for different products -> categorise lections and use common products for different lections
 - [x] Improvement Tips -> AI Analyses historical conversations
     - [x] Pass conversation logs to AI as context
     - [x] Save AI Chats to DB
@@ -21,7 +21,7 @@
 - [ ] Streak
 - [ ] Conversation Log Caching
 - [ ] Clean up `call.tsx` component for better readability -> use hook
-- [ ] Dashboard
+- [x] Dashboard
 - [ ] Show Messages in Conversation Log
 - [ ] Profile Pictures
 - [ ] Leaderboard
