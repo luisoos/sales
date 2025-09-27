@@ -1,25 +1,28 @@
 'use client';
 
-import { getLessonById, lessons } from '~/utils/prompts/lessons';
-import {
-    Table,
-    TableCard,
-    TableRowActionsDropdown,
-} from '~/components/ui/application/table/table';
-import {
-    BadgeWithDot,
-    BadgeWithImage,
-} from '~/components/ui/base/badges/badges';
-import { BadgeGroup } from '~/components/ui/base/badges/badge-groups';
+import React from 'react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { getLessonById } from '~/utils/prompts/lessons';
+import { Table, TableCard } from '~/components/ui/application/table/table';
+import { BadgeWithDot } from '~/components/ui/base/badges/badges';
+import { Fragment, useEffect, useState } from 'react';
 import { Conversation, ConversationStatus } from '@prisma/client';
 import { BadgeColors } from '~/components/ui/base/badges/badge-types';
 import { CloudAlert, MessageCircleOff } from 'lucide-react';
 import Link from 'next/link';
 import AnimatedDotsLoader from '~/components/animated-bars-loader';
-import { standardiseWord } from '~/lib/utils';
+import { standardiseWord, ucfirst, cn } from '~/lib/utils';
 import FormattedDate from '~/components/formatted-date';
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from '~/components/ui/sheet';
+import { ScrollArea } from '~/components/ui/scroll-area';
+import { RoleMessage } from '~/types/conversation';
 
 export default function Page() {
     const router = useRouter();
@@ -108,6 +111,7 @@ export default function Page() {
                         />
                         <Table.Head id='status' label='Status' />
                         <Table.Head id='createdAt' label='Created At' />
+                        <Table.Head id='action' label='Action' />
                     </Table.Header>
 
                     <Table.Body items={conversations}>
@@ -117,28 +121,36 @@ export default function Page() {
                                     id={item.id}
                                     className='cursor-pointer'>
                                     <Table.Cell className='lg:w-min'>
-                                        <div className='flex lg:hidden'>
-                                            <BadgeWithDot
-                                                color={getStatusBadgeColor(
-                                                    item.status,
-                                                )}
-                                                size='sm'
-                                                className='mr-2'>
-                                                {standardiseWord(item.status)}
-                                            </BadgeWithDot>
-                                            <span className='font-mono text-muted-foreground'>
-                                                <FormattedDate
-                                                    pDate={item.createdAt}
-                                                />
+                                        <ConversationMessagesSheet
+                                            content={
+                                                item.messages as RoleMessage[]
+                                            }>
+                                            <div className='flex lg:hidden'>
+                                                <BadgeWithDot
+                                                    color={getStatusBadgeColor(
+                                                        item.status,
+                                                    )}
+                                                    size='sm'
+                                                    className='mr-2'>
+                                                    {standardiseWord(
+                                                        item.status,
+                                                    )}
+                                                </BadgeWithDot>
+                                                <span className='font-mono text-muted-foreground'>
+                                                    <FormattedDate
+                                                        pDate={item.createdAt}
+                                                    />
+                                                </span>
+                                            </div>
+                                            <span className='font-mono font-extralight'>
+                                                #{item.lessonId}{' '}
                                             </span>
-                                        </div>
-                                        <span className='font-mono font-extralight'>
-                                            #{item.lessonId}{' '}
-                                        </span>
-                                        {
-                                            getLessonById(Number(item.lessonId))
-                                                ?.title
-                                        }
+                                            {
+                                                getLessonById(
+                                                    Number(item.lessonId),
+                                                )?.title
+                                            }
+                                        </ConversationMessagesSheet>
                                     </Table.Cell>
                                     <Table.Cell className='max-lg:hidden'>
                                         <BadgeWithDot
@@ -151,6 +163,15 @@ export default function Page() {
                                     </Table.Cell>
                                     <Table.Cell className='max-lg:hidden'>
                                         <FormattedDate pDate={item.createdAt} />
+                                    </Table.Cell>
+                                    <Table.Cell className='max-lg:hidden'>
+                                        <ConversationMessagesSheet
+                                            content={
+                                                item.messages as RoleMessage[]
+                                            }
+                                            visualiseButton={true}>
+                                            View Messages
+                                        </ConversationMessagesSheet>
                                     </Table.Cell>
                                 </Table.Row>
                             );
@@ -171,4 +192,51 @@ function getStatusBadgeColor(status: ConversationStatus): BadgeColors {
         case 'UNFINISHED':
             return 'gray';
     }
+}
+
+function ConversationMessagesSheet({
+    children,
+    content,
+    visualiseButton = false,
+    className,
+}: {
+    children: React.ReactNode;
+    content: RoleMessage[];
+    visualiseButton?: boolean;
+    className?: string;
+}) {
+    return (
+        <Sheet>
+            <SheetTrigger
+                visualiseButton={visualiseButton}
+                variant='outline'
+                className='text-left'>
+                {children}
+            </SheetTrigger>
+            <SheetContent className={className}>
+                <SheetHeader>
+                    <SheetTitle>Messages in this Conversation</SheetTitle>
+                </SheetHeader>
+                <ScrollArea className='h-[calc(100vh-4rem)] pr-4'>
+                    <div className='text-sm text-muted-foreground'>
+                        {content.map((msg, index) => (
+                            <div key={index} className='mb-4'>
+                                <span className='font-semibold text-foreground'>
+                                    {ucfirst(msg.role)}:{' '}
+                                </span>
+                                <span>
+                                    {msg.content
+                                        .replace(
+                                            /<stop_call_close>|<stop_call_no_close>/g,
+                                            '',
+                                        )
+                                        .trim()}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </ScrollArea>
+            </SheetContent>
+        </Sheet>
+    );
 }

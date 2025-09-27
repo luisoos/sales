@@ -5,11 +5,27 @@ import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { X } from 'lucide-react';
 
+import { buttonVariants } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
 
 const Sheet = SheetPrimitive.Root;
 
-const SheetTrigger = SheetPrimitive.Trigger;
+const SheetTrigger = React.forwardRef<
+    React.ElementRef<typeof SheetPrimitive.Trigger>,
+    React.ComponentPropsWithoutRef<typeof SheetPrimitive.Trigger> &
+        VariantProps<typeof buttonVariants> & { visualiseButton?: boolean }
+>(({ className, visualiseButton = false, variant, size, ...props }, ref) => (
+    <SheetPrimitive.Trigger
+        ref={ref}
+        className={
+            visualiseButton
+                ? cn(buttonVariants({ variant, size, className }))
+                : className
+        }
+        {...props}
+    />
+));
+SheetTrigger.displayName = SheetPrimitive.Trigger.displayName;
 
 const SheetClose = SheetPrimitive.Close;
 
@@ -35,10 +51,10 @@ const sheetVariants = cva(
     {
         variants: {
             side: {
-                top: 'inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top',
-                bottom: 'inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
-                left: 'inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm',
-                right: 'inset-y-0 right-0 h-full w-3/4 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm',
+                top: 'rounded-b-lg inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top',
+                bottom: 'rounded-t-lg inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
+                left: 'rounded-l-lg inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm',
+                right: 'rounded-r-lg inset-y-0 right-0 h-full w-3/4 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm',
             },
         },
         defaultVariants: {

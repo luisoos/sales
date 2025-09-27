@@ -22,7 +22,7 @@
 - [ ] Conversation Log Caching
 - [ ] Clean up `call.tsx` component for better readability -> use hook
 - [x] Dashboard
-- [ ] Show Messages in Conversation Log
+- [x] Show Messages in Conversation Log
 - [ ] Profile Pictures
 - [ ] Leaderboard
 - [ ] Payment, then hide the lessons client-side that require payment
