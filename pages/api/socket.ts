@@ -10,9 +10,10 @@ import os from 'os';
 import path from 'path';
 import { SystemPromptBuilder } from '~/utils/prompts/system-prompt';
 import { createServerClient } from '@supabase/ssr';
-import {
+import { 
     appendTurnAndMaybeSetStatus,
     getOrCreateConversation,
+    getUnfinishedConversation,
 } from '~/server/services/conversation';
 import { RoleMessage } from '~/types/conversation';
 import { getLessonById } from '~/utils/prompts/lessons';
@@ -114,13 +115,19 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                         content: new SystemPromptBuilder(lessonId).build(),
                     },
                 ];
+                // add getUnfinishedConversation messages to history using await
+                const unfinishedMessages = await getUnfinishedConversation({
+                    userId: socket.data.userId,
+                    lessonId: String(lessonId),
+                });
+                chatHistory[socket.data.userId]!.push(...unfinishedMessages?.messages as RoleMessage[]);
                 socket.data.lessonId = String(lessonId);
                 console.log(
                     `📚 Lesson ${lessonId} selected for ${socket.id}. History initialized.`,
                 );
 
                 // To continue an unfinished conversation
-                const pastMessages = await getOrCreateConversation({
+                const pastMessages = await getUnfinishedConversation({
                     userId: socket.data.userId,
                     lessonId: String(lessonId),
                 });
@@ -260,6 +267,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                                         userId,
                                         lessonId,
                                     });
+                                console.log(conversation)
                                 await appendTurnAndMaybeSetStatus({
                                     conversationId: conversation.id,
                                     userText: transcription.text,

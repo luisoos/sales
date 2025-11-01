@@ -9,6 +9,20 @@ export async function getAllConversations(params: { userId: string }) {
     });
 }
 
+export async function getUnfinishedConversation(params: {
+    userId: string;
+    lessonId: string;
+}) {
+    return db.conversation.findFirst({
+        where: {
+            userId: params.userId,
+            lessonId: params.lessonId,
+            status: 'UNFINISHED',
+        },
+        orderBy: { createdAt: 'desc' },
+    });
+}
+
 export async function getOrCreateConversation(params: {
     userId: string;
     lessonId: string;
