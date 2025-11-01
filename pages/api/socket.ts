@@ -6,6 +6,7 @@ import { Server as IOServer, type Socket } from 'socket.io';
 import { randomBytes } from 'crypto';
 import fs from 'fs';
 import Groq from 'groq-sdk';
+import os from 'os';
 import path from 'path';
 import { SystemPromptBuilder } from '~/utils/prompts/system-prompt';
 import { createServerClient } from '@supabase/ssr';
@@ -176,7 +177,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                 });
 
                 const tempFileName = `${randomBytes(16).toString('hex')}.webm`;
-                const filePath = path.join('/tmp', tempFileName);
+                const filePath = path.join(os.tmpdir(), tempFileName);
 
                 try {
                     fs.writeFileSync(filePath, audioBuffer);
