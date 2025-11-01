@@ -80,6 +80,12 @@ export const products: Product[] = [
         description:
             'An AI-powered CRM that predicts customer churn and identifies upselling opportunities.',
         category: 'B2B SaaS',
+        features: [
+            'Predictive churn analysis',
+            'AI-driven upsell opportunity identification',
+            'ROI and Total Cost of Ownership reporting',
+            'Flexible and customizable dashboards',
+        ],
     },
     {
         id: 2,
@@ -87,6 +93,12 @@ export const products: Product[] = [
         description:
             'An operating system for internal innovation programs, helping companies source and manage employee ideas.',
         category: 'Enterprise Software',
+        features: [
+            'Centralized idea submission portal',
+            'Gamification to boost employee engagement',
+            'Secure, enterprise-grade platform with full integration capabilities',
+            'Analytics dashboard to track innovation ROI',
+        ],
     },
     {
         id: 3,
@@ -94,6 +106,12 @@ export const products: Product[] = [
         description:
             'A comprehensive cybersecurity suite for small and medium businesses (SMBs).',
         category: 'Cybersecurity',
+        features: [
+            'All-in-one cybersecurity suite (antivirus, firewall, anti-phishing)',
+            'Ransomware protection and recovery',
+            'Free dark web vulnerability scan',
+            'Business continuity and ROI reporting',
+        ],
     },
     {
         id: 4,
@@ -101,6 +119,12 @@ export const products: Product[] = [
         description:
             'A platform for optimizing supply chains to reduce carbon footprint and transportation costs.',
         category: 'Supply Chain',
+        features: [
+            'Route optimization to reduce fuel costs and emissions',
+            'Carbon footprint tracking and reporting',
+            'Seamless integration with existing Transportation Management Systems',
+            'On-time delivery and reliability analytics',
+        ],
     },
     {
         id: 5,
@@ -108,6 +132,12 @@ export const products: Product[] = [
         description:
             'An AI-driven platform for internal mobility and employee skill-mapping.',
         category: 'HR Tech',
+        features: [
+            'AI-powered internal mobility and skill-mapping',
+            'Visual career pathing for employees',
+            'Reduces recruitment costs and employee attrition',
+            'Explainable AI with bias detection',
+        ],
     },
     {
         id: 6,
@@ -115,6 +145,12 @@ export const products: Product[] = [
         description:
             'A telehealth platform for specialized medical consultations.',
         category: 'HealthTech',
+        features: [
+            'HIPAA-compliant (Health Insurance Portability and Accountability Act) telehealth platform',
+            'Seamless Electronic Health Record systems integration',
+            'Streamlined patient scheduling and follow-ups',
+            'Reimbursement and ROI modeling tools',
+        ],
     },
     {
         id: 7,
@@ -122,6 +158,12 @@ export const products: Product[] = [
         description:
             'Project management software for large-scale construction projects, with a focus on safety and compliance.',
         category: 'Construction Tech',
+        features: [
+            'Digital workflows for Requests for Information (RFIs), submittals, and change orders',
+            'Centralized project communication hub',
+            'Mobile app for on-site daily reports and safety checklists',
+            'Advanced safety and compliance tracking to mitigate risk',
+        ],
     },
     {
         id: 8,
@@ -129,6 +171,12 @@ export const products: Product[] = [
         description:
             'An analytics platform that uses in-store sensor data to optimize layout and product placement.',
         category: 'Retail Tech',
+        features: [
+            'In-store customer behavior analytics (path, dwell time)',
+            'Marketing campaign and promotion effectiveness measurement',
+            'Fully anonymous and GDPR-compliant (General Data Protection Regulation) data collection',
+            'Advanced analytics to optimize store layout and staffing',
+        ],
     },
     {
         id: 9,
@@ -136,6 +184,12 @@ export const products: Product[] = [
         description:
             'A personalized learning platform for corporate training and development.',
         category: 'EdTech',
+        features: [
+            'Personalized AI-driven learning paths',
+            'Gamification and interactive content to boost engagement',
+            'Easy-to-use custom content authoring tools',
+            'Robust analytics to measure training effectiveness and ROI',
+        ],
     },
     {
         id: 10,
@@ -143,6 +197,12 @@ export const products: Product[] = [
         description:
             'A farm management software using drone and satellite imagery for crop monitoring.',
         category: 'AgriTech',
+        features: [
+            'Crop monitoring with drone and satellite imagery',
+            'AI-powered recommendations for fertilizer and pesticide use',
+            'Robust offline functionality for remote areas',
+            'Enterprise-level reporting for multi-farm operations',
+        ],
     },
     {
         id: 11,
@@ -150,6 +210,12 @@ export const products: Product[] = [
         description:
             'An AI tool for financial advisors to optimize client portfolios.',
         category: 'FinTech',
+        features: [
+            'AI-powered portfolio optimization and analysis',
+            'Explainable AI (XAI) for compliance and audit trails',
+            'Augments advisor expertise with data-driven insights',
+            'Performance "bake-off" tool to compare against existing models',
+        ],
     },
     {
         id: 12,
@@ -157,6 +223,12 @@ export const products: Product[] = [
         description:
             'A virtual and hybrid event platform with advanced networking features.',
         category: 'Event Management',
+        features: [
+            'Hybrid event platform for in-person and virtual attendees',
+            'Advanced networking features with AI-powered matchmaking',
+            'Virtual expo hall with measurable sponsor ROI',
+            'High-production, TV-show quality streaming capabilities',
+        ],
     },
     {
         id: 13,
@@ -164,6 +236,12 @@ export const products: Product[] = [
         description:
             'Robotic Process Automation (RPA) for manufacturing assembly lines.',
         category: 'Manufacturing Tech',
+        features: [
+            'Robotic Process Automation (RPA) for assembly lines',
+            'Addresses skilled labor shortages and reduces turnover',
+            'Focus on worker safety and upskilling opportunities',
+            'Low Total Cost of Ownership and rapid implementation',
+        ],
     },
     {
         id: 14,
@@ -171,6 +249,12 @@ export const products: Product[] = [
         description:
             'AI-powered contract review and analysis software for legal teams.',
         category: 'LegalTech',
+        features: [
+            'AI-powered contract review and analysis',
+            'Automatically redlines contracts and flags high-risk clauses',
+            'SOC 2 Type II security with private cloud deployment options',
+            'Reduces reliance on outside counsel for significant cost savings',
+        ],
     },
     {
         id: 15,
@@ -178,6 +262,12 @@ export const products: Product[] = [
         description:
             'A platform for managing and distributing marketing content across all channels, with AI-powered performance prediction.',
         category: 'MarTech',
+        features: [
+            'Unified platform for content planning, distribution, and analytics',
+            'AI-powered prediction of content performance',
+            'Sales enablement features to track content influence on deals',
+            'Cross-channel analytics to prove marketing ROI',
+        ],
     },
 ];
 

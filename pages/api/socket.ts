@@ -225,7 +225,8 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                         const character = lessonId
                             ? getLessonById(Number(lessonId))?.character
                             : undefined;
-                        const voice: string = character?.voice ?? 'Aaliyah-PlayAI';
+                        const voice: string =
+                            character?.voice ?? 'Aaliyah-PlayAI';
 
                         const wav = await groq.audio.speech.create({
                             model: 'playai-tts',

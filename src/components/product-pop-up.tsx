@@ -10,7 +10,7 @@ import {
     AlertDialogTitle,
 } from './ui/alert-dialog';
 import { useState } from 'react';
-import { BookText, Brain, Info } from 'lucide-react';
+import { CircleStar, Brain, Info } from 'lucide-react';
 
 export default function ProductPopUp({ product }: { product: Product }) {
     const [open, setOpen] = useState<boolean>(true);
@@ -18,7 +18,7 @@ export default function ProductPopUp({ product }: { product: Product }) {
     return (
         <AlertDialog open={open}>
             <AlertDialogContent
-                className='lg:w-9/12 lg:max-w-2xl h-96'
+                className='lg:w-9/12 lg:max-w-2xl h-[28rem]'
                 variant='no-darken'>
                 <div className='text-center'>
                     <AlertDialogTitle className='mt-2 font-normal text-sm'>
@@ -38,6 +38,16 @@ export default function ProductPopUp({ product }: { product: Product }) {
                             <Brain />
                         </div>
                         {product.description}
+                    </div>
+                    <div className='my-4 px-16 flex pt-2 text-left'>
+                        <div className='aspect-square mt-1 mr-8'>
+                            <CircleStar />
+                        </div>
+                        <div>
+                            {product.features.map((feature, index) => (
+                                <li key={index}>{feature}</li>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 <AlertDialogFooter className='mt-auto h-min'>

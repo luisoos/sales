@@ -305,6 +305,10 @@ export default function Call({ lesson, showNotes }: CallProps) {
                                         label='Summary'
                                         value={lesson?.summary}
                                     />
+                                    <NoteRow
+                                        label='Product Features'
+                                        value={lesson?.product.features}
+                                    />
                                 </tbody>
                             </table>
                         </motion.div>
@@ -383,12 +387,20 @@ function NoteRow({
     value,
 }: {
     label: string;
-    value: string | undefined;
+    value: string | string[] | undefined;
 }) {
     return (
         <tr>
             <td className='w-40 align-top font-medium pr-2'>{label}:</td>
-            <td className='align-top'>{value}</td>
+            <td className='align-top list-inside'>
+                {Array.isArray(value) ? (
+                    value.map((item, index) => (
+                        <li key={index}>{item}</li>
+                    ))
+                ) : (
+                    value
+                )}
+            </td>
         </tr>
     );
 }
