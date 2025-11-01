@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { io, type Socket } from 'socket.io-client';
 import PushToTalkButton from './push-to-talk-button';
-import { cn } from '~/lib/utils';
+import { cn, standardiseWord } from '~/lib/utils';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -51,7 +51,7 @@ export default function Call({ lesson, showNotes }: CallProps) {
         setDisableButton(true);
         socketRef.current?.disconnect();
 
-        toast.info(`Call ended with status: ${status}`);
+        toast.info(`Call ended with status: ${standardiseWord(status)}`);
 
         setCallEndedDialogOpen(true);
         setCallEndedDialogStatus(status);
@@ -114,8 +114,13 @@ export default function Call({ lesson, showNotes }: CallProps) {
         });
 
         return () => {
-            if (!callEndedRef.current && messagesRef.current.length > 0) {
-                handleCallEnd('NOT CLOSED');
+            if (socketRef.current?.connected) {
+                if (!callEndedRef.current && messagesRef.current.length > 0) {
+                    callEndedRef.current = true;
+                    socketRef.current?.disconnect();
+                } else {
+                    socketRef.current?.disconnect();
+                }
             }
         };
     }, []);
