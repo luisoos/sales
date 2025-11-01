@@ -3,6 +3,7 @@ import type { Socket as NetSocket } from 'net';
 import { type Server as HTTPServer } from 'http';
 import { Server as IOServer, type Socket } from 'socket.io';
 
+import { randomBytes } from 'crypto';
 import fs from 'fs';
 import Groq from 'groq-sdk';
 import path from 'path';
@@ -106,7 +107,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
 
             socket.on('selectLesson', async (lessonId: number) => {
                 // Initialize chat history with the system prompt for the selected lesson
-                chatHistory[socket.id] = [
+                chatHistory[socket.data.userId] = [
                     {
                         role: 'system',
                         content: new SystemPromptBuilder(lessonId).build(),
@@ -140,12 +141,12 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
             });
 
             socket.on('audio', (chunk: Buffer) => {
-                audioCache[socket.id] = chunk;
+                audioCache[socket.data.userId] = chunk;
             });
 
             socket.on('stop', async () => {
-                const audioBuffer = audioCache[socket.id];
-                delete audioCache[socket.id]; // Immediately clear cache
+                const audioBuffer = audioCache[socket.data.userId];
+                delete audioCache[socket.data.userId]; // Immediately clear cache
 
                 if (!audioBuffer || audioBuffer.length < 1000) {
                     // Also validates minimum size
@@ -157,7 +158,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                 }
 
                 // Ensure history is initialized
-                if (!chatHistory[socket.id]) {
+                if (!chatHistory[socket.data.userId]) {
                     socket.emit(
                         'err',
                         'Please select a lesson before starting the call.',
@@ -174,10 +175,8 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     message: 'Prozess gestoppt.',
                 });
 
-                const filePath = path.join(
-                    'tmp/',
-                    `${socket.id}-${Date.now()}.webm`,
-                );
+                const tempFileName = `${randomBytes(16).toString('hex')}.webm`;
+                const filePath = path.join('/tmp', tempFileName);
 
                 try {
                     fs.writeFileSync(filePath, audioBuffer);
@@ -196,11 +195,11 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                             role: 'user',
                             content: transcription.text,
                         };
-                    chatHistory[socket.id]?.push(userMessage);
+                    chatHistory[socket.data.userId]?.push(userMessage);
                     socket.emit('transcription', transcription.text);
 
                     const chatCompletion = await groq.chat.completions.create({
-                        messages: chatHistory[socket.id] ?? [], // Send full history
+                        messages: chatHistory[socket.data.userId] ?? [], // Send full history
                         model: 'openai/gpt-oss-20b',
                         temperature: 1,
                         max_tokens: 8192,
@@ -218,7 +217,9 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                                 role: 'assistant',
                                 content: chatAnswer,
                             };
-                        chatHistory[socket.id]?.push(assistantMessage);
+                        chatHistory[socket.data.userId]?.push(
+                            assistantMessage,
+                        );
 
                         // get lessonId and then the character of this lesson
                         const lessonId = socket.data?.lessonId;
@@ -325,8 +326,8 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
             socket.on('disconnect', () => {
                 console.log('🚪 Client getrennt:', socket.id);
                 // Clean up caches on disconnect
-                delete audioCache[socket.id];
-                delete chatHistory[socket.id];
+                delete audioCache[socket.data.userId];
+                delete chatHistory[socket.data.userId];
             });
         });
     }
