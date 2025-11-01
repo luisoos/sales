@@ -13,6 +13,7 @@ import {
     getOrCreateConversation,
 } from '~/server/services/conversation';
 import { RoleMessage } from '~/types/conversation';
+import { getLessonById } from '~/utils/prompts/lessons';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -219,9 +220,16 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                             };
                         chatHistory[socket.id]?.push(assistantMessage);
 
+                        // get lessonId and then the character of this lesson
+                        const lessonId = socket.data?.lessonId;
+                        const character = lessonId
+                            ? getLessonById(Number(lessonId))?.character
+                            : undefined;
+                        const voice: string = character?.voice ?? 'Aaliyah-PlayAI';
+
                         const wav = await groq.audio.speech.create({
                             model: 'playai-tts',
-                            voice: 'Aaliyah-PlayAI',
+                            voice: voice,
                             response_format: 'wav',
                             input: chatAnswer
                                 .replace(
@@ -230,7 +238,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                                 )
                                 .trim(),
                             sample_rate: 16000,
-                            speed: 1.25,
+                            speed: 1.2,
                         });
                         const buffer = Buffer.from(await wav.arrayBuffer());
 

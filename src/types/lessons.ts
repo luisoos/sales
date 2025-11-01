@@ -5,6 +5,7 @@ export type Character = {
     name: string;
     role: string;
     avatarUrl: string;
+    voice: string;
 };
 
 export type Product = {

@@ -16,6 +16,7 @@
         - [x] Use API pagination
     - [x] 🐛 Unexpected AI API Stream end (frontend) 
     - [x] Rate limit AI calls
+        -> New implementation required for Edge cases/scaling -> use Redis
     - [x] Ability to delete past chats (context menu or button)
 - [x] `/log-in`: If already authenticated, redirect to `/dashboard`
 - [ ] Streak
