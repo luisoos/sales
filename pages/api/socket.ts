@@ -89,7 +89,8 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                 );
 
                 // Socket.io expects synchronous middleware
-                supabase.auth.getUser()
+                supabase.auth
+                    .getUser()
                     .then(({ data: { user }, error }) => {
                         if (error || !user) {
                             return next(new Error('Unauthorized'));
@@ -114,7 +115,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
 
             socket.on('selectLesson', async (lessonId: number) => {
                 // TODO: add payment check here (if the lesson is premium)
-                
+
                 // Initialize chat history with the system prompt for the selected lesson
                 chatHistory[socket.data.userId + ':' + socket.id] = [
                     {
@@ -162,7 +163,8 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
             });
 
             socket.on('stop', async () => {
-                const audioBuffer = audioCache[socket.data.userId + ':' + socket.id];
+                const audioBuffer =
+                    audioCache[socket.data.userId + ':' + socket.id];
                 delete audioCache[socket.data.userId + ':' + socket.id]; // Immediately clear cache
 
                 if (!audioBuffer || audioBuffer.length < 1000) {
@@ -212,11 +214,15 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                             role: 'user',
                             content: transcription.text,
                         };
-                    chatHistory[socket.data.userId + ':' + socket.id]?.push(userMessage);
+                    chatHistory[socket.data.userId + ':' + socket.id]?.push(
+                        userMessage,
+                    );
                     socket.emit('transcription', transcription.text);
 
                     const chatCompletion = await groq.chat.completions.create({
-                        messages: chatHistory[socket.data.userId + ':' + socket.id] ?? [], // Send full history
+                        messages:
+                            chatHistory[socket.data.userId + ':' + socket.id] ??
+                            [], // Send full history
                         model: 'openai/gpt-oss-20b',
                         temperature: 1,
                         max_tokens: 8192,
@@ -234,7 +240,9 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                                 role: 'assistant',
                                 content: chatAnswer,
                             };
-                        chatHistory[socket.data.userId + ':' + socket.id]?.push(assistantMessage);
+                        chatHistory[socket.data.userId + ':' + socket.id]?.push(
+                            assistantMessage,
+                        );
 
                         // get lessonId and then the character of this lesson
                         const lessonId = socket.data?.lessonId;
