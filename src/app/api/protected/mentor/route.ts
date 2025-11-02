@@ -30,7 +30,7 @@ const limiter = new RateLimiter({
     day: { max: 120, window: 24 * 60 * 60 * 1000 },
 });
 
-export async function GET(request: NextRequest, response: NextResponse) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
     try {
         const supabase = await createClient();
         const {
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest, response: NextResponse) {
     }
 }
 
-export async function POST(request: NextRequest, response: NextResponse) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
     try {
         const supabase = await createClient();
         const {

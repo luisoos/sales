@@ -108,8 +108,10 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
             console.log('⏩ Neuer Client:', socket.id);
 
             socket.on('selectLesson', async (lessonId: number) => {
+                // TODO: add payment check here (if the lesson is premium)
+                
                 // Initialize chat history with the system prompt for the selected lesson
-                chatHistory[socket.data.userId] = [
+                chatHistory[socket.data.userId + ':' + socket.id] = [
                     {
                         role: 'system',
                         content: new SystemPromptBuilder(lessonId).build(),
@@ -120,7 +122,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     userId: socket.data.userId,
                     lessonId: String(lessonId),
                 });
-                chatHistory[socket.data.userId]!.push(
+                chatHistory[socket.data.userId + ':' + socket.id]!.push(
                     ...(unfinishedMessages?.messages as RoleMessage[]),
                 );
                 socket.data.lessonId = String(lessonId);
@@ -151,12 +153,12 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
             });
 
             socket.on('audio', (chunk: Buffer) => {
-                audioCache[socket.data.userId] = chunk;
+                audioCache[socket.data.userId + ':' + socket.id] = chunk;
             });
 
             socket.on('stop', async () => {
-                const audioBuffer = audioCache[socket.data.userId];
-                delete audioCache[socket.data.userId]; // Immediately clear cache
+                const audioBuffer = audioCache[socket.data.userId + ':' + socket.id];
+                delete audioCache[socket.data.userId + ':' + socket.id]; // Immediately clear cache
 
                 if (!audioBuffer || audioBuffer.length < 1000) {
                     // Also validates minimum size
@@ -168,7 +170,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                 }
 
                 // Ensure history is initialized
-                if (!chatHistory[socket.data.userId]) {
+                if (!chatHistory[socket.data.userId + ':' + socket.id]) {
                     socket.emit(
                         'err',
                         'Please select a lesson before starting the call.',
@@ -205,11 +207,11 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                             role: 'user',
                             content: transcription.text,
                         };
-                    chatHistory[socket.data.userId]?.push(userMessage);
+                    chatHistory[socket.data.userId + ':' + socket.id]?.push(userMessage);
                     socket.emit('transcription', transcription.text);
 
                     const chatCompletion = await groq.chat.completions.create({
-                        messages: chatHistory[socket.data.userId] ?? [], // Send full history
+                        messages: chatHistory[socket.data.userId + ':' + socket.id] ?? [], // Send full history
                         model: 'openai/gpt-oss-20b',
                         temperature: 1,
                         max_tokens: 8192,
@@ -227,7 +229,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                                 role: 'assistant',
                                 content: chatAnswer,
                             };
-                        chatHistory[socket.data.userId]?.push(assistantMessage);
+                        chatHistory[socket.data.userId + ':' + socket.id]?.push(assistantMessage);
 
                         // get lessonId and then the character of this lesson
                         const lessonId = socket.data?.lessonId;
@@ -335,8 +337,8 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
             socket.on('disconnect', () => {
                 console.log('🚪 Client getrennt:', socket.id);
                 // Clean up caches on disconnect
-                delete audioCache[socket.data.userId];
-                delete chatHistory[socket.data.userId];
+                delete audioCache[socket.data.userId + ':' + socket.id];
+                delete chatHistory[socket.data.userId + ':' + socket.id];
             });
         });
     }

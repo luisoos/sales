@@ -13,7 +13,7 @@ const conversationSchema = z.object({
 
 const deleteConversationIdSchema = z.string();
 
-export async function GET(request: NextRequest, response: NextResponse) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
     const supabase = await createClient();
     const {
         data: { user },
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest, response: NextResponse) {
     return NextResponse.json({ conversations });
 }
 
-export async function POST(request: NextRequest, response: NextResponse) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
     const supabase = await createClient();
     const {
         data: { user },
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest, response: NextResponse) {
     return NextResponse.json({ conversations });
 }
 
-export async function PATCH(request: NextRequest, response: NextResponse) {
+export async function PATCH(request: NextRequest): Promise<NextResponse> {
     const supabase = await createClient();
     const {
         data: { user },
@@ -92,7 +92,7 @@ export async function PATCH(request: NextRequest, response: NextResponse) {
     return NextResponse.json({ conversations });
 }
 
-export async function DELETE(request: NextRequest, response: NextResponse) {
+export async function DELETE(request: NextRequest): Promise<NextResponse> {
     const supabase = await createClient();
     const {
         data: { user },
