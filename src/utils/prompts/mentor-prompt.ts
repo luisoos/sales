@@ -34,10 +34,10 @@ export default function getMentorPrompt(conversations: Conversation[]): string {
         <lesson_level>${lesson?.levelLabel || 'unknown'}</lesson_level>
         <lead_temperature>${lesson?.leadTemperature || 'unknown'}</lead_temperature>
         <scenario>
-            <character>${lesson?.character || 'unknown'}</character>
+            <character>${json2xml(JSON.stringify(lesson?.character) || 'unknown')}</character>
             <company_description>${lesson?.companyDescription || 'unknown'}</company_description>
             <call_goal>${lesson?.goal || 'unknown'}</call_goal>
-            <primary_pain_points>${lesson?.primaryPainPoints || 'unknown'}</primary_pain_points>
+            <primary_pain_points>${lesson?.primaryPainPoints.join(', ') || 'unknown'}</primary_pain_points>
         </scenario>
     </lesson>
     <trainee_role>SALESPERSON - Analyze user messages for sales coaching</trainee_role>
@@ -85,10 +85,10 @@ ${sortedConversations
             <lesson_level>${lesson?.levelLabel || 'unknown'}</lesson_level>
             <lead_temperature>${lesson?.leadTemperature || 'unknown'}</lead_temperature>
             <scenario>
-                <character>${lesson?.character || 'unknown'}</character>
+                <character>${json2xml(JSON.stringify(lesson?.character) || 'unknown')}</character>
                 <company_description>${lesson?.companyDescription || 'unknown'}</company_description>
                 <call_goal>${lesson?.goal || 'unknown'}</call_goal>
-                <primary_pain_points>${lesson?.primaryPainPoints || 'unknown'}</primary_pain_points>
+                <primary_pain_points>${lesson?.primaryPainPoints.join(', ') || 'unknown'}</primary_pain_points>
             </scenario>
         </lesson>
         <trainee_role>SALESPERSON - Analyze user messages for sales coaching</trainee_role>
