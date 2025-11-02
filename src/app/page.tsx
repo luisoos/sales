@@ -130,7 +130,7 @@ export default function HomePage() {
     );
 }
 
-export const HeaderBadgeGroup = () => {
+const HeaderBadgeGroup = () => {
     return (
         <div className='w-min mx-auto flex flex-col items-start gap-4 hover:translate-x-2 transition-all duration-500'>
             <BadgeGroup
