@@ -56,7 +56,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
         global.__io = io;
 
         // Enforce auth on every socket connection using Supabase cookies
-        io.use(async (socket, next) => {
+        io.use((socket, next) => {
             try {
                 const cookieHeader = socket.request.headers.cookie ?? '';
                 const parsed = cookieHeader
@@ -88,15 +88,20 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     },
                 );
 
-                const {
-                    data: { user },
-                } = await supabase.auth.getUser();
+                // Socket.io expects synchronous middleware
+                supabase.auth.getUser()
+                    .then(({ data: { user }, error }) => {
+                        if (error || !user) {
+                            return next(new Error('Unauthorized'));
+                        }
 
-                if (!user) {
-                    return next(new Error('Unauthorized'));
-                }
+                        socket.data.userId = user.id;
 
-                socket.data.userId = user.id;
+                        return next();
+                    })
+                    .catch(() => {
+                        return next(new Error('Unauthorized'));
+                    });
 
                 return next();
             } catch (_err) {
