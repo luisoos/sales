@@ -10,7 +10,7 @@ import os from 'os';
 import path from 'path';
 import { SystemPromptBuilder } from '~/utils/prompts/system-prompt';
 import { createServerClient } from '@supabase/ssr';
-import { 
+import {
     appendTurnAndMaybeSetStatus,
     getOrCreateConversation,
     getUnfinishedConversation,
@@ -120,7 +120,9 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     userId: socket.data.userId,
                     lessonId: String(lessonId),
                 });
-                chatHistory[socket.data.userId]!.push(...unfinishedMessages?.messages as RoleMessage[]);
+                chatHistory[socket.data.userId]!.push(
+                    ...(unfinishedMessages?.messages as RoleMessage[]),
+                );
                 socket.data.lessonId = String(lessonId);
                 console.log(
                     `📚 Lesson ${lessonId} selected for ${socket.id}. History initialized.`,
@@ -225,9 +227,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                                 role: 'assistant',
                                 content: chatAnswer,
                             };
-                        chatHistory[socket.data.userId]?.push(
-                            assistantMessage,
-                        );
+                        chatHistory[socket.data.userId]?.push(assistantMessage);
 
                         // get lessonId and then the character of this lesson
                         const lessonId = socket.data?.lessonId;
@@ -267,7 +267,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                                         userId,
                                         lessonId,
                                     });
-                                console.log(conversation)
+                                console.log(conversation);
                                 await appendTurnAndMaybeSetStatus({
                                     conversationId: conversation.id,
                                     userText: transcription.text,

@@ -8,7 +8,7 @@ import { Badge } from '~/components/ui/base/badges/badges';
 import { Separator } from '~/components/ui/separator';
 import { Send, Bot, User, Trash2, Loader2 } from 'lucide-react';
 import useMentorStream from '~/hooks/use-mentor-stream';
-import { cn } from '~/lib/utils';
+import { cn, normaliseSpacing } from '~/lib/utils';
 import { Streamdown } from 'streamdown';
 import ChatHistory from '~/components/chat-history';
 
@@ -125,7 +125,9 @@ export default function Page() {
                                         </div>
                                         <div className='whitespace-pre-wrap break-words'>
                                             <Streamdown key={message.id}>
-                                                {message.content}
+                                                {normaliseSpacing(
+                                                    message.content,
+                                                )}
                                             </Streamdown>
                                             {message.id ===
                                                 messages[messages.length - 1]

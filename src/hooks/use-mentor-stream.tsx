@@ -35,13 +35,16 @@ export default function useMentorStream() {
             setError(null);
 
             try {
+                // include the new user message in the history we send to the API
+                const messageHistoryToSend = [...messages, userMessage];
+
                 const response = await fetch('/api/protected/mentor', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        messageHistory: messages,
+                        messageHistory: messageHistoryToSend,
                         message: message,
                         mentorChatId: chatId,
                     }),
@@ -92,22 +95,7 @@ export default function useMentorStream() {
                                 return;
                             }
                             const newChatId = chatIdMatch[1].trim();
-                            setChatId(newChatId);
-
-                            // Update message IDs to use the new chat ID
-                            setMessages((prev) => {
-                                const timestamp = Date.now();
-                                return prev.map((msg, index) => {
-                                    if (!msg.id.startsWith('temp-')) return msg;
-                                    const randomStr = Math.random()
-                                        .toString(36)
-                                        .substring(2, 8);
-                                    return {
-                                        ...msg,
-                                        id: `msg-${newChatId}-${timestamp}-${index}-${randomStr}`,
-                                    };
-                                });
-                            });
+                            if (chatId !== newChatId) setChatId(newChatId);
                         } else {
                             setMessages((prev) =>
                                 prev.map((msg) =>
@@ -130,14 +118,16 @@ export default function useMentorStream() {
             } finally {
                 setIsLoading(false);
                 setStreamingMessage(false);
-                // Check all messages for unfinished sentences (if the tokens were exceeded) and remove that
-                setMessages(
-                    messages
-                        .filter((message) => message.role === 'assistant')
-                        .map((message) => ({
-                            ...message,
-                            content: trimUnfinishedSentence(message.content),
-                        })),
+                // Trim unfinished assistant sentences
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg.role === 'assistant'
+                            ? {
+                                  ...msg,
+                                  content: trimUnfinishedSentence(msg.content),
+                              }
+                            : msg,
+                    ),
                 );
             }
         },
@@ -176,16 +166,15 @@ export default function useMentorStream() {
                         },
                     );
 
-                    // Set fetched messages but do not display unfinished sentences (see above)
+                    // Set fetched messages preserving both user and assistant roles.
                     setMessages(
-                        (messagesWithIds as ChatMessage[])
-                            .filter((message) => message.role === 'assistant')
-                            .map((message) => ({
-                                ...message,
-                                content: trimUnfinishedSentence(
-                                    message.content,
-                                ),
-                            })),
+                        (messagesWithIds as ChatMessage[]).map((message) => ({
+                            ...message,
+                            content:
+                                message.role === 'assistant'
+                                    ? trimUnfinishedSentence(message.content)
+                                    : message.content,
+                        })),
                     );
                 } catch (error) {
                     console.error('Error fetching messages:', error);

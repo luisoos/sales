@@ -25,3 +25,15 @@ export function trimUnfinishedSentence(text: string): string {
     }
     return finishedSentences.join(' ').trim();
 }
+
+export function normaliseSpacing(text: string): string {
+    return (
+        text
+            .replace(/\*\*([^*]+)\s+:\s*\*\*/g, '**$1:**')
+            .replace(/\*([^*]+)\s+:\s*\*/g, '*$1:*')
+            .replace(/ +([.!?])/g, '$1')
+            // <br> to HTML line break (<br> not working in tables for example)
+            .replace(/<br\s*\/?>/g, '&#10;')
+            .trim()
+    );
+}

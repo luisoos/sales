@@ -398,13 +398,9 @@ function NoteRow({
         <tr>
             <td className='w-40 align-top font-medium pr-2'>{label}:</td>
             <td className='align-top list-inside'>
-                {Array.isArray(value) ? (
-                    value.map((item, index) => (
-                        <li key={index}>{item}</li>
-                    ))
-                ) : (
-                    value
-                )}
+                {Array.isArray(value)
+                    ? value.map((item, index) => <li key={index}>{item}</li>)
+                    : value}
             </td>
         </tr>
     );
