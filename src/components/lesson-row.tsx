@@ -1,9 +1,9 @@
 import { Table } from '~/components/ui/application/table/table';
-import { LeadTemperatureBadge } from '~/app/dashboard/calls/[slug]/page';
 import { BadgeWithImage } from '~/components/ui/base/badges/badges';
 import { BadgeGroup } from '~/components/ui/base/badges/badge-groups';
 import { cn } from '~/lib/utils';
-import { leadTemperature } from '~/utils/prompts/lessons';
+import { LeadTemperatureBadge } from './lead-temperature-badge';
+import { leadTemperature } from '~/types/lessons';
 
 interface LessonRowProps {
     lesson: {

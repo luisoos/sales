@@ -3,13 +3,11 @@
 import Call from '~/components/call';
 import { redirect, useParams } from 'next/navigation';
 import { getLessonById } from '~/utils/prompts/lessons';
-import { type leadTemperature } from '~/types/lessons';
-import { cn, ucfirst } from '~/lib/utils';
-import { BadgeWithDot } from '~/components/ui/base/badges/badges';
 import React from 'react';
 import { Checkbox } from '~/components/ui/checkbox';
 import { Label } from '~/components/ui/label';
 import ProductPopUp from '~/components/product-pop-up';
+import { LeadTemperatureBadge } from '~/components/lead-temperature-badge';
 
 export default function Page() {
     const params = useParams<{
@@ -62,36 +60,5 @@ export default function Page() {
             <Call lesson={lesson} showNotes={showNotes} />
             <ProductPopUp product={lesson.product} />
         </div>
-    );
-}
-
-export function LeadTemperatureBadge({
-    leadTemperature,
-    className,
-}: {
-    leadTemperature: leadTemperature;
-    className?: string;
-}) {
-    function getTemperatureColor(temperature: leadTemperature) {
-        switch (temperature) {
-            case 'warm':
-                return 'warning';
-            case 'mixed':
-                return 'orange';
-            case 'cold':
-                return 'blue';
-            case 'hostile':
-                return 'gray';
-        }
-    }
-
-    return (
-        <BadgeWithDot
-            type='modern'
-            color={getTemperatureColor(leadTemperature)}
-            size='sm'
-            className={cn(className)}>
-            {ucfirst(leadTemperature)}
-        </BadgeWithDot>
     );
 }
