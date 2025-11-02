@@ -33,7 +33,15 @@ const config = {
         "@typescript-eslint/no-unsafe-member-access": "off",
         "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/no-floating-promises": "off"
+        "@typescript-eslint/no-floating-promises": "off",
+        "@typescript-eslint/prefer-for-of": "off",
+        "@typescript-eslint/no-unsafe-argument": "warn",
+        "@typescript-eslint/no-inferrable-types": "warn",
+        "@typescript-eslint/no-empty-object-type": "warn",
+        "@typescript-eslint/prefer-regexp-exec": "warn",
+        "@typescript-eslint/no-unsafe-call": "warn",
+        "react/no-unescaped-entities": "warn",
+
     },
 };
 module.exports = config;

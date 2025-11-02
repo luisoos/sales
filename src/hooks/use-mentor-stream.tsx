@@ -90,7 +90,7 @@ export default function useMentorStream() {
                         if (chunk.includes('__CHAT_ID__:')) {
                             const chatIdMatch =
                                 chunk.match(/__CHAT_ID__:(\S+)/);
-                            if (!chatIdMatch || !chatIdMatch[1]) {
+                            if (!chatIdMatch?.[1]) {
                                 console.error('Invalid chat ID format');
                                 return;
                             }
