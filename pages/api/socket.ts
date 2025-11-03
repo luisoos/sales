@@ -116,47 +116,48 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
             socket.on('selectLesson', async (lessonId: number) => {
                 // TODO: add payment check here (if the lesson is premium)
 
-                // Initialize chat history with the system prompt for the selected lesson
-                chatHistory[socket.data.userId + ':' + socket.id] = [
+                // Initialize chat history with system prompt and fetch any unfinished conversation
+                const sessionKey = socket.data.userId + ':' + socket.id;
+                chatHistory[sessionKey] = [
                     {
                         role: 'system',
                         content: new SystemPromptBuilder(lessonId).build(),
                     },
                 ];
-                // add getUnfinishedConversation messages to history using await
+
+                // Get unfinished conversation once and use it for both history and emissions
                 const unfinishedMessages = await getUnfinishedConversation({
                     userId: socket.data.userId,
                     lessonId: String(lessonId),
                 });
-                if (unfinishedMessages?.messages)
-                    chatHistory[socket.data.userId + ':' + socket.id]!.push(
-                        ...(unfinishedMessages?.messages as RoleMessage[]),
-                    );
+
+                const messages = unfinishedMessages?.messages as
+                    | RoleMessage[]
+                    | undefined;
+                if (
+                    messages &&
+                    Array.isArray(messages) &&
+                    messages.length > 0
+                ) {
+                    // Add messages to chat history
+                    chatHistory[sessionKey]!.push(...messages);
+
+                    // Emit messages to continue conversation
+                    messages.forEach((message) => {
+                        if (message.role === 'user') {
+                            socket.emit('transcription', message.content);
+                        } else if (message.role === 'assistant') {
+                            socket.emit('text', message.content);
+                        }
+                    });
+                }
+
                 socket.data.lessonId = String(lessonId);
                 console.log(
-                    `📚 Lesson ${lessonId} selected for ${socket.id}. History initialized.`,
+                    `📚 Lesson ${lessonId} selected for ${socket.id}. History initialized with ${
+                        messages?.length || 0
+                    } previous messages.`,
                 );
-
-                // To continue an unfinished conversation
-                const pastMessages = await getUnfinishedConversation({
-                    userId: socket.data.userId,
-                    lessonId: String(lessonId),
-                });
-
-                if (
-                    pastMessages &&
-                    Array.isArray(pastMessages.messages) &&
-                    pastMessages.messages.length > 0
-                )
-                    (pastMessages.messages as RoleMessage[])?.forEach(
-                        (message) => {
-                            if (message.role === 'user') {
-                                socket.emit('transcription', message.content);
-                            } else if (message.role === 'assistant') {
-                                socket.emit('text', message.content);
-                            }
-                        },
-                    );
             });
 
             socket.on('audio', (chunk: Buffer) => {

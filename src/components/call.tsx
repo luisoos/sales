@@ -59,7 +59,7 @@ export default function Call({ lesson, showNotes }: CallProps) {
 
     useEffect(() => {
         if (socketRef.current) return;
-        
+
         // Connect to websocket
         const socket = io({
             path: '/api/socket',
@@ -127,22 +127,12 @@ export default function Call({ lesson, showNotes }: CallProps) {
         };
     }, []);
 
-    // Update selected lesson if it changes while the socket is active
+    // Assert no duplicate messages are being produced
     useEffect(() => {
-        if (lessonId && socketRef.current) {
-            socketRef.current.emit('selectLesson', lessonId);
-        }
-    }, [lessonId]);
-
-    // Due to react strict mode in development, each request is being sent twice.
-    // This results in a duplicated conversation log.
-    useEffect(() => {
-        if (process.env.NODE_ENV === 'development') {
-            const uniqueMessages = [...new Set(messages)];
-            if (uniqueMessages.length !== messages.length)
-                // No endless loop
-                setMessages(uniqueMessages);
-        }
+        const uniqueMessages = [...new Set(messages)];
+        if (uniqueMessages.length !== messages.length)
+            // No endless loop
+            setMessages(uniqueMessages);
     }, [messages]);
 
     const audioChunksRef = useRef<Blob[]>([]);
