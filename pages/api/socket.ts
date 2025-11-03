@@ -128,9 +128,10 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     userId: socket.data.userId,
                     lessonId: String(lessonId),
                 });
-                chatHistory[socket.data.userId + ':' + socket.id]!.push(
-                    ...(unfinishedMessages?.messages as RoleMessage[]),
-                );
+                if (unfinishedMessages?.messages)
+                    chatHistory[socket.data.userId + ':' + socket.id]!.push(
+                        ...(unfinishedMessages?.messages as RoleMessage[]),
+                    );
                 socket.data.lessonId = String(lessonId);
                 console.log(
                     `📚 Lesson ${lessonId} selected for ${socket.id}. History initialized.`,
@@ -167,7 +168,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     audioCache[socket.data.userId + ':' + socket.id];
                 delete audioCache[socket.data.userId + ':' + socket.id]; // Immediately clear cache
 
-                if (!audioBuffer || audioBuffer.length < 1000) {
+                if (!audioBuffer || audioBuffer.length < 100) {
                     // Also validates minimum size
                     console.log(
                         '⏹ Stop-Signal received, but audio buffer is missing or too small.',

@@ -189,6 +189,7 @@ export default function useMentorStream() {
         setError(null);
         setChatId(undefined);
     }, []);
+    
     return {
         messages,
         isLoading,

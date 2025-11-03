@@ -139,15 +139,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             userId: user.id,
         });
 
-        console.log([
-            {
-                role: 'system',
-                content: getMentorPrompt(conversations),
-            },
-            ...parsed.data.messageHistory,
-            { role: 'user', content: parsed.data.message },
-        ]);
-
         const stream = await groq.chat.completions.create({
             messages: [
                 {

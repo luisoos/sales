@@ -58,6 +58,8 @@ export default function Call({ lesson, showNotes }: CallProps) {
     }
 
     useEffect(() => {
+        if (socketRef.current) return;
+        
         // Connect to websocket
         const socket = io({
             path: '/api/socket',
