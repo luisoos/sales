@@ -27,6 +27,7 @@
 - [ ] Profile Pictures
 - [ ] Leaderboard
 - [ ] Payment, then hide the lessons client-side that require payment
+- [ ] Voices for characters not constistent
 
 #### Naming convention
 A **lection** is the name used for an AI Call lesson in the frontend, a **lesson** is the name used in the backend code. Conversations are being stored to the DB as **Conversations**.

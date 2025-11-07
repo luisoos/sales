@@ -117,6 +117,15 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                 // TODO: add payment check here (if the lesson is premium)
 
                 // Initialize chat history with system prompt and fetch any unfinished conversation
+                try {
+                    new SystemPromptBuilder(lessonId).build();
+                } catch (err) {
+                    socket.emit('err', 'Selected lesson does not exist.');
+                    console.log(
+                        `Error: Client ${socket.id} selected non-existing lesson ${lessonId}.`,
+                    );
+                    return;
+                }
                 const sessionKey = socket.data.userId + ':' + socket.id;
                 chatHistory[sessionKey] = [
                     {
@@ -174,7 +183,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     console.log(
                         '⏹ Stop-Signal received, but audio buffer is missing or too small.',
                     );
-                    socket.emit('err', 'Audio recording too short or empty.');
+                    // socket.emit('err', 'Audio recording too short or empty.');
                     return;
                 }
 
@@ -227,7 +236,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                             [], // Send full history
                         model: 'openai/gpt-oss-20b',
                         temperature: 1,
-                        max_tokens: 8192,
+                        max_tokens: 300,
                         top_p: 1,
                         stream: false,
                     });
