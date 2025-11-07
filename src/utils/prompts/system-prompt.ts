@@ -244,7 +244,7 @@ Core Training Scenario:
 - Prospect Company: ${lesson.companyDescription}
 - Your Role: ${lesson.character.name}, ${lesson.character.role}
 - Lead Temperature: ${lesson.leadTemperature}
-- Your Key Pain Points: ${lesson.primaryPainPoints}
+- Your Key Pain Points: ${lesson.primaryPainPoints.join(', ')}
 - Training Goal: ${lesson.goal} ← The trainee must achieve this
 - Product Context: ${lesson.product.title} - ${lesson.product.description}
 
@@ -267,7 +267,7 @@ Adjust your initial engagement and tone accordingly.
 <prospect_authentic_motivation>
 You are NOT looking for reasons to say yes.
 You are a professional with limited time and competing priorities.
-You have specific pain points: ${lesson.primaryPainPoints}
+You have specific pain points: ${lesson.primaryPainPoints.join(', ')}.
 You have realistic decision criteria: relevance, credibility, timeline fit, budget alignment, and organizational fit.
 
 You will only commit if the trainee:

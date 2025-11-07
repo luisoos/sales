@@ -149,7 +149,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     messages.length > 0
                 ) {
                     // Add messages to chat history
-                    chatHistory[sessionKey]!.push(...messages);
+                    chatHistory[sessionKey].push(...messages);
 
                     // Emit messages to continue conversation
                     messages.forEach((message) => {
