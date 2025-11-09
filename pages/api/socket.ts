@@ -17,6 +17,7 @@ import {
 } from '~/server/services/conversation';
 import { RoleMessage } from '~/types/conversation';
 import { getLessonById } from '~/utils/prompts/lessons';
+import { getTipGeneratorPrompt } from '~/utils/prompts/tip-prompt';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -148,6 +149,18 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                     Array.isArray(messages) &&
                     messages.length > 0
                 ) {
+                    // Prevent errors and possible race conditions
+                    if (!chatHistory[sessionKey]) {
+                        chatHistory[sessionKey] = [
+                            {
+                                role: 'system',
+                                content: new SystemPromptBuilder(
+                                    lessonId,
+                                ).build(),
+                            },
+                        ];
+                    }
+
                     // Add messages to chat history
                     chatHistory[sessionKey].push(...messages);
 
@@ -236,7 +249,7 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                             [], // Send full history
                         model: 'openai/gpt-oss-20b',
                         temperature: 1,
-                        max_tokens: 300,
+                        max_tokens: 400,
                         top_p: 1,
                         stream: false,
                     });
@@ -308,6 +321,42 @@ export default function handler(_req: NextApiRequest, res: SocketResponse) {
                             console.error(
                                 'Failed to persist conversation:',
                                 err,
+                            );
+                        }
+
+                        // Generate a tip
+                        console.log(lessonId);
+                        const tip = await groq.chat.completions.create({
+                            messages: [
+                                {
+                                    role: 'system',
+                                    content: getTipGeneratorPrompt(
+                                        Number(lessonId),
+                                        chatHistory[
+                                            socket.data.userId + ':' + socket.id
+                                        ] as RoleMessage[],
+                                    ),
+                                },
+                            ],
+                            model: 'openai/gpt-oss-20b',
+                            temperature: 0.3,
+                            max_tokens: 50,
+                            top_p: 1,
+                            stream: false,
+                        });
+
+                        const tipContent =
+                            tip.choices[0]?.message?.content;
+
+                        if (tipContent && (tipContent.includes('<tip>') || tipContent.includes('<generic_help>'))) {
+                            socket.emit(
+                                'tip',
+                                tipContent
+                                    .replace('<tip>', '')
+                                    .replace('</tip>', '')
+                                    .replace('<generic_help>', '')
+                                    .replace('</generic_help>', '')
+                                    .trim() || null,
                             );
                         }
                     }

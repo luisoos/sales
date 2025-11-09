@@ -101,6 +101,10 @@ export default function Call({ lesson, showNotes }: CallProps) {
             setCharacterSpeaks(false);
         });
 
+        socket.on('tip', (msg: string) => {
+            toast(`✨ ${msg}`);
+        });
+
         socket.on('stopped', (msg) => {
             // setMessages((prev) => [...prev, '🛑 Server: ' + msg.message]);
             stopRecording();

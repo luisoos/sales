@@ -222,7 +222,7 @@ function ConversationMessagesSheet({
                         {content.map((msg, index) => (
                             <div key={index} className='mb-4'>
                                 <span className='font-semibold text-foreground'>
-                                    {ucfirst(msg.role)}:{' '}
+                                    {getDisplayRole(msg.role)}:{' '}
                                 </span>
                                 <span>
                                     {msg.content
@@ -239,4 +239,17 @@ function ConversationMessagesSheet({
             </SheetContent>
         </Sheet>
     );
+}
+
+function getDisplayRole(role: RoleMessage['role']): string {
+    switch (role) {
+        case 'system':
+            return 'System';
+        case 'user':
+            return 'Trainee (You)';
+        case 'assistant':
+            return 'Prospect';
+        default:
+            return 'Unknown';
+    }
 }
