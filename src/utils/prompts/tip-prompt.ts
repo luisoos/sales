@@ -7,7 +7,7 @@ export function getTipGeneratorPrompt(
     lessonId: number,
     conversationHistory: RoleMessage[],
 ): string {
-    const lesson = getLessonById(lessonId) as Lesson;
+    const lesson = getLessonById(lessonId);
     if (!lesson) {
         throw new Error(`Lesson with ID ${lessonId} not found.`);
     }
