@@ -1,4 +1,15 @@
-# 🚀 SalesTrainer
+<h1 align="center"> 🚀 SalesTrainer</h1>
+
+<p align="center">
+   Fast API responses by <a href="https://groq.com/">Groq</a> • Responsive • Great User Experience by Design • Fullstack <a href="https://nextjs.org/">Next.js</a> Project
+</p>
+
+<div align="center">
+<video src="https://github.com/user-attachments/assets/c72f695c-6c02-40bb-a1e5-abeb0bf870f9" width="200" controls>
+</video>
+</div>
+
+---
 
 - [📒 To-do](#to-do)
     * [Advanced To-dos (for later)](#advanced-to-dos-for-later)
