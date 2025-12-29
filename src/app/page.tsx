@@ -44,12 +44,11 @@ export default function HomePage() {
                 <NavigationMenu className='mx-auto'>
                     <NavigationMenuList className='w-full'>
                         <NavigationMenuItem>
-                            <Link href='/' legacyBehavior passHref>
-                                <NavigationMenuLink
-                                    className={navigationMenuTriggerStyle()}>
+                            <NavigationMenuLink asChild>
+                                <Link href='/' className={navigationMenuTriggerStyle()}>
                                     Home
-                                </NavigationMenuLink>
-                            </Link>
+                                </Link>
+                            </NavigationMenuLink>
                         </NavigationMenuItem>
                         <NavigationMenuItem>
                             <NavigationMenuTrigger>
@@ -69,15 +68,16 @@ export default function HomePage() {
                             </NavigationMenuContent>
                         </NavigationMenuItem>
                         <NavigationMenuItem className='pl-auto'>
-                            <Link href='/login' legacyBehavior passHref>
-                                <NavigationMenuLink
+                            <NavigationMenuLink asChild>
+                                <Link
+                                    href='/login'
                                     className={cn(
                                         navigationMenuTriggerStyle(),
                                         'bg-brand text-white border border-brand-dark',
                                     )}>
                                     Login
-                                </NavigationMenuLink>
-                            </Link>
+                                </Link>
+                            </NavigationMenuLink>
                         </NavigationMenuItem>
                     </NavigationMenuList>
                 </NavigationMenu>

@@ -1,13 +1,21 @@
 # 🚀 SalesTrainer
 
-### To-do
+- [📒 To-do](#to-do)
+    * [Advanced To-dos (for later)](#advanced-to-dos-for-later)
+- [💡 Naming conventions](#naming-conventions)
+- [🛠️ Tech Stack](#-tech-stack)
+- [🚀 Getting Started](#-getting-started)
+- [🔑 Setting up Social Auth with Supabase](#-setting-up-social-auth-with-supabase)
+- [📚 Learn More](#-learn-more)
+
+### 📒 To-do
 - [x] Lections
 - [x] Secure Websockets and add authentication / session
 - [x] Prompt Engineer
 - [x] Save conversations
     - [x] 🐛 FIX: seems to only save first conversation, but maybe thats not true -> test
 
-#### Later
+#### Advanced To-dos (for later)
 - [x] Different lections for different products -> categorise lections and use common products for different lections
 - [x] Improvement Tips -> AI Analyses historical conversations
     - [x] Pass conversation logs to AI as context
@@ -27,9 +35,9 @@
 - [ ] Profile Pictures
 - [ ] Leaderboard
 - [ ] Payment, then hide the lessons client-side that require payment
-- [ ] Voices for characters not constistent
+- [ ] Voices for characters not consistent
 
-#### Naming convention
+### 💡 Naming conventions
 A **lection** is the name used for an AI Call lesson in the frontend, a **lesson** is the name used in the backend code. Conversations are being stored to the DB as **Conversations**.
 
 ## 🛠️ Tech Stack

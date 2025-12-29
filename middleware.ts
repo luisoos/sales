@@ -17,32 +17,32 @@ export async function middleware(request: NextRequest) {
     // Update the user's auth session and get the response
     const response = await updateSession(request);
 
-    // For protected routes, ensure user is authenticated
-    if (
-        request.nextUrl.pathname.startsWith('/api/') ||
-        request.nextUrl.pathname.startsWith('/dashboard')
-    ) {
-        // Create a new Supabase client for server-side operations
-        const supabase = await createClient();
-        const {
-            data: { user },
-            error,
-        } = await supabase.auth.getUser();
+    // // For protected routes, ensure user is authenticated
+    // if (
+    //     request.nextUrl.pathname.startsWith('/api/') ||
+    //     request.nextUrl.pathname.startsWith('/dashboard')
+    // ) {
+    //     // Create a new Supabase client for server-side operations
+    //     const supabase = await createClient();
+    //     const {
+    //         data: { user },
+    //         error,
+    //     } = await supabase.auth.getUser();
 
-        if (error || !user) {
-            return NextResponse.redirect(new URL('/login', request.url));
-        }
-    } else if (request.nextUrl.pathname.startsWith('/login')) {
-        const supabase = await createClient();
-        const {
-            data: { user },
-            error,
-        } = await supabase.auth.getUser();
+    //     if (error || !user) {
+    //         return NextResponse.redirect(new URL('/login', request.url));
+    //     }
+    // } else if (request.nextUrl.pathname.startsWith('/login')) {
+    //     const supabase = await createClient();
+    //     const {
+    //         data: { user },
+    //         error,
+    //     } = await supabase.auth.getUser();
 
-        if (!error && user) {
-            return NextResponse.redirect(new URL('/dashboard', request.url));
-        }
-    }
+    //     if (!error && user) {
+    //         return NextResponse.redirect(new URL('/dashboard', request.url));
+    //     }
+    // }
 
     // Return the response from updateSession or continue with the request
     return response || NextResponse.next();

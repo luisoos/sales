@@ -1,6 +1,5 @@
 import { json2xml } from 'xml-js';
 import { RoleMessage } from '~/types/conversation';
-import { Lesson } from '~/types/lessons';
 import { getLessonById } from './lessons';
 
 export function getTipGeneratorPrompt(
